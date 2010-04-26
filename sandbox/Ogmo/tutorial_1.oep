@@ -1,0 +1,17 @@
+<project>
+	<name>Ogmo Level test</name>
+	<settings>
+		<defaultWidth>640</defaultWidth>
+		<defaultHeight>480</defaultHeight>
+		<workingDirectory>../gfx/</workingDirectory>
+	</settings>
+	<tilesets>
+		<tileset name="bricks" image="tiles_bricks.png" tileWidth="16" tileHeight="16" />
+		<tileset name="grass" image="tiles_grass.png" tileWidth="16" tileHeight="16"/>
+	</tilesets>
+	<layers>
+		<grid name="floors" gridSize="16" exportAsObjects="true"/>
+	</layers>
+
+
+</project>
