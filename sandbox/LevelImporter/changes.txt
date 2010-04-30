@@ -1,0 +1,42 @@
+﻿VERSION 0.87 (March 22, 2010)
+	- Fixed a bug causing freezing with recycled Entities.
+
+VERSION 0.86 (March 21, 2010)
+	- Fixed a bug with World's withType(), countType(), and getType().
+	- Fixed a bug with Core's drawLinePlus().
+
+VERSION 0.85 (February 22, 2010)
+	- Performance increase in World's withType(), getTypeNearest(), getTypeFirst(), getType(), hasType(), and countType().
+
+VERSION 0.84 (February 20, 2010)
+	- Fixed Engine's showSplash() function, so now the colors are actually set properly.
+
+VERSION 0.83 (February 14, 2010)
+	- Added collidePoint() and collideRect() to Entity.
+	- Added collidePoint() and collideRect() to World, for checking against all Entities of a collision-type.
+	- Fixed a problem with Camera effecting draw positions in the render loop.
+	- Cleaned up some minor redundancies in the regular collide() and collideWith() checks.
+	- FP.delta property temporarily removed and suspended due to bugs. May re-include in later version.
+	- Aside from FP.delta removal, this version should be completely 0.81 compatible.
+
+VERSION 0.81 (February 10, 2010)
+	- Added 3 new functions to Input for checking particular keyCodes.
+	- Added a set of functions to FP for working with seeded pseudo-random numbers.
+	- Fixed a bug disallowing you from using a null bitmap in Tileset's constructor.
+
+VERSION 0.80 (February 7, 2010)
+	- Entity collisions improved for bitmap masks.
+	- Collision properties for Entities exposed, setCollision- functions changed to setHitbox() and setMask(), and use an origin instead of offset.
+	- Added a bunch of functions to World for retrieving Entities based on certain contitions.
+	- Added two getNearest() functions and distanceTo() to Entity.
+	- Tilemaps can now be much larger, and will be collided against as a grid in regular collision checks.
+	- Added a start parameter to addAlarm() in core, to auto-start alarms after adding them.
+	- Moved splash screen parameters in Engine to showSplash(), with added volume and flashpunk.net website link options.
+	- FP.camera is now a new Camera class, and has functions for moving the camera and setting it's movement boundaries.
+	- Added Entity recycling functions to World with create(), recycle(), and next().
+	- Improved some small rendering issues with Acrobats to increase speed.
+	- New Text and Textplus classes now use embedded fonts instead of bitmap fonts. Bitmap font support is temporarily suspended.
+	- Tilemaps now have loadFromArray() and loadFromBitmap(), as well as an overrideable loadPixel() function for specific conditions when loading bitmaps.
+	- Added getColor, getRed/BlueGreen(), distanceRect(), distanceRectPoint(), approach(), delta, and VERSION to FP.
+	- Removed Factory class, use FlashDevelop's preloader template instead until I get this sorted out.
+	- New ASDoc documentation! Much cleaner and linked, with new commentation in all classes.

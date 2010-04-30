@@ -1,0 +1,28 @@
+<project>
+	<name>Test LD Transmission</name>
+	<settings>
+		<defaultWidth>1600</defaultWidth>
+		<defaultHeight>480</defaultHeight>
+		<workingDirectory>./gfx</workingDirectory>
+	</settings>
+	
+	<tilesets>
+		<tileset name="bricks" image="tiles_bricks.png" tileWidth="16" tileHeight="16"/>
+		<tileset name="grass" image="tiles_grass.png" tileWidth="16" tileHeight="16"/>
+	</tilesets>
+	
+	<objects>
+		<object name="ogmo" image="ogmo.png" width="16" height="16" tile="true" resizableX="true" resizableY="true">
+			<values>
+				<integer name="pathType" default="1" />
+			</values>	
+		</object>
+	</objects>
+	
+	<layers>
+		<grid name="fondations" gridSize="16" color="#FF000000" exportAsObjects="true"/>
+		<objects name="chemins" gridSize="16"/>
+		<tiles name="habillage" gridSize="16" exportTileSize="true"/>
+	</layers>
+	
+</project>

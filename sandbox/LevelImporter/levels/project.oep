@@ -1,25 +1,23 @@
 <project>
-	<name>Ogmo Level test</name>
+	<name>Example Project</name>
 	<settings>
 		<defaultWidth>640</defaultWidth>
 		<defaultHeight>480</defaultHeight>
 		<workingDirectory>./gfx</workingDirectory>
 	</settings>
 	<tilesets>
-		<tileset name="bricks" image="tiles_bricks.png" tileWidth="16" tileHeight="16" />
+		<tileset name="bricks" image="tiles_bricks.png" tileWidth="16" tileHeight="16"/>
 		<tileset name="grass" image="tiles_grass.png" tileWidth="16" tileHeight="16"/>
 	</tilesets>
 	<objects>
-		<object name="ogmo" image="ogmo.png" width="16" height="16" limit="1" />
+		<object name="ogmo" image="ogmo.png" width="16" height="16" limit="1"/>
 		<folder name="dangers">
 			<object name="spikes" image="spikes.png" width="16" height="16" resizableX="true" tile="true"/>
 		</folder>
 	</objects>
 	<layers>
-		<grid name="floors" gridSize="16" exportAsObjects="true"/>
-		<objects name="actors" gridSize="16" />
+		<grid name="floors" gridSize="16" gridColor="" exportAsObjects="true"/>
+		<objects name="actors" gridSize="16"/>
 		<tiles name="tilesAbove" gridSize="16" exportTileSize="true"/>
 	</layers>
-
-
 </project>

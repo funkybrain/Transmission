@@ -1,0 +1,9 @@
+<level>
+  <width>1600</width>
+  <height>480</height>
+  <chemins>
+    <ogmo x="208" y="160" width="384" height="16" pathType="1"/>
+    <ogmo x="576" y="176" width="16" height="144" pathType="1"/>
+    <ogmo x="592" y="304" width="576" height="16" pathType="1"/>
+  </chemins>
+</level>

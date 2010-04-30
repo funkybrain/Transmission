@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<rdf>
+	<channel>
+		<title><![CDATA[Test file]]></title>
+		<link>http://www.sephiroth.it</link>
+		<description><![CDATA[A custom description of this document]]></description>
+		<language>en-us</language>
+		<items>
+			<item id="001">
+				<resource url="http://www.sephiroth.it/tutorials.php" />
+				<channel>FLASH-PHP</channel>
+				<author email="alex@alex.com">
+					<name>Alessandro</name>
+				</author>
+			</item>
+			<item id="002">
+				<resource url="http://www.sephiroth.it/tutorials/flashPHP/E4X" />
+				<channel>Flash 9</channel>
+				<author email="mich@alex.com">
+					<name>Michael</name>
+				</author>
+			</item>
+			<item id="003">
+				<resource url="http://www.sephiroth.it/tutorials/flashPHP/scrollRect" />
+				<channel>Flash 8</channel>
+				<author email="fk@alex.com">
+					<name>Frank</name>
+				</author>
+			</item>
+		</items>
+	</channel>		
+</rdf>
