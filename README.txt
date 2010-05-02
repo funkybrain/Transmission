@@ -1,1 +1,3 @@
-wow, i can change files directly in github!
+To do list:
+> combine .png into into one tileset
+> figure out how to handle intersections
