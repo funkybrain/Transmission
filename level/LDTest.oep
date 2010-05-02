@@ -1,0 +1,32 @@
+<project>
+	<name>Transmission LD Test</name>
+	<settings>
+		<bgColor>#202020</bgColor>
+		<defaultWidth>640</defaultWidth>
+		<defaultHeight>480</defaultHeight>
+		<minWidth>32</minWidth>
+		<minHeight>32</minHeight>
+		<maxWidth>1000</maxWidth>
+		<maxHeight>600</maxHeight>
+		<workingDirectory>gfx</workingDirectory>
+	</settings>
+	
+	<objects>
+		<object name="player" image="player.png" width="32" height="32" limit="1"/>
+	</objects> 
+	
+	<tilesets>
+		<tileset name="red" image="red.png" tileWidth="30" tileHeight="30"/>
+		<tileset name="green" image="green.png" tileWidth="30" tileHeight="30"/>
+		<tileset name="blue" image="blue.png" tileWidth="30" tileHeight="30"/>	
+	</tilesets> 
+	
+	<layers>
+		<objects name="objects" gridSize="30" drawGridSize="30" />
+		<grid name="solid" color="#FFFF6699" gridSize="30" drawGridSize="30" exportAsObjects="true" />
+		<tiles name="path_red" gridSize="30" drawGridSize="60" />
+		<tiles name="path_green" gridSize="30" drawGridSize="60" />
+		<tiles name="path_blue" gridSize="30" drawGridSize="60" />
+		
+	</layers>
+</project>
