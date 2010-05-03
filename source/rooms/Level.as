@@ -11,7 +11,7 @@
 		/**
 		 * Level XML.
 		 */
-		[Embed(source = '../../level/level1.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
+		[Embed(source = '../../level/Level1.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
 		
 		/**
 		 * Camera following information.

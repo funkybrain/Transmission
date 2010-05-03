@@ -1,156 +1,124 @@
 <level>
-  <width>840</width>
+  <width>810</width>
   <height>480</height>
-  <objects>
-    <player x="0" y="180"/>
-  </objects>
-  <path_red set="red">
-    <tile tx="0" ty="0" x="30" y="150"/>
-    <tile tx="0" ty="0" x="60" y="150"/>
-    <tile tx="0" ty="0" x="90" y="150"/>
-    <tile tx="0" ty="0" x="90" y="120"/>
-    <tile tx="0" ty="0" x="120" y="120"/>
-    <tile tx="0" ty="0" x="150" y="120"/>
-    <tile tx="0" ty="0" x="180" y="120"/>
-    <tile tx="0" ty="0" x="210" y="120"/>
-    <tile tx="0" ty="0" x="240" y="120"/>
-    <tile tx="0" ty="0" x="270" y="120"/>
-    <tile tx="0" ty="0" x="300" y="120"/>
-    <tile tx="0" ty="0" x="330" y="120"/>
-    <tile tx="0" ty="0" x="360" y="120"/>
-    <tile tx="0" ty="0" x="390" y="120"/>
-    <tile tx="0" ty="0" x="390" y="150"/>
-    <tile tx="0" ty="0" x="390" y="180"/>
-    <tile tx="0" ty="0" x="390" y="210"/>
-    <tile tx="0" ty="0" x="390" y="240"/>
-    <tile tx="0" ty="0" x="390" y="270"/>
-    <tile tx="0" ty="0" x="420" y="270"/>
-    <tile tx="0" ty="0" x="420" y="300"/>
-    <tile tx="0" ty="0" x="450" y="300"/>
-    <tile tx="0" ty="0" x="480" y="300"/>
-    <tile tx="0" ty="0" x="510" y="300"/>
-    <tile tx="0" ty="0" x="540" y="300"/>
-    <tile tx="0" ty="0" x="570" y="300"/>
-    <tile tx="0" ty="0" x="570" y="330"/>
-    <tile tx="0" ty="0" x="600" y="330"/>
-    <tile tx="0" ty="0" x="630" y="330"/>
-    <tile tx="0" ty="0" x="630" y="300"/>
-    <tile tx="0" ty="0" x="660" y="300"/>
-    <tile tx="0" ty="0" x="660" y="270"/>
-    <tile tx="0" ty="0" x="660" y="240"/>
-    <tile tx="0" ty="0" x="660" y="210"/>
-    <tile tx="0" ty="0" x="660" y="180"/>
-    <tile tx="0" ty="0" x="660" y="150"/>
-    <tile tx="0" ty="0" x="690" y="150"/>
-    <tile tx="0" ty="0" x="690" y="120"/>
-    <tile tx="0" ty="0" x="690" y="90"/>
-    <tile tx="0" ty="0" x="690" y="60"/>
-    <tile tx="0" ty="0" x="720" y="60"/>
-    <tile tx="0" ty="0" x="750" y="60"/>
-    <tile tx="0" ty="0" x="780" y="60"/>
-    <tile tx="0" ty="0" x="810" y="60"/>
-    <tile tx="0" ty="0" x="0" y="150"/>
+  <path_red set="Paths">
+    <tile tx="60" ty="0" x="0" y="120"/>
+    <tile tx="60" ty="0" x="30" y="120"/>
+    <tile tx="60" ty="0" x="60" y="120"/>
+    <tile tx="60" ty="0" x="90" y="120"/>
+    <tile tx="60" ty="0" x="120" y="120"/>
+    <tile tx="60" ty="0" x="180" y="120"/>
+    <tile tx="60" ty="0" x="210" y="120"/>
+    <tile tx="60" ty="0" x="210" y="150"/>
+    <tile tx="60" ty="0" x="210" y="180"/>
+    <tile tx="60" ty="0" x="210" y="210"/>
+    <tile tx="60" ty="0" x="210" y="240"/>
+    <tile tx="60" ty="0" x="210" y="300"/>
+    <tile tx="60" ty="0" x="210" y="330"/>
+    <tile tx="60" ty="0" x="240" y="330"/>
+    <tile tx="60" ty="0" x="270" y="330"/>
+    <tile tx="60" ty="0" x="300" y="330"/>
+    <tile tx="60" ty="0" x="330" y="330"/>
+    <tile tx="60" ty="0" x="390" y="330"/>
+    <tile tx="60" ty="0" x="420" y="330"/>
+    <tile tx="60" ty="0" x="450" y="330"/>
+    <tile tx="60" ty="0" x="480" y="330"/>
+    <tile tx="60" ty="0" x="510" y="330"/>
+    <tile tx="60" ty="0" x="540" y="330"/>
+    <tile tx="60" ty="0" x="570" y="330"/>
+    <tile tx="60" ty="0" x="570" y="300"/>
+    <tile tx="60" ty="0" x="570" y="270"/>
+    <tile tx="60" ty="0" x="570" y="210"/>
+    <tile tx="60" ty="0" x="570" y="180"/>
+    <tile tx="60" ty="0" x="600" y="180"/>
+    <tile tx="60" ty="0" x="660" y="180"/>
+    <tile tx="60" ty="0" x="690" y="180"/>
+    <tile tx="60" ty="0" x="720" y="180"/>
+    <tile tx="60" ty="0" x="750" y="180"/>
+    <tile tx="60" ty="0" x="780" y="180"/>
   </path_red>
-  <path_green set="green">
-    <tile tx="0" ty="0" x="0" y="180"/>
-    <tile tx="0" ty="0" x="30" y="180"/>
-    <tile tx="0" ty="0" x="30" y="210"/>
-    <tile tx="0" ty="0" x="60" y="210"/>
-    <tile tx="0" ty="0" x="90" y="210"/>
-    <tile tx="0" ty="0" x="120" y="210"/>
-    <tile tx="0" ty="0" x="150" y="210"/>
-    <tile tx="0" ty="0" x="180" y="210"/>
-    <tile tx="0" ty="0" x="210" y="210"/>
-    <tile tx="0" ty="0" x="210" y="180"/>
-    <tile tx="0" ty="0" x="240" y="180"/>
-    <tile tx="0" ty="0" x="240" y="150"/>
-    <tile tx="0" ty="0" x="240" y="120"/>
-    <tile tx="0" ty="0" x="240" y="90"/>
-    <tile tx="0" ty="0" x="240" y="60"/>
-    <tile tx="0" ty="0" x="270" y="60"/>
-    <tile tx="0" ty="0" x="300" y="60"/>
-    <tile tx="0" ty="0" x="330" y="60"/>
-    <tile tx="0" ty="0" x="360" y="60"/>
-    <tile tx="0" ty="0" x="390" y="60"/>
-    <tile tx="0" ty="0" x="420" y="60"/>
-    <tile tx="0" ty="0" x="450" y="60"/>
-    <tile tx="0" ty="0" x="480" y="60"/>
-    <tile tx="0" ty="0" x="480" y="90"/>
-    <tile tx="0" ty="0" x="480" y="120"/>
-    <tile tx="0" ty="0" x="480" y="150"/>
-    <tile tx="0" ty="0" x="480" y="180"/>
-    <tile tx="0" ty="0" x="480" y="210"/>
-    <tile tx="0" ty="0" x="480" y="240"/>
-    <tile tx="0" ty="0" x="480" y="270"/>
-    <tile tx="0" ty="0" x="480" y="300"/>
-    <tile tx="0" ty="0" x="480" y="330"/>
-    <tile tx="0" ty="0" x="480" y="360"/>
-    <tile tx="0" ty="0" x="480" y="390"/>
-    <tile tx="0" ty="0" x="510" y="390"/>
-    <tile tx="0" ty="0" x="540" y="390"/>
-    <tile tx="0" ty="0" x="570" y="390"/>
-    <tile tx="0" ty="0" x="600" y="390"/>
-    <tile tx="0" ty="0" x="630" y="390"/>
-    <tile tx="0" ty="0" x="660" y="390"/>
-    <tile tx="0" ty="0" x="660" y="420"/>
-    <tile tx="0" ty="0" x="690" y="420"/>
-    <tile tx="0" ty="0" x="720" y="420"/>
-    <tile tx="0" ty="0" x="720" y="390"/>
-    <tile tx="0" ty="0" x="750" y="390"/>
-    <tile tx="0" ty="0" x="750" y="360"/>
-    <tile tx="0" ty="0" x="750" y="330"/>
-    <tile tx="0" ty="0" x="750" y="300"/>
-    <tile tx="0" ty="0" x="750" y="270"/>
-    <tile tx="0" ty="0" x="750" y="240"/>
-    <tile tx="0" ty="0" x="750" y="210"/>
-    <tile tx="0" ty="0" x="780" y="210"/>
-    <tile tx="0" ty="0" x="780" y="180"/>
-    <tile tx="0" ty="0" x="810" y="180"/>
+  <path_green set="Paths">
+    <tile tx="30" ty="0" x="0" y="210"/>
+    <tile tx="30" ty="0" x="30" y="210"/>
+    <tile tx="30" ty="0" x="60" y="210"/>
+    <tile tx="30" ty="0" x="90" y="210"/>
+    <tile tx="30" ty="0" x="120" y="210"/>
+    <tile tx="30" ty="0" x="150" y="210"/>
+    <tile tx="30" ty="0" x="150" y="180"/>
+    <tile tx="30" ty="0" x="150" y="150"/>
+    <tile tx="30" ty="0" x="150" y="90"/>
+    <tile tx="30" ty="0" x="150" y="60"/>
+    <tile tx="30" ty="0" x="180" y="60"/>
+    <tile tx="30" ty="0" x="210" y="60"/>
+    <tile tx="30" ty="0" x="240" y="60"/>
+    <tile tx="30" ty="0" x="270" y="60"/>
+    <tile tx="30" ty="0" x="300" y="60"/>
+    <tile tx="30" ty="0" x="330" y="60"/>
+    <tile tx="30" ty="0" x="360" y="60"/>
+    <tile tx="30" ty="0" x="360" y="90"/>
+    <tile tx="30" ty="0" x="360" y="120"/>
+    <tile tx="30" ty="0" x="360" y="150"/>
+    <tile tx="30" ty="0" x="360" y="180"/>
+    <tile tx="30" ty="0" x="360" y="210"/>
+    <tile tx="30" ty="0" x="360" y="240"/>
+    <tile tx="30" ty="0" x="360" y="300"/>
+    <tile tx="30" ty="0" x="360" y="360"/>
+    <tile tx="30" ty="0" x="360" y="390"/>
+    <tile tx="30" ty="0" x="390" y="390"/>
+    <tile tx="30" ty="0" x="420" y="390"/>
+    <tile tx="30" ty="0" x="450" y="390"/>
+    <tile tx="30" ty="0" x="480" y="390"/>
+    <tile tx="30" ty="0" x="510" y="390"/>
+    <tile tx="30" ty="0" x="540" y="390"/>
+    <tile tx="30" ty="0" x="570" y="390"/>
+    <tile tx="30" ty="0" x="600" y="390"/>
+    <tile tx="30" ty="0" x="630" y="390"/>
+    <tile tx="30" ty="0" x="630" y="360"/>
+    <tile tx="30" ty="0" x="630" y="330"/>
+    <tile tx="30" ty="0" x="630" y="300"/>
+    <tile tx="30" ty="0" x="630" y="270"/>
+    <tile tx="30" ty="0" x="630" y="210"/>
+    <tile tx="30" ty="0" x="630" y="150"/>
+    <tile tx="30" ty="0" x="630" y="120"/>
+    <tile tx="30" ty="0" x="660" y="120"/>
+    <tile tx="30" ty="0" x="690" y="120"/>
+    <tile tx="30" ty="0" x="720" y="120"/>
+    <tile tx="30" ty="0" x="750" y="120"/>
+    <tile tx="30" ty="0" x="780" y="120"/>
   </path_green>
-  <path_blue set="blue">
-    <tile tx="0" ty="0" x="0" y="210"/>
-    <tile tx="0" ty="0" x="0" y="240"/>
+  <path_blue set="Paths">
     <tile tx="0" ty="0" x="0" y="270"/>
-    <tile tx="0" ty="0" x="0" y="300"/>
-    <tile tx="0" ty="0" x="0" y="330"/>
-    <tile tx="0" ty="0" x="30" y="330"/>
-    <tile tx="0" ty="0" x="60" y="330"/>
-    <tile tx="0" ty="0" x="90" y="330"/>
-    <tile tx="0" ty="0" x="120" y="330"/>
-    <tile tx="0" ty="0" x="150" y="330"/>
-    <tile tx="0" ty="0" x="180" y="330"/>
-    <tile tx="0" ty="0" x="180" y="300"/>
+    <tile tx="0" ty="0" x="30" y="270"/>
+    <tile tx="0" ty="0" x="60" y="270"/>
+    <tile tx="0" ty="0" x="90" y="270"/>
+    <tile tx="0" ty="0" x="120" y="270"/>
+    <tile tx="0" ty="0" x="150" y="270"/>
     <tile tx="0" ty="0" x="180" y="270"/>
-    <tile tx="0" ty="0" x="210" y="270"/>
     <tile tx="0" ty="0" x="240" y="270"/>
     <tile tx="0" ty="0" x="270" y="270"/>
     <tile tx="0" ty="0" x="300" y="270"/>
     <tile tx="0" ty="0" x="330" y="270"/>
-    <tile tx="0" ty="0" x="330" y="240"/>
-    <tile tx="0" ty="0" x="330" y="210"/>
-    <tile tx="0" ty="0" x="330" y="180"/>
-    <tile tx="0" ty="0" x="360" y="180"/>
-    <tile tx="0" ty="0" x="390" y="180"/>
-    <tile tx="0" ty="0" x="420" y="180"/>
-    <tile tx="0" ty="0" x="450" y="180"/>
-    <tile tx="0" ty="0" x="480" y="180"/>
-    <tile tx="0" ty="0" x="510" y="180"/>
-    <tile tx="0" ty="0" x="540" y="180"/>
-    <tile tx="0" ty="0" x="540" y="150"/>
-    <tile tx="0" ty="0" x="570" y="150"/>
-    <tile tx="0" ty="0" x="600" y="150"/>
-    <tile tx="0" ty="0" x="600" y="180"/>
-    <tile tx="0" ty="0" x="600" y="210"/>
+    <tile tx="0" ty="0" x="390" y="270"/>
+    <tile tx="0" ty="0" x="420" y="270"/>
+    <tile tx="0" ty="0" x="450" y="270"/>
+    <tile tx="0" ty="0" x="450" y="240"/>
+    <tile tx="0" ty="0" x="480" y="240"/>
+    <tile tx="0" ty="0" x="510" y="240"/>
+    <tile tx="0" ty="0" x="540" y="240"/>
     <tile tx="0" ty="0" x="600" y="240"/>
-    <tile tx="0" ty="0" x="630" y="240"/>
     <tile tx="0" ty="0" x="660" y="240"/>
     <tile tx="0" ty="0" x="690" y="240"/>
-    <tile tx="0" ty="0" x="690" y="270"/>
-    <tile tx="0" ty="0" x="720" y="270"/>
-    <tile tx="0" ty="0" x="720" y="300"/>
-    <tile tx="0" ty="0" x="720" y="330"/>
-    <tile tx="0" ty="0" x="750" y="330"/>
-    <tile tx="0" ty="0" x="780" y="330"/>
-    <tile tx="0" ty="0" x="810" y="330"/>
+    <tile tx="0" ty="0" x="720" y="240"/>
+    <tile tx="0" ty="0" x="750" y="240"/>
+    <tile tx="0" ty="0" x="780" y="240"/>
   </path_blue>
+  <objects>
+    <player x="150" y="120"/>
+    <player x="360" y="330"/>
+    <player x="630" y="180"/>
+    <player x="210" y="270"/>
+    <player x="570" y="240"/>
+    <player x="630" y="240"/>
+    <player x="360" y="270"/>
+  </objects>
 </level>
