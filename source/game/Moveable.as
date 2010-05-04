@@ -10,7 +10,7 @@
 		/**
 		 * Entity -type- to consider solid when colliding.
 		 */
-		public var solid:String = "solid";
+		public var solid:String = "red";
 		
 		/**
 		 * Constructor.

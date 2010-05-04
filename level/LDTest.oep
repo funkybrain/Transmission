@@ -20,10 +20,12 @@
 	</tilesets> 
 	
 	<layers>
-
-		<grid name="solid" color="#FFFF6699" gridSize="30" drawGridSize="30" exportAsObjects="true" />
+	<!-- colors #AARRGGBB-->
+		<grid name="mask_red" color="#FFFF0000" gridSize="30" drawGridSize="30" exportAsObjects="true" />
 		<tiles name="path_red" gridSize="30" drawGridSize="60" />
+		<grid name="mask_green" color="#FF00FF00" gridSize="30" drawGridSize="30" exportAsObjects="true" />
 		<tiles name="path_green" gridSize="30" drawGridSize="60" />
+		<grid name="mask_blue" color="#FF0000FF" gridSize="30" drawGridSize="30" exportAsObjects="true" />
 		<tiles name="path_blue" gridSize="30" drawGridSize="60" />
 		<objects name="objects" gridSize="30" drawGridSize="30" />
 		

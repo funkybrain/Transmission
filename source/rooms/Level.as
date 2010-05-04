@@ -1,9 +1,13 @@
-﻿package rooms 
+﻿package rooms
 {
 	//import game.Background;
-	import game.Floors;
 	//import game.Particles;
-	//import game.Player;
+	
+	import game.Debug;
+	import game.PathRed;
+	import game.PathBlue;
+	import game.PathGreen;
+	import game.Player;
 	import net.flashpunk.FP;
 	
 	public class Level extends LevelLoader
@@ -24,8 +28,11 @@
 		 */
 		public var width:uint;
 		public var height:uint;
-		//public var player:Player;
+		public var player:Player;
+		public var debug:Debug;
 		
+
+		 
 		/**
 		 * Constructor.
 		 */
@@ -35,7 +42,14 @@
 			width = level.width;
 			height = level.height;
 			
-			add(new Floors(level));
+			add(new PathRed(level));
+			add(new PathBlue(level));
+			add(new PathGreen(level));
+			player = new Player();
+			add(player);
+			
+			debug = new Debug();
+
 			//add(new Particles);
 			//add(new Background);
 			
@@ -43,8 +57,8 @@
 			{
 				player = new Player(p.@x, p.@y);
 				add(player);
-			}
-		}*/
+			}*/
+		}
 		
 		/**
 		 * Update the level.
@@ -55,7 +69,15 @@
 			super.update();
 			
 			// camera following
-			//cameraFollow();
+			cameraFollow();
+			
+		}
+		
+		override public function render():void 
+		{
+			super.render();
+			debug.drawHitBox(player);
+			
 		}
 		
 		/**

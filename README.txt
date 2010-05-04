@@ -1,5 +1,9 @@
 To do list:
 > figure out how to handle intersections
+> work out collisions - keep player on path, and identify path type
+> figure out how tweens work
+> test music playback
+> figure out how particles work
 
 Architecture
 ------------
@@ -12,7 +16,7 @@ Architecture
 > public class BluePath extends Entity
 > public class GreenPath extends Entity
 
-N Entities that handle intersections
+N Entities that handle intersections???
 > public class Intersection extends Entity
 
 

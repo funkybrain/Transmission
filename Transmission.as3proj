@@ -4,16 +4,17 @@
   <output>
     <movie disabled="False" />
     <movie input="" />
-    <movie path="" />
-    <movie fps="30" />
-    <movie width="800" />
-    <movie height="600" />
-    <movie version="9" />
-    <movie background="#FFFFFF" />
+    <movie path="build/transmission.swf" />
+    <movie fps="60" />
+    <movie width="640" />
+    <movie height="480" />
+    <movie version="10" />
+    <movie background="#C0C0C0" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="." />
+    <class path="source" />
+    <class path="flashpunk" />
   </classpaths>
   <!-- Build options -->
   <build>
@@ -21,6 +22,7 @@
     <option allowSourcePathOverlap="False" />
     <option benchmark="False" />
     <option es="False" />
+    <option locale="" />
     <option loadConfig="" />
     <option optimize="True" />
     <option showActionScriptWarnings="True" />
@@ -34,7 +36,9 @@
     <option verboseStackTraces="False" />
     <option linkReport="" />
     <option loadExterns="" />
+    <option staticLinkRSL="True" />
     <option additional="" />
+    <option compilerConstants="" />
     <option customSDK="" />
   </build>
   <!-- SWC Include Libraries -->
@@ -63,7 +67,7 @@
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <!-- example: <compile path="..." /> -->
+    <compile path="source\Main.as" />
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
