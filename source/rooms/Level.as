@@ -8,6 +8,7 @@
 	import game.PathBlue;
 	import game.PathGreen;
 	import game.Player;
+	import game.SoundManager;
 	import net.flashpunk.FP;
 	
 	public class Level extends LevelLoader
@@ -15,7 +16,7 @@
 		/**
 		 * Level XML.
 		 */
-		[Embed(source = '../../level/Level1.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
+		[Embed(source = '../../level/Level1_thin.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
 		
 		/**
 		 * Camera following information.
@@ -28,8 +29,13 @@
 		 */
 		public var width:uint;
 		public var height:uint;
+		
+		/**
+		 * class properties used as object references.
+		 */		
 		public var player:Player;
 		public var debug:Debug;
+		public var sound:SoundManager;
 		
 
 		 
@@ -42,22 +48,25 @@
 			width = level.width;
 			height = level.height;
 			
+			// add paths to world
 			add(new PathRed(level));
 			add(new PathBlue(level));
 			add(new PathGreen(level));
-			player = new Player();
-			add(player);
 			
+			// add debug hud to world
 			debug = new Debug();
+			// add SoundManager object to world
+			sound = new SoundManager();
 
 			//add(new Particles);
 			//add(new Background);
 			
-/*			for each (var p:XML in level.objects[0].player)
+			//add player to world
+			for each (var p:XML in level.objects[0].player)
 			{
 				player = new Player(p.@x, p.@y);
 				add(player);
-			}*/
+			}
 		}
 		
 		/**
@@ -67,6 +76,9 @@
 		{
 			// update entities
 			super.update();
+			
+			// update Soundmanager - required so the tweens actually get updated
+			sound.update();
 			
 			// camera following
 			cameraFollow();

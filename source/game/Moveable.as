@@ -10,7 +10,7 @@
 		/**
 		 * Entity -type- to consider solid when colliding.
 		 */
-		public var solid:String = "red";
+		public var pathArray:Array = new Array("red", "green", "blue");
 		
 		/**
 		 * Constructor.
@@ -43,12 +43,16 @@
 				while (moveX != 0)
 				{
 					moveX -= sign;
-					if ((e = collide(solid, x + sign, y)))
+					if ((e = collideTypes(pathArray, x + sign, y)))
 					{
 						collideX(e);
+						x += sign;
+						trace(e.type);
+						
+					}
+					else {						
 						moveX = 0;
 					}
-					else x += sign;
 				}
 			}
 			
@@ -59,12 +63,14 @@
 				while (moveY != 0)
 				{
 					moveY -= sign;
-					if ((e = collide(solid, x, y + sign)))
+					if ((e = collideTypes(pathArray, x, y + sign)))
 					{
 						collideY(e);
-						moveY = 0;
+						y += sign;
 					}
-					else y += sign;
+					else {
+						moveY = 0;						
+					}
 				}
 			}
 		}

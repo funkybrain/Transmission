@@ -68,8 +68,13 @@
 			graphic = avatar;
 			frames = new Array( 0, 1, 2, 3 );
 			avatar.add("walk", frames, 5, true);
-			
-			setHitbox(30, 30);
+			// transformations to set the hitbox based on image size
+			var offsetOriginX:int = -avatar.width / 4;
+			var offsetOriginY:int = -avatar.height / 4;
+			var boxWidth:int = avatar.width / 2;
+			var boxHeight:int = avatar.height / 2;
+						
+			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
 			
 			//TODO might need at a letter point to center the origin of the player
 			//avatar.originX = avatar.width / 2;
@@ -275,16 +280,16 @@
 		/**
 		 * Horizontal collision handler.
 		 */
-		override protected function collideX(e:Entity):void 
+		/*override protected function collideX(e:Entity):void 
 		{
 			if (spdX > 100 || spdX < -100) SCALE.setMotion(1, 1.2, 1, 1, .2, Ease.quadIn);
 			spdX = 0;
-		}
+		}*/
 		
 		/**
 		 * Vertical collision handler.
 		 */
-		override protected function collideY(e:Entity):void 
+		/*override protected function collideY(e:Entity):void 
 		{
 			if (spdY > 0)
 			{
@@ -297,6 +302,6 @@
 				SCALE.setMotion(1.2, 1, 1, 1, .1, Ease.quadOut);
 				spdY /= 2;
 			}
-		}
+		}*/
 	}
 }

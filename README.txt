@@ -1,8 +1,6 @@
 To do list:
 > figure out how to handle intersections
 > work out collisions - keep player on path, and identify path type
-> figure out how tweens work
-> test music playback
 > figure out how particles work
 
 Architecture
