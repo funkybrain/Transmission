@@ -1,12 +1,16 @@
 To do list:
 > figure out how to handle intersections
-> work out collisions - keep player on path, and identify path type
+> work out distance traveled on each path
 > figure out how particles work
+> get grid size from xml to stay flexible
+> put the three grid layers next to each other in order to easily draw the collision masks
 
 Architecture
 ------------
 
 3 Entities that handle the three paths:
+
+> have a Path entoty that handles common stuff for all paths
 
 > public class RedPath extends Entity
 >> has Tilemap and Grid for collision
