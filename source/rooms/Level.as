@@ -33,7 +33,8 @@
 		/**
 		 * class properties used as object references.
 		 */		
-		public var player:Player;
+		public var father:Player;
+		private var baseSpeed:Array = new Array(3);
 		public var debug:Debug;
 		public var sound:SoundManager;
 		
@@ -56,16 +57,22 @@
 			// add debug hud to world
 			debug = new Debug();
 			// add SoundManager object to world
-			sound = new SoundManager();
+			//sound = new SoundManager();
 
 			//add(new Particles);
 			//add(new Background);
 			
+			// set base speed vb of father
+			for (var i:int = 0; i < 3; i++) 
+			{
+				baseSpeed[i]=10
+			}
+			
 			//add player to world
 			for each (var p:XML in level.objects[0].player)
 			{
-				player = new Player(p.@x, p.@y);
-				add(player);
+				father = new Player(p.@x, p.@y, baseSpeed);
+				add(father);
 			}
 		}
 		
@@ -78,7 +85,7 @@
 			super.update();
 			
 			// update Soundmanager - required so the tweens actually get updated
-			sound.update();
+			//sound.update();
 			
 			// camera following
 			cameraFollow();
@@ -88,7 +95,7 @@
 		override public function render():void 
 		{
 			super.render();
-			debug.drawHitBox(player);
+			debug.drawHitBox(father);
 			
 		}
 		
@@ -114,7 +121,7 @@
 		/**
 		 * Getter functions used to get the position to place the camera when following the player.
 		 */
-		private function get targetX():Number { return player.x - FP.width / 2; }
-		private function get targetY():Number { return player.y - FP.height / 2; }
+		private function get targetX():Number { return father.x - FP.width / 2; }
+		private function get targetY():Number { return father.y - FP.height / 2; }
 	}
 }

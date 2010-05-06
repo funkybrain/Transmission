@@ -1,9 +1,11 @@
 To do list:
 > figure out how to handle intersections
-> work out distance traveled on each path
 > figure out how particles work
 > get grid size from xml to stay flexible
 > put the three grid layers next to each other in order to easily draw the collision masks
+> stress test level size in ogmo and flash
+> animate paths
+> child tarnsmission and speed calcs
 
 Architecture
 ------------
@@ -38,5 +40,3 @@ N Entities that handle intersections???
 N entities that handle cosmetic animations
 > public class Animations extends Entity
 > has graphic = Spritemap to play animations
-
-

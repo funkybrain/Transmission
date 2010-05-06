@@ -32,15 +32,27 @@
 		/**
 		 * Movement constants.
 		 */
-		public const VMAX:Number = 100;
-		//public const MAXY:Number = 800;
-		//public const GRAV:Number = 1500;
-		//public const FLOAT:Number = 3000;
 		public const ACCELX:Number = 1200;
 		public const ACCELY:Number = 1200;
 		public const DRAG:Number = 800;
+		
+		/**
+		 * Movement variables.
+		 */
+		public var previousPos:Point; // store previous player position
+		public var pathIndex:uint; // stores an index to target the required path when calling an array
+		public var distance:Number = 0; // stores frame by frame distance
+
+		/**
+		 * Game (transmission) specific variables.
+		 */
+		public const COEFF_D:Number = 10; // used in S-curve calculation		
+		 
 		//public const JUMP:Number = -500;
 		//public const LEAP:Number = 1.5;
+		//public const MAXY:Number = 800;
+		//public const GRAV:Number = 1500;
+		//public const FLOAT:Number = 3000;
 		
 		/**
 		 * Movement properties.
@@ -59,15 +71,19 @@
 		 */
 		//public var emitter:Emitter;
 		
-		public function Player(x:int = 30, y:int = 30) 
+		public function Player(x:int, y:int, baseSpeed:Array) 
 		{
 			this.x = x;
 			this.y = y;
+			position.x = x;
+			position.y = y;
+			previousPos = position.clone(); // set initial player position as first previousPos
 			
 			// set the Entity's graphic property to a Spritemap object
 			graphic = avatar;
 			frames = new Array( 0, 1, 2, 3 );
 			avatar.add("walk", frames, 5, true);
+			
 			// transformations to set the hitbox based on image size
 			var offsetOriginX:int = -avatar.width / 4;
 			var offsetOriginY:int = -avatar.height / 4;
@@ -87,12 +103,26 @@
 			//addTween(ROTATE);
 			//SCALE.x = SCALE.y = 1;
 			
+			
+			// define payer movement keys
 			Input.define("R", Key.RIGHT);
 			Input.define("L", Key.LEFT);
 			Input.define("U", Key.UP);
 			Input.define("D", Key.DOWN);
 			
-			//Input.define("JUMP", Key.SPACE, Key.SHIFT, Key.CONTROL, Key.UP, Key.Z, Key.X, Key.A, Key.S);
+			/**
+			 * Initialize:
+			 * player maximum velocity (100)
+			 * distance (0) on each path type
+			 * basic speed on each path
+			 */
+			for (var i:int = 0; i < 3; i++) 
+			{
+				pathMaxVel[i] = 100;
+				pathDistance[i] = 0;
+			}
+			
+			pathBaseSpeed = baseSpeed; //NOTE may have to concat() to make a true copy
 		}
 		
 /*		override public function added():void 
@@ -105,13 +135,30 @@
 		 */
 		override public function update():void 
 		{
-			//checkFloor();
-			//gravity();
-			acceleration();
-			//jumping();
+			pathIndex = getCurrentPath();
+			acceleration(pathIndex);			
 			move(spdX * FP.elapsed, spdY * FP.elapsed);
-			animation();
 			
+			// calculate distance traveled since last frame and add to path total
+			distance = Point.distance(position, previousPos);
+			pathDistance[pathIndex] += Math.round(distance);
+			
+			// update speed on paths based on new pathDistance
+			scurve();
+			
+			//trace(distance);
+			animation();
+			previousPos = position.clone(); //store current position as next previous position
+			
+			if (Debug.flag==true) 
+			{
+				for (var i:int = 0; i < pathDistance.length; i++) 
+				{
+					trace("path: " + i + " dist: " + pathDistance[i]);
+				}
+			}
+			
+			//trace("spdX*elapsed: "+spdX * FP.elapsed);
 			//if (spdY != 0) emitter.emit("trail", x - 10 + FP.rand(20), y - 10 + FP.rand(20));
 		}
 		
@@ -136,7 +183,7 @@
 		/**
 		 * Accelerates the player based on input.
 		 */
-		private function acceleration():void
+		private function acceleration(pathType:uint):void
 		{
 			// evaluate input
 			var accelx:Number = 0;
@@ -147,24 +194,24 @@
 			if (Input.check("U")) accely -= ACCELY;
 			if (Input.check("D")) accely += ACCELY;
 			
-			// handle acceleration
+			// handle horizontal acceleration
 			if (accelx != 0)
 			{
 				if (accelx > 0)
 				{
 					// accelerate right
-					if (spdX < VMAX)
+					if (spdX < pathMaxVel[pathType])
 					{
 						spdX += accelx * FP.elapsed;
-						if (spdX > VMAX) spdX = VMAX;
+						if (spdX > pathMaxVel[pathType]) spdX = pathMaxVel[pathType];
 					}
 					else accelx = 0;
 				} else	{
 					// accelerate left
-					if (spdX > -VMAX)
+					if (spdX > -pathMaxVel[pathType])
 					{
 						spdX += accelx * FP.elapsed;
-						if (spdX < -VMAX) spdX = -VMAX;
+						if (spdX < -pathMaxVel[pathType]) spdX = -pathMaxVel[pathType];
 					}
 					else accelx = 0;
 				}
@@ -172,34 +219,34 @@
 			}	
 
 			
-			// handle acceleration
+			// handle vertical acceleration
 			if (accely != 0)
 			{
 				if (accely > 0)
 				{
 					// accelerate down
-					if (spdY < VMAX)
+					if (spdY < pathMaxVel[pathType])
 					{
 						spdY += accely * FP.elapsed;
-						if (spdY > VMAX) spdY = VMAX;
+						if (spdY > pathMaxVel[pathType]) spdY = pathMaxVel[pathType];
 					}
 					else accely = 0;
 				}
 				else
 				{
 					// accelerate up
-					if (spdY > -VMAX)
+					if (spdY > -pathMaxVel[pathType])
 					{
 						spdY += accely * FP.elapsed;
-						if (spdY < -VMAX) spdY = -VMAX;
+						if (spdY < -pathMaxVel[pathType]) spdY = -pathMaxVel[pathType];
 					}
 					else accely = 0;
 				}
 			
 			}
 			
-			// handle decelleration
-			if (accelx == 0)
+			// handle decelleration (drag)
+			if (accelx == 0) // horizontal drag
 			{
 				if (spdX > 0)
 				{
@@ -213,7 +260,7 @@
 				}
 			}
 			
-			if (accely == 0)
+			if (accely == 0) //vertical drag
 			{
 				if (spdY > 0)
 				{
@@ -231,24 +278,21 @@
 		// end acceleration()
 		
 		/**
-		 * Makes the player jump on input.
+		 * S-curve calculation.
 		 */
-		/*private function jumping():void
-		{
-			if (onSolid && Input.pressed("JUMP"))
+		private function scurve():void //BUG s-curve calcs are fucked
+		{			
+			//maxSpeed[i] = avatar.speedBasePath[i] + avatar.coeff_d * ( 1 / (1 + exp(-adjust)))*avatar.coefSpeedBaseChild[i];   
+			for (var i:int = 0; i < 3; i++) 
 			{
-				spdY = JUMP;
-				onSolid = false;
-				if (spdX < 0 && avatar.flipped) spdX *= LEAP;
-				else if (spdX > 0 && !avatar.flipped) spdX *= LEAP;
-				
-				SCALE.setMotion(1, 1.2, 1, 1, .2, Ease.quadIn);
-				ROTATE.tween(0, 360 * -FP.sign(spdX), FP.scale(Math.abs(spdX), 0, MAXX, .7, .5), Ease.quadInOut);
-				
-				var i:int = 10;
-				while (i --) emitter.emit("dust", x - 10 + FP.rand(20) , y + 16);
+				// first map distance on path to s-curve significant numbers
+				var mapped:Number = FP.scale(pathDistance[i], 0, 800, -3, -1);
+				//trace(mapped);
+				//trace(pathBaseSpeed[i]);
+				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp(-mapped)));
+				trace(pathMaxVel[i]);
 			}
-		}*/
+		}
 		
 		/**
 		 * Handles animation.
@@ -303,5 +347,26 @@
 				spdY /= 2;
 			}
 		}*/
+		
+				/**
+		 * Makes the player jump on input.
+		 */
+		/*private function jumping():void
+		{
+			if (onSolid && Input.pressed("JUMP"))
+			{
+				spdY = JUMP;
+				onSolid = false;
+				if (spdX < 0 && avatar.flipped) spdX *= LEAP;
+				else if (spdX > 0 && !avatar.flipped) spdX *= LEAP;
+				
+				SCALE.setMotion(1, 1.2, 1, 1, .2, Ease.quadIn);
+				ROTATE.tween(0, 360 * -FP.sign(spdX), FP.scale(Math.abs(spdX), 0, MAXX, .7, .5), Ease.quadInOut);
+				
+				var i:int = 10;
+				while (i --) emitter.emit("dust", x - 10 + FP.rand(20) , y + 16);
+			}
+		}*/
+
 	}
 }
