@@ -32,8 +32,8 @@
 		/**
 		 * Movement constants.
 		 */
-		public const ACCELX:Number = 1200;
-		public const ACCELY:Number = 1200;
+		public const ACCELX:Number = 1000;
+		public const ACCELY:Number = 1000;
 		public const DRAG:Number = 800;
 		
 		/**
@@ -46,7 +46,7 @@
 		/**
 		 * Game (transmission) specific variables.
 		 */
-		public const COEFF_D:Number = 10; // used in S-curve calculation		
+		public const COEFF_D:Number = 1.5; // used in S-curve calculation		
 		 
 		//public const JUMP:Number = -500;
 		//public const LEAP:Number = 1.5;
@@ -57,7 +57,7 @@
 		/**
 		 * Movement properties.
 		 */
-		public var onSolid:Boolean;
+		
 		public var spdX:Number = 0;
 		public var spdY:Number = 0;
 		
@@ -118,7 +118,7 @@
 			 */
 			for (var i:int = 0; i < 3; i++) 
 			{
-				pathMaxVel[i] = 100;
+				pathMaxVel[i] = 10;
 				pathDistance[i] = 0;
 			}
 			
@@ -135,144 +135,115 @@
 		 */
 		override public function update():void 
 		{
-			pathIndex = getCurrentPath();
-			acceleration(pathIndex);			
-			move(spdX * FP.elapsed, spdY * FP.elapsed);
-			
-			// calculate distance traveled since last frame and add to path total
-			distance = Point.distance(position, previousPos);
-			pathDistance[pathIndex] += Math.round(distance);
+			pathIndex = getCurrentPath(); // BUG it checks for path after it has moved off the path, hence bug
 			
 			// update speed on paths based on new pathDistance
 			scurve();
 			
+			// move player based on maximum speeds returned by the s-curve
+			acceleration(pathIndex);			
+			
+			//move(spdX * FP.elapsed, spdY * FP.elapsed);
+			//move(spdX, spdY, pathIndex);
+			
+			//trace("elapsed: " + FP.elapsed);
+			
+			// calculate distance traveled since last frame and add to path total
+			distance = Point.distance(position, previousPos);
+			pathDistance[pathIndex] += Math.round(distance);			
 			//trace(distance);
+			
+			// play sprite animation
 			animation();
+			
 			previousPos = position.clone(); //store current position as next previous position
 			
 			if (Debug.flag==true) 
 			{
 				for (var i:int = 0; i < pathDistance.length; i++) 
 				{
-					trace("path: " + i + " dist: " + pathDistance[i]);
+					//trace("path: " + i + " dist: " + pathDistance[i]);
 				}
 			}
 			
-			//trace("spdX*elapsed: "+spdX * FP.elapsed);
-			//if (spdY != 0) emitter.emit("trail", x - 10 + FP.rand(20), y - 10 + FP.rand(20));
 		}
 		
-/*		private function checkFloor():void
-		{
-			if (collide(solid, x, y + 1)) onSolid = true;
-			else onSolid = false;
-		}*/
-		
-		/**
-		 * Applies gravity to the player.
-		 */
-	/*	private function gravity():void
-		{
-			if (onSolid) return;
-			var g:Number = GRAV;
-			if (spdY < 0 && !Input.check("JUMP")) g += FLOAT;
-			spdY += g * FP.elapsed;
-			if (spdY > MAXY) spdY = MAXY;
-		}*/
-		
+
 		/**
 		 * Accelerates the player based on input.
 		 */
-		private function acceleration(pathType:uint):void
+		private function acceleration(pathType:uint):void //BUG problems with collision detection and pathType - keep movement within path
 		{
 			// evaluate input
-			var accelx:Number = 0;
-			var accely:Number = 0;
+			velocity.x = 0;
+			velocity.y = 0;			
+			var sign:int, e:Entity;
 			
-			if (Input.check("R")) accelx += ACCELX;
-			if (Input.check("L")) accelx -= ACCELX;
-			if (Input.check("U")) accely -= ACCELY;
-			if (Input.check("D")) accely += ACCELY;
+			//BUG perhaps move one pixel at a time with a while loop
 			
-			// handle horizontal acceleration
-			if (accelx != 0)
+			if (Input.check("R"))
 			{
-				if (accelx > 0)
+				if ((e = collideTypes(pathCollideType, x + pathMaxVel[pathType], y)))
 				{
-					// accelerate right
-					if (spdX < pathMaxVel[pathType])
-					{
-						spdX += accelx * FP.elapsed;
-						if (spdX > pathMaxVel[pathType]) spdX = pathMaxVel[pathType];
-					}
-					else accelx = 0;
-				} else	{
-					// accelerate left
-					if (spdX > -pathMaxVel[pathType])
-					{
-						spdX += accelx * FP.elapsed;
-						if (spdX < -pathMaxVel[pathType]) spdX = -pathMaxVel[pathType];
-					}
-					else accelx = 0;
+					velocity.x = pathMaxVel[pathType];
+				} else 
+				{
+					velocity.x = 0;
 				}
+				//trace("right");
+			}
+						
+			if (Input.check("L"))
+			{
+				if ((e = collideTypes(pathCollideType, x - pathMaxVel[pathType], y)))
+				{
+					velocity.x = -pathMaxVel[pathType];
+				} else 
+				{
+					velocity.x = 0;
+				}	
+				//trace("left");
+				
+			}
 			
-			}	
+			if (Input.check("U"))
+			{
+				if ((e = collideTypes(pathCollideType, x, y - pathMaxVel[pathType])))
+				{
+					velocity.y = -pathMaxVel[pathType];
+				} else 
+				{
+					velocity.y = 0;
+				}
+				//trace("up");
+				
+			}
+			
+			
+			if (Input.check("D"))
+			{
+				if ((e = collideTypes(pathCollideType, x, y + pathMaxVel[pathType])))
+				{
+					velocity.y = +pathMaxVel[pathType];
+				} else 
+				{
+					velocity.y = 0;
+				}	
+				//trace("down");
 
-			
-			// handle vertical acceleration
-			if (accely != 0)
-			{
-				if (accely > 0)
-				{
-					// accelerate down
-					if (spdY < pathMaxVel[pathType])
-					{
-						spdY += accely * FP.elapsed;
-						if (spdY > pathMaxVel[pathType]) spdY = pathMaxVel[pathType];
-					}
-					else accely = 0;
-				}
-				else
-				{
-					// accelerate up
-					if (spdY > -pathMaxVel[pathType])
-					{
-						spdY += accely * FP.elapsed;
-						if (spdY < -pathMaxVel[pathType]) spdY = -pathMaxVel[pathType];
-					}
-					else accely = 0;
-				}
-			
 			}
+			//trace("position: x=" + position.x + " y=" + position.y);
+			//trace("velocity: x=" + velocity.x + " y=" + velocity.y);
 			
-			// handle decelleration (drag)
-			if (accelx == 0) // horizontal drag
-			{
-				if (spdX > 0)
-				{
-					spdX -= DRAG * FP.elapsed;
-					if (spdX < 0) spdX = 0;
-				}
-				else
-				{
-					spdX += DRAG * FP.elapsed;
-					if (spdX > 0) spdX = 0;
-				}
-			}
+			// add position to velocity vector
+			position.x = (position.add(velocity)).x;
+			position.y = (position.add(velocity)).y;
 			
-			if (accely == 0) //vertical drag
-			{
-				if (spdY > 0)
-				{
-					spdY -= DRAG * FP.elapsed;
-					if (spdY < 0) spdY = 0;
-				}
-				else
-				{
-					spdY += DRAG * FP.elapsed;
-					if (spdY > 0) spdY = 0;
-				}
-			}
+			// set new player x,y
+			x = position.x;
+			y = position.y;
+			
+			//trace("position: x=" + position.x + " y=" + position.y + "\n");
 			
 		}
 		// end acceleration()
@@ -280,18 +251,19 @@
 		/**
 		 * S-curve calculation.
 		 */
-		private function scurve():void //BUG s-curve calcs are fucked
+		private function scurve():void //TODO s-curves are here
 		{			
 			//maxSpeed[i] = avatar.speedBasePath[i] + avatar.coeff_d * ( 1 / (1 + exp(-adjust)))*avatar.coefSpeedBaseChild[i];   
 			for (var i:int = 0; i < 3; i++) 
 			{
 				// first map distance on path to s-curve significant numbers
 				var mapped:Number = FP.scale(pathDistance[i], 0, 800, -3, -1);
-				//trace(mapped);
-				//trace(pathBaseSpeed[i]);
 				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp(-mapped)));
-				trace(pathMaxVel[i]);
+				
 			}
+			//trace("mapped: " + FP.scale(pathDistance[2], 0, 800, -3, -1) + " vb blue: " + pathBaseSpeed[2] + " maxVel blue : " + pathMaxVel[2]);
+			//trace("base speed: " + pathBaseSpeed[i]);
+			//trace("maxVel: " + pathMaxVel[i]);
 		}
 		
 		/**

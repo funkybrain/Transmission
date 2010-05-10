@@ -1,6 +1,7 @@
 package game 
 {
 	import net.flashpunk.Entity;
+	import net.flashpunk.graphics.Text;
 	import net.flashpunk.utils.Draw;
 	/**
 	* Debug flag.
@@ -22,6 +23,8 @@ package game
 				Draw.hitbox(e);
 			}
 		}
+		
+
 		
 	}
 

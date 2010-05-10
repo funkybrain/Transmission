@@ -9,7 +9,9 @@
 	import game.PathGreen;
 	import game.Player;
 	import game.SoundManager;
+	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Text;
 	
 	public class Level extends LevelLoader
 	{
@@ -17,6 +19,10 @@
 		 * Level XML.
 		 */
 		[Embed(source = '../../level/Level1_thin.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
+		
+		
+		//[Embed(source = '../../assets/arial.ttf.png')] private const FONT:String;
+		
 		
 		/**
 		 * Camera following information.
@@ -37,7 +43,8 @@
 		private var baseSpeed:Array = new Array(3);
 		public var debug:Debug;
 		public var sound:SoundManager;
-		
+		public var debugText:Text = new Text("");
+		public var debugHUD:Entity;
 
 		 
 		/**
@@ -56,6 +63,11 @@
 			
 			// add debug hud to world
 			debug = new Debug();
+			debugHUD = new Entity();
+			debugHUD.x = 10;
+			debugHUD.y = 10;
+			add(debugHUD);
+			
 			// add SoundManager object to world
 			//sound = new SoundManager();
 
@@ -65,9 +77,9 @@
 			// set base speed vb of father
 			for (var i:int = 0; i < 3; i++) 
 			{
-				baseSpeed[i]=10
+				baseSpeed[i] = 0.6;
 			}
-			
+						
 			//add player to world
 			for each (var p:XML in level.objects[0].player)
 			{
@@ -84,6 +96,13 @@
 			// update entities
 			super.update();
 			
+			// draw debug information on screen
+			var father_var:String = "base pseed: " + father.pathBaseSpeed[0] + " max vel: " + father.pathMaxVel[0];
+			debugText.text = father_var;
+			//debugText.font = FONT;
+			//trace(debugText.text);
+			debugHUD.graphic = debugText;
+			
 			// update Soundmanager - required so the tweens actually get updated
 			//sound.update();
 			
@@ -96,7 +115,6 @@
 		{
 			super.render();
 			debug.drawHitBox(father);
-			
 		}
 		
 		/**
