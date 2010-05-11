@@ -8,6 +8,7 @@ To do list:
 > child tarnsmission and speed calcs
 > how the f*** do i make robot child follow father?
 > put game variables in externnal xml - import in static object
+> how does flashdev profiler work?
 
 Architecture
 ------------

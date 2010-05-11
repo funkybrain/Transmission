@@ -145,7 +145,7 @@
 		 */
 		override public function update():void 
 		{
-			pathIndex = getCurrentPath(); // BUG it checks for path after it has moved off the path, hence bug
+			pathIndex = getCurrentPath();
 			
 			// update speed on paths based on new pathDistance
 			scurve();
@@ -178,14 +178,13 @@
 		/**
 		 * Accelerates the player based on input.
 		 */
-		private function acceleration(pathType:uint):void //BUG problems with collision detection and pathType - keep movement within path
+		private function acceleration(pathType:uint):void
 		{
 			// evaluate input
 			velocity.x = 0;
 			velocity.y = 0;			
 			var sign:int, e:Entity;
 			
-			//BUG perhaps move one pixel at a time with a while loop
 			
 			if (Input.check("R"))
 			{

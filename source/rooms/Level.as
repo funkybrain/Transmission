@@ -7,6 +7,7 @@
 	import game.PathRed;
 	import game.PathBlue;
 	import game.PathGreen;
+	import game.PathTile;
 	import game.Player;
 	import game.Robot;
 	import game.SoundManager;
@@ -58,7 +59,8 @@
 		public var son:Robot;
 		public var sonIsAlive:Boolean = false;
 		public var grandSon:Robot;
-		
+		public var animatedTile:PathTile;
+		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
 		 
 		/**
 		 * Constructor.
@@ -101,6 +103,10 @@
 			//set transmission time for father (one-shot alarm)
 			father.timeToSon = new Alarm(TIMER_SON, onTimeToSon, 2);
 			father.addTween(father.timeToSon, true);
+			
+			// for debug purposes, add one animated tile to list
+			pathTileList[0] = new PathTile(5, 5, 30, 0);
+			add(pathTileList[0]);
 		}
 		
 		/**
@@ -121,20 +127,15 @@
 			// update entities
 			super.update();
 			
-			// draw debug information on screen
-			var father_var:String = "Red - Vb: " + father.pathBaseSpeed[0] + " d: " + Number(father.pathDistance[0]).toFixed(2) + " V: " + Number(father.pathMaxVel[0]).toFixed(2) + "\n"
-									+"Green - Vb: " + father.pathBaseSpeed[1] + " d: " + Number(father.pathDistance[1]).toFixed(2) +" V: " + Number(father.pathMaxVel[1]).toFixed(2) + "\n"
-									+"Blue - Vb: " + father.pathBaseSpeed[2] + " d: " + Number(father.pathDistance[2]).toFixed(2) +" V: " + Number(father.pathMaxVel[2]).toFixed(2) + "\n"
-									+"Timer Son: " + Math.floor(father.timeToSon.remaining) + "\n";
-			debugText.text = father_var;
-			debugText.size = 11;
-			debugHUD.x = FP.camera.x + 10;
-			debugHUD.y = FP.camera.y + 10;
-
-			//trace(debugText.text);
-			debugHUD.graphic = debugText;
+			// update debug text
+			updateDebugText();
 			
-			// update SoundManager - required so the tweens actually get updated
+			//TODO check if a new animated tile needs to be placed
+			// use an as3.0 Vector class?
+			addNewTile(father.x, father.y, 30); //TODO 30 is the step (move to property please!)
+
+			
+			//update SoundManager - required so the tweens actually get updated
 			//sound.update();
 			
 			// if son is aliiven follow father
@@ -154,6 +155,49 @@
 			super.render();
 			debug.drawHitBox(father);
 			debugHUD.render();
+		}
+		
+		public function addNewTile(_x:int, _y:int, _step:int ):void
+		{
+			// convert x,y into row, col
+			var row:int, col:int, tileExists:Boolean=false;
+			col = Math.floor(_x / _step);
+			row = Math.floor(_y / _step);
+			
+			// loop through vector to see if a path of index (row,col) already exists
+			for each (var value:PathTile in pathTileList)
+			{
+				if (value.row==row && value.col == col) 
+				{
+					tileExists = true;
+					break;
+				}				
+			}
+			
+			if (tileExists==false) 
+			{
+				var index:int = pathTileList.push(new PathTile(col, row, 30, 0)); //TODO change 0 for pathType
+				add(pathTileList[index-1]);
+			}
+		}
+		
+		/**
+		 * update all the debug overlay info.
+		 */
+		public function updateDebugText():void
+		{
+			// draw debug information on screen
+			var father_var:String = "Red - Vb: " + father.pathBaseSpeed[0] + " d: " + Number(father.pathDistance[0]).toFixed(2) + " V: " + Number(father.pathMaxVel[0]).toFixed(2) + "\n"
+									+"Green - Vb: " + father.pathBaseSpeed[1] + " d: " + Number(father.pathDistance[1]).toFixed(2) +" V: " + Number(father.pathMaxVel[1]).toFixed(2) + "\n"
+									+"Blue - Vb: " + father.pathBaseSpeed[2] + " d: " + Number(father.pathDistance[2]).toFixed(2) +" V: " + Number(father.pathMaxVel[2]).toFixed(2) + "\n"
+									+"Timer Son: " + Math.floor(father.timeToSon.remaining) + "\n";
+			debugText.text = father_var;
+			debugText.size = 11;
+			debugHUD.x = FP.camera.x + 10;
+			debugHUD.y = FP.camera.y + 10;
+
+			//trace(debugText.text);
+			debugHUD.graphic = debugText;
 		}
 		
 		/**
