@@ -25,12 +25,12 @@
 		/**
 		 * Game (transmission) specific variables.
 		 */
-		public var pathBaseSpeed:Array = new Array(3); // basic speed modifier on each path
-		public var pathMaxVel:Array = new Array(3); // max velocity on each path type
+		public var pathBaseSpeed:Array = new Array(); // basic speed modifier on each path
+		public var pathMaxVel:Array = new Array(); // max velocity on each path type
 		
 		public var totaldistance:Number; // total distance traveled on all paths
-		public var pathDistance:Array = new Array(3); // distance travelled on each path
-		public var pathDistToTotalRatio:Array = new Array(3); // ratio of distance travelled on each path by total distance
+		public var pathDistance:Array = new Array(); // distance travelled on each path
+		public var pathDistToTotalRatio:Array = new Array(); // ratio of distance travelled on each path by total distance
 		 
 		/**
 		 * Constructor.

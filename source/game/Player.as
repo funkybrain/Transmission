@@ -6,7 +6,7 @@
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.graphics.ParticleType;
 	import net.flashpunk.graphics.Spritemap;
-	import net.flashpunk.tweens.misc.NumTween;
+	import net.flashpunk.tweens.misc.*;
 	import net.flashpunk.tweens.motion.LinearMotion;
 	import net.flashpunk.utils.Ease;
 	import net.flashpunk.utils.Input;
@@ -30,54 +30,63 @@
 		//public const ROTATE:NumTween = new NumTween;
 		
 		/**
-		 * Movement constants.
+		 * Alarms.
 		 */
-		public const ACCELX:Number = 1000;
-		public const ACCELY:Number = 1000;
-		public const DRAG:Number = 800;
+		public var timeToSon:Alarm;
+		public var timeToGrandson:Alarm;
 		
+	
+		/**
+		 * Game (transmission) specific variables.
+		 */
+		private const COEFF_D:Number = 2; // used in S-curve calculation		
+		private const VB:Number = 0.3; // base speed of father
+		
+					
 		/**
 		 * Movement variables.
 		 */
 		public var previousPos:Point; // store previous player position
 		public var pathIndex:uint; // stores an index to target the required path when calling an array
 		public var distance:Number = 0; // stores frame by frame distance
+		public var vbArray:Array = new Array(VB, VB, VB);
 
-		/**
-		 * Game (transmission) specific variables.
-		 */
-		public const COEFF_D:Number = 1.5; // used in S-curve calculation		
-		 
-		//public const JUMP:Number = -500;
-		//public const LEAP:Number = 1.5;
-		//public const MAXY:Number = 800;
-		//public const GRAV:Number = 1500;
-		//public const FLOAT:Number = 3000;
-		
-		/**
-		 * Movement properties.
-		 */
-		
-		public var spdX:Number = 0;
-		public var spdY:Number = 0;
 		
 		/**
 		 * Animation properties.
 		 */
 		public var frames:Array;
-		 
+		
+		/**
+		 * Movement constants.
+		 */
+		//public const ACCELX:Number = 1000;
+		//public const ACCELY:Number = 1000;
+		//public const DRAG:Number = 800;
+				
+		/**
+		 * Movement properties.
+		 */
+		
+		//public var spdX:Number = 0;
+		//public var spdY:Number = 0;
+		
 		/**
 		 * Particle emitter.
 		 */
 		//public var emitter:Emitter;
 		
-		public function Player(x:int, y:int, baseSpeed:Array) 
+		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
-			this.x = x;
-			this.y = y;
+			this.x = _x;
+			this.y = _y;
+			
+			// set position vector as entity's coordinates
 			position.x = x;
 			position.y = y;
-			previousPos = position.clone(); // set initial player position as first previousPos
+			
+			// set initial player position as first previousPos
+			previousPos = position.clone();
 			
 			// set the Entity's graphic property to a Spritemap object
 			graphic = avatar;
@@ -88,16 +97,9 @@
 			var offsetOriginX:int = -avatar.width / 4;
 			var offsetOriginY:int = -avatar.height / 4;
 			var boxWidth:int = avatar.width / 2;
-			var boxHeight:int = avatar.height / 2;
-						
+			var boxHeight:int = avatar.height / 2;					
 			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
 			
-			//TODO might need at a letter point to center the origin of the player
-			//avatar.originX = avatar.width / 2;
-			//avatar.originY = avatar.height / 2;
-			//avatar.x = -avatar.originX;
-			//avatar.y = -avatar.originY;
-			//avatar.smooth = true;
 
 			//addTween(SCALE);
 			//addTween(ROTATE);
@@ -110,19 +112,27 @@
 			Input.define("U", Key.UP);
 			Input.define("D", Key.DOWN);
 			
-			/**
-			 * Initialize:
-			 * player maximum velocity (100)
-			 * distance (0) on each path type
-			 * basic speed on each path
-			 */
+			
+			// Initialize
+			// distance (0) on each path type
 			for (var i:int = 0; i < 3; i++) 
 			{
-				pathMaxVel[i] = 10;
 				pathDistance[i] = 0;
 			}
+			// and basic speed vb on each path (pathBaseSpeed is an array)
+			if (_vb == null	) 
+			{
+				pathBaseSpeed = vbArray; //NOTE may have to concat() to make a true copy
+			} 
 			
-			pathBaseSpeed = baseSpeed; //NOTE may have to concat() to make a true copy
+			
+			//TODO might need at a letter point to center the origin of the player
+			//avatar.originX = avatar.width / 2;
+			//avatar.originY = avatar.height / 2;
+			//avatar.x = -avatar.originX;
+			//avatar.y = -avatar.originY;
+			//avatar.smooth = true;
+
 		}
 		
 /*		override public function added():void 
@@ -142,16 +152,12 @@
 			
 			// move player based on maximum speeds returned by the s-curve
 			acceleration(pathIndex);			
-			
-			//move(spdX * FP.elapsed, spdY * FP.elapsed);
-			//move(spdX, spdY, pathIndex);
-			
-			//trace("elapsed: " + FP.elapsed);
-			
+					
 			// calculate distance traveled since last frame and add to path total
 			distance = Point.distance(position, previousPos);
-			pathDistance[pathIndex] += Math.round(distance);			
+			pathDistance[pathIndex] += distance;			
 			//trace(distance);
+			//trace(pathDistance[pathIndex]);
 			
 			// play sprite animation
 			animation();
@@ -257,7 +263,7 @@
 			for (var i:int = 0; i < 3; i++) 
 			{
 				// first map distance on path to s-curve significant numbers
-				var mapped:Number = FP.scale(pathDistance[i], 0, 800, -3, -1);
+				var mapped:Number = FP.scale(pathDistance[i], 0, 1000, -3, -1);
 				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp(-mapped)));
 				
 			}
@@ -271,7 +277,7 @@
 		 */
 		private function animation():void
 		{
-			if (spdX != 0 || spdY != 0)
+			if (velocity.x != 0 || velocity.y != 0)
 			{
 				avatar.play("walk");
 			} else avatar.setFrame(0);

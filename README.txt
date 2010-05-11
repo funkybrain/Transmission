@@ -6,6 +6,8 @@ To do list:
 > stress test level size in ogmo and flash
 > animate paths
 > child tarnsmission and speed calcs
+> how the f*** do i make robot child follow father?
+> put game variables in externnal xml - import in static object
 
 Architecture
 ------------
