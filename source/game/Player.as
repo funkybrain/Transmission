@@ -32,7 +32,7 @@
 		/**
 		 * Alarms.
 		 */
-		public var timeToSon:Alarm;
+		public var timeToChild:Alarm;
 		public var timeToGrandson:Alarm;
 		
 	
@@ -40,7 +40,8 @@
 		 * Game (transmission) specific variables.
 		 */
 		private const COEFF_D:Number = 2; // used in S-curve calculation		
-		private const VB:Number = 0.3; // base speed of father
+		public const VB:Number = 0.3; // base speed of father
+		public const CT_VB:Number = 0.2; // Ctvb : coeff de transmission de la vitesse de base father -> child
 		
 					
 		/**
@@ -92,15 +93,26 @@
 			graphic = avatar;
 			frames = new Array( 0, 1, 2, 3 );
 			avatar.add("walk", frames, 5, true);
+			// note: if you're goiing down the route of fixed framrate, use 
+			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
 			
-			// transformations to set the hitbox based on image size
-			var offsetOriginX:int = -avatar.width / 4;
-			var offsetOriginY:int = -avatar.height / 4;
-			var boxWidth:int = avatar.width / 2;
-			var boxHeight:int = avatar.height / 2;					
+			//TODO: transformations to set the hitbox based on image size
+			
+			// set hitbox origin at c. 2/5th right and 2/3rd down from entity origin
+			var offsetOriginX:int = -1.5*(avatar.width/5);
+			var offsetOriginY:int = -1.7*(avatar.height/3);
+			// set hitbox width and height
+			var boxWidth:int = avatar.width / 3;
+			var boxHeight:int = avatar.height / 4;					
 			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
 			
-
+			//TODO center the origin of the player
+			//avatar.originX = avatar.width / 2;
+			//avatar.originY = avatar.height / 2;
+			//avatar.x = -avatar.originX;
+			//avatar.y = -avatar.originY;
+			//avatar.smooth = true;
+			
 			//addTween(SCALE);
 			//addTween(ROTATE);
 			//SCALE.x = SCALE.y = 1;
@@ -124,14 +136,6 @@
 			{
 				pathBaseSpeed = vbArray; //NOTE may have to concat() to make a true copy
 			} 
-			
-			
-			//TODO might need at a letter point to center the origin of the player
-			//avatar.originX = avatar.width / 2;
-			//avatar.originY = avatar.height / 2;
-			//avatar.x = -avatar.originX;
-			//avatar.y = -avatar.originY;
-			//avatar.smooth = true;
 
 		}
 		
@@ -153,28 +157,45 @@
 			// move player based on maximum speeds returned by the s-curve
 			acceleration(pathIndex);			
 					
-			// calculate distance traveled since last frame and add to path total
+			// calculate distance traveled since last frame and add to that path total
 			distance = Point.distance(position, previousPos);
-			pathDistance[pathIndex] += distance;			
-			//trace(distance);
-			//trace(pathDistance[pathIndex]);
+			pathDistance[pathIndex] += distance;
+			
+			// calculate distance traveled on all paths
+			getTotalDistanceTravelled();
+			
+			// calculate ratios
+			getPathRatios();
 			
 			// play sprite animation
 			animation();
 			
 			previousPos = position.clone(); //store current position as next previous position
 			
-			if (Debug.flag==true) 
-			{
-				for (var i:int = 0; i < pathDistance.length; i++) 
-				{
-					//trace("path: " + i + " dist: " + pathDistance[i]);
-				}
-			}
-			
 		}
 		
-
+		private function getTotalDistanceTravelled():void
+		{
+			var total:Number = 0;
+			
+			for (var i:int = 0; i < 3; i++) 
+			{
+				total += pathDistance[i];
+			}
+			
+			totaldistance = total;
+		}
+		
+		private function getPathRatios():void
+		{
+			for (var i:int = 0; i < 3; i++) 
+			{
+				pathDistToTotalRatio[i] = pathDistance[i] / totaldistance;
+			}
+				//trace(distance);
+				//trace(pathDistance[pathIndex]);
+		}
+		
 		/**
 		 * Accelerates the player based on input.
 		 */

@@ -21,12 +21,12 @@
 	
 	<layers>
 	<!-- colors #AARRGGBB-->
-		<grid name="mask_red" color="#FFFF0000" gridSize="10" drawGridSize="10" exportAsObjects="true" />
-		<grid name="mask_green" color="#FF00FF00" gridSize="10" drawGridSize="10" exportAsObjects="true" />
-		<grid name="mask_blue" color="#FF0000FF" gridSize="10" drawGridSize="10" exportAsObjects="true" />
-		<tiles name="path_red" gridSize="30" drawGridSize="60" />
-		<tiles name="path_green" gridSize="30" drawGridSize="60" />
-		<tiles name="path_blue" gridSize="30" drawGridSize="60" />
+		<grid name="mask_red" color="#FFFF0000" gridSize="10" drawGridSize="30" exportAsObjects="true" />
+		<grid name="mask_green" color="#FF00FF00" gridSize="10" drawGridSize="30" exportAsObjects="true" />
+		<grid name="mask_blue" color="#FF0000FF" gridSize="10" drawGridSize="30" exportAsObjects="true" />
+		<tiles name="path_red" gridSize="30" drawGridSize="30" />
+		<tiles name="path_green" gridSize="30" drawGridSize="30" />
+		<tiles name="path_blue" gridSize="30" drawGridSize="30" />
 		<objects name="objects" gridSize="30" drawGridSize="30" />
 		
 	</layers>

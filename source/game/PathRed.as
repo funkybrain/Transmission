@@ -31,14 +31,15 @@
 		{
 			// set entity type
 			type = "red";
+			layer = 20;
 			mylevel = level;
 			
 			// create and populate the tilemap from the level XML
-			/*graphic = tiles = new Tilemap(TILES, level.width, level.height, 30, 30);
+			graphic = tiles = new Tilemap(TILES, level.width, level.height, 30, 30);
 			for each (var tile:XML in level.path_red[0].tile)
 			{
 				tiles.setTile(tile.@x / 30, tile.@y / 30, tiles.getIndex(tile.@tx / 30, tile.@ty / 30));
-			}*/
+			}
 			
 			// create and populate the collision grid mask from the level XML
 			mask = grid = new Grid(level.width, level.height, 10, 10);

@@ -54,11 +54,11 @@
 		/**
 		 * Game (transmission) specific variables.
 		 */
-		private var TIMER_SON:Number = 30;	
+		private var TIMER_CHILD:Number = 30;	
 		public var father:Player;
-		public var son:Robot;
-		public var sonIsAlive:Boolean = false;
-		public var grandSon:Robot;
+		public var child:Robot;
+		public var childIsAlive:Boolean = false;
+		public var grandChild:Robot;
 		public var animatedTile:PathTile;
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
 		 
@@ -101,12 +101,10 @@
 			}
 			
 			//set transmission time for father (one-shot alarm)
-			father.timeToSon = new Alarm(TIMER_SON, onTimeToSon, 2);
-			father.addTween(father.timeToSon, true);
+			father.timeToChild = new Alarm(TIMER_CHILD, onTimeToSon, 2);
+			father.addTween(father.timeToChild, true);
 			
-			// for debug purposes, add one animated tile to list
-			pathTileList[0] = new PathTile(5, 5, 30, 0);
-			add(pathTileList[0]);
+
 		}
 		
 		/**
@@ -115,9 +113,112 @@
 		public function onTimeToSon():void
 		{
 			trace("ring ring son is ready");
-			son = new Robot(father.x, father.y);
-			add(son);
+			child = new Robot(father.x, father.y);
+			add(child);
+			
+			//TODO: later on this will be a two-step process. for now, send directly transmitted behaviour to player
+			transmitFatherToChild();
 		}
+		
+		public function transmitFatherToChild():void
+		{
+			//BUG: Romain n'utilise plus des vb(pour chaque chemin) lors de la transmission dans le dernier proto. Normal?
+			// store ratio in easy to manipulate variables
+			var r:Number = father.pathDistToTotalRatio[0]; 
+			var v:Number = father.pathDistToTotalRatio[1]; 
+			var b:Number = father.pathDistToTotalRatio[2];
+   
+			// cas 1: un chemin à 100%
+			if(r>=0.99 || v>=0.99 || b>=0.99) {
+				for (var j:int = 0; j < 3; j++) {
+					if(father.pathDistToTotalRatio[j]>=0.99) {
+						father.pathBaseSpeed[j] = father.VB + 2 * father.CT_VB;
+					} else {
+						father.pathBaseSpeed[j] = father.VB - father.CT_VB;
+					}
+				}
+			} 
+			else if (r>=0.60 && r/3.0>=v && v>=b) { // cas 2: un chemin à 60%
+				father.pathBaseSpeed[0] = father.VB + 1.5 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB - father.CT_VB;
+				trace("Perseverance cas1");
+			}
+			else if (r>=0.60 && r/3.0>=b && b>=v) { // cas 2: un chemin à 60%
+				father.pathBaseSpeed[0] = father.VB + 1.5 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB - father.CT_VB;
+				trace("Perseverance cas1");
+			}
+			else if (v>=0.60 && v/3.0>=r && r>=b) { // cas 2: un chemin à 60%
+				father.pathBaseSpeed[0] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 1.5 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB - father.CT_VB;
+				trace("Perseverance cas1");
+			}
+			else if (v>=0.60 && v/3.0>=b && b>=r) { // cas 2: un chemin à 60%
+				father.pathBaseSpeed[0] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 1.5 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB - father.CT_VB;
+				trace("Perseverance cas1");
+			}
+			else if (b>=0.60 && b/3.0>=v && v>=r) { // cas 2: un chemin à 60%
+				father.pathBaseSpeed[0] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 1.5 * father.CT_VB;
+				trace("Perseverance cas1");
+			}
+			else if (b>=0.60 && b/3.0>=r && r>=v) { // cas 2: un chemin à 60%
+				father.pathBaseSpeed[0] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB - father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 1.5 * father.CT_VB;
+				trace("Perseverance cas1");
+			}
+			else if(r>=0.35 && r<=0.50 && v>0.20 && v<0.50 && b<0.20 && b<0.50) { // Cas 1 :Ouverture 
+				father.pathBaseSpeed[0] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 0.50 * father.CT_VB;
+				trace("Ouverture cas1");
+			}
+			else if(v>=0.35 && v<=0.50 && r>0.20 && r<0.50 && b>0.20 && b<0.50) { // Cas 1 :Ouverture 
+				father.pathBaseSpeed[0] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 0.50 * father.CT_VB;
+				trace("Ouverture cas1");
+			} 
+			else if(r>=0.35 && r<=0.50 && b>0.20 && b<0.50 && v>0.20 && v<0.50) { // Cas 1 :Ouverture 
+				father.pathBaseSpeed[0] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 0.50 * father.CT_VB;
+				trace("Ouverture cas1");
+			}
+			else if(v>=0.35 && v<=0.50 && b>0.20 && b<0.50 && r>0.20 && r<0.50) { // Cas 1 :Ouverture 
+				father.pathBaseSpeed[0] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 0.50 * father.CT_VB;
+				trace("Ouverture cas1");
+			} 
+			else if(b>=0.35 && b<=0.50 && v>0.20 && v<0.50 && r>0.20 && r<0.50) { // Cas 1 :Ouverture 
+				father.pathBaseSpeed[0] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 0.50 * father.CT_VB;
+				trace("Ouverture cas1");
+			} 
+			else if(b>=0.35 && b<=0.50 && r>0.20 && r<0.50 && v>0.20 && v<0.50) { // Cas 1 :Ouverture 
+				father.pathBaseSpeed[0] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[1] = father.VB + 0.50 * father.CT_VB;
+				father.pathBaseSpeed[2] = father.VB + 0.50 * father.CT_VB;
+				trace("Ouverture cas1");
+			}		 
+			else {
+				trace("cas moyen!");
+			}
+      
+			for (var i:int = 0; i < 3; i++) {
+				trace("vitesse de base child: ("+ i + ") " + father.pathBaseSpeed[i]);
+			}
+		} 
+		// end transmitFatherToSon()
 		
 		/**
 		 * Update the level.
@@ -130,16 +231,18 @@
 			// update debug text
 			updateDebugText();
 			
-			//TODO check if a new animated tile needs to be placed
-			// use an as3.0 Vector class?
-			addNewTile(father.x, father.y, 30); //TODO 30 is the step (move to property please!)
+			//check if a new animated tile needs to be placed where player has walked
+			var shiftX:Number, shiftY:Number; // need to locate the center of the entity
+			shiftX = father.x + father.avatar.width / 2;
+			shiftY = father.y + father.avatar.height / 2;
+			addNewTile(shiftX, shiftY, 30); //TODO 30 is the grid step (move to property please!)
 
 			
 			//update SoundManager - required so the tweens actually get updated
 			//sound.update();
 			
 			// if son is aliiven follow father
-			if (sonIsAlive) 
+			if (childIsAlive) 
 			{
 				// follow father for a certain amount of tiime then disappear
 				// upon disappearence, transmit values to father, which then becomes son
@@ -176,7 +279,8 @@
 			
 			if (tileExists==false) 
 			{
-				var index:int = pathTileList.push(new PathTile(col, row, 30, 0)); //TODO change 0 for pathType
+				// add new animated tile to Vector and Level
+				var index:int = pathTileList.push(new PathTile(col, row, 30, father.pathIndex)); //TODO ditto: don't hardwire step
 				add(pathTileList[index-1]);
 			}
 		}
@@ -187,10 +291,10 @@
 		public function updateDebugText():void
 		{
 			// draw debug information on screen
-			var father_var:String = "Red - Vb: " + father.pathBaseSpeed[0] + " d: " + Number(father.pathDistance[0]).toFixed(2) + " V: " + Number(father.pathMaxVel[0]).toFixed(2) + "\n"
-									+"Green - Vb: " + father.pathBaseSpeed[1] + " d: " + Number(father.pathDistance[1]).toFixed(2) +" V: " + Number(father.pathMaxVel[1]).toFixed(2) + "\n"
-									+"Blue - Vb: " + father.pathBaseSpeed[2] + " d: " + Number(father.pathDistance[2]).toFixed(2) +" V: " + Number(father.pathMaxVel[2]).toFixed(2) + "\n"
-									+"Timer Son: " + Math.floor(father.timeToSon.remaining) + "\n";
+			var father_var:String = "Red - Vb: " + Number(father.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(father.pathDistance[0]).toFixed(2) + " r: " + Number(father.pathDistToTotalRatio[0]).toFixed(2) + " V: " + Number(father.pathMaxVel[0]).toFixed(2) + "\n"
+									+"Green - Vb: " + Number(father.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(father.pathDistance[1]).toFixed(2) +" r: " + Number(father.pathDistToTotalRatio[1]).toFixed(2) + " V: " + Number(father.pathMaxVel[1]).toFixed(2) + "\n"
+									+"Blue - Vb: " + Number(father.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(father.pathDistance[2]).toFixed(2) +" r: " + Number(father.pathDistToTotalRatio[2]).toFixed(2) + " V: " + Number(father.pathMaxVel[2]).toFixed(2) + "\n"
+									+"Timer child: " + Math.floor(father.timeToChild.remaining) + "\n";
 			debugText.text = father_var;
 			debugText.size = 11;
 			debugHUD.x = FP.camera.x + 10;

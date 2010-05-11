@@ -48,7 +48,7 @@ package game
 			this.y = _row * _step;
 			this.col = _col;
 			this.row = _row;
-			
+			layer = 10;
 			// set the path tile's graphic property to a Spritemap object
 			// and create an animation
 			playTileAnimation(_tile);

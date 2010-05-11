@@ -2,13 +2,13 @@ To do list:
 > figure out how to handle intersections
 > figure out how particles work
 > get grid size from xml to stay flexible
-> put the three grid layers next to each other in order to easily draw the collision masks
 > stress test level size in ogmo and flash
-> animate paths
-> child tarnsmission and speed calcs
+> implement moovesmooth
+> grandchild tarnsmission
 > how the f*** do i make robot child follow father?
 > put game variables in externnal xml - import in static object
 > how does flashdev profiler work?
+> instead of using father reference, use player but add a state struct with the three states: father, child, grandchild
 
 Architecture
 ------------
