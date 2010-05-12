@@ -1,0 +1,26 @@
+<data>
+
+	<!-- variables utilisées pour les calculs de vitesse-->
+	<vitesse>
+		<VB>0.3</VB>
+		<CT_VB>0.2</CT_VB>
+	</vitesse>
+
+	<!-- variables utilisées pour le calcul de S-Curve-->
+	<scurve>
+		<COEFF_D>2</COEFF_D>
+		<D_MAX>2</D_MAX>
+		<S_MIN>-3</S_MIN>
+		<S_MAX>1</S_MAX>
+	</scurve>
+
+	<!-- variables utilisées pour les timers de transmission-->
+	<timers>
+		<timeToChild>30</timeToChild>
+		<timeFatherToChild>30</timeFatherToChild>
+		<timeToGrandChild>30</timeToGrandChild>
+		<timeChildToGrandChild>30</timeChildToGrandChild>
+	</timers>
+	
+	
+</data>

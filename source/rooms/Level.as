@@ -4,6 +4,7 @@
 	//import game.Particles;
 	
 	import game.Debug;
+	import game.LoadXmlData;
 	import game.PathRed;
 	import game.PathBlue;
 	import game.PathGreen;
@@ -61,6 +62,7 @@
 		public var grandChild:Robot;
 		public var animatedTile:PathTile;
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
+		public var data:LoadXmlData;
 		 
 		/**
 		 * Constructor.
@@ -104,6 +106,10 @@
 			father.timeToChild = new Alarm(TIMER_CHILD, onTimeToSon, 2);
 			father.addTween(father.timeToChild, true);
 			
+			//Load gamedesign data
+			data = new LoadXmlData();
+			
+			FP.screen.color = 0x808080;
 
 		}
 		

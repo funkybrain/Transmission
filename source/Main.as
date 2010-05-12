@@ -13,7 +13,7 @@
 		 */
 		public function Main() 
 		{
-			super(640, 480, 60, false);
+			super(800, 480, 60, false);
 			FP.world = new Level;
 		}
 	}

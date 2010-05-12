@@ -9,6 +9,9 @@ To do list:
 > put game variables in externnal xml - import in static object
 > how does flashdev profiler work?
 > instead of using father reference, use player but add a state struct with the three states: father, child, grandchild
+> add variable dark mask (restricting player view)
+> center player in right 3rd of screen
+> fix bug with path tielset (couple of tiles showig at beginning of levels)
 
 Architecture
 ------------

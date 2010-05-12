@@ -32,6 +32,7 @@
 		/**
 		 * Alarms.
 		 */
+		//TODO gamedata to replace from xml
 		public var timeToChild:Alarm;
 		public var timeToGrandson:Alarm;
 		
