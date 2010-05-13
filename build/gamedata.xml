@@ -9,9 +9,9 @@
 	<!-- variables utilisées pour le calcul de S-Curve-->
 	<scurve>
 		<COEFF_D>2</COEFF_D>
-		<D_MAX>2</D_MAX>
+		<D_MAX>1000</D_MAX>
 		<S_MIN>-3</S_MIN>
-		<S_MAX>1</S_MAX>
+		<S_MAX>-1</S_MAX>
 	</scurve>
 
 	<!-- variables utilisées pour les timers de transmission-->

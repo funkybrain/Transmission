@@ -5,6 +5,8 @@ package game
 	import flash.xml.*
 	import flash.errors.*
 	import flash.events.*
+	import net.flashpunk.FP;
+	import rooms.Level;
 	
 	public class LoadXmlData
 	{
@@ -12,6 +14,7 @@ package game
 		public var loader:URLLoader = new URLLoader();
 		public var url:XMLList;
 		
+		public static var gameDataLoaded:Boolean = false;
 		
 		public static var timer_ToChild:Number;
 		public static var timer_ToGrandChild:Number;
@@ -27,13 +30,13 @@ package game
 		public function LoadXmlData() 
 		{
 			loader.addEventListener(Event.COMPLETE, onComplete);
-			loader.load(new URLRequest("../data/gamedata.xml"));
+			loader.load(new URLRequest("gamedata.xml"));
 		}
 		
 		public function onComplete(evt:Event):void
 		{
 			gameData = new XML(loader.data)
-			//trace("xml loaded, start parsing using E4X syntax");
+			trace("xml loaded, start parsing using E4X syntax");
 			
 			// speed
 			VB = Number(gameData.vitesse.VB.text());
@@ -50,6 +53,10 @@ package game
 			timer_ToGrandChild = Number(gameData.timers.timeToGrandChild.text());
 			timer_FatherToChild = Number(gameData.timers.timeFatherToChild.text());
 			timer_ChildToGrandChild = Number(gameData.timers.timeChildToGrandChild.text());
+			
+			trace("done assigning data");
+			
+			FP.world = new Level;
 						
 		}
 		

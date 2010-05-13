@@ -11,6 +11,7 @@
 	import net.flashpunk.utils.Ease;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
+	import game.LoadXmlData;
 
 	
 	import net.flashpunk.*;
@@ -32,7 +33,6 @@
 		/**
 		 * Alarms.
 		 */
-		//TODO gamedata to replace from xml
 		public var timeToChild:Alarm;
 		public var timeToGrandson:Alarm;
 		
@@ -40,10 +40,16 @@
 		/**
 		 * Game (transmission) specific variables.
 		 */
-		private const COEFF_D:Number = 2; // used in S-curve calculation		
-		public const VB:Number = 0.3; // base speed of father
-		public const CT_VB:Number = 0.2; // Ctvb : coeff de transmission de la vitesse de base father -> child
+		//private const COEFF_D:Number = 2; // used in S-curve calculation		
+		//public const VB:Number = 0.3; // base speed of father
+		//public const CT_VB:Number = 0.2; // Ctvb : coeff de transmission de la vitesse de base father -> child
 		
+		public var COEFF_D:Number; // used in S-curve calculation		
+		public var VB:Number; // base speed of father
+		public var CT_VB:Number; // Ctvb : coeff de transmission de la vitesse de base father -> child
+		public var D_MAX:Number; // max distance used in mapping for s-curve data
+		public var S_MIN:Number; // s-cruve mini abcisse
+		public var S_MAX:Number; // s-cruve max abcisse
 					
 		/**
 		 * Movement variables.
@@ -51,7 +57,7 @@
 		public var previousPos:Point; // store previous player position
 		public var pathIndex:uint; // stores an index to target the required path when calling an array
 		public var distance:Number = 0; // stores frame by frame distance
-		public var vbArray:Array = new Array(VB, VB, VB);
+		public var vbArray:Array;
 
 		
 		/**
@@ -107,16 +113,18 @@
 			var boxHeight:int = avatar.height / 4;					
 			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
 			
-			//TODO center the origin of the player
-			//avatar.originX = avatar.width / 2;
-			//avatar.originY = avatar.height / 2;
-			//avatar.x = -avatar.originX;
-			//avatar.y = -avatar.originY;
-			//avatar.smooth = true;
+			/*
+			TODO center the origin of the player
+			avatar.originX = avatar.width / 2;
+			avatar.originY = avatar.height / 2;
+			avatar.x = -avatar.originX;
+			avatar.y = -avatar.originY;
+			avatar.smooth = true;
 			
-			//addTween(SCALE);
-			//addTween(ROTATE);
-			//SCALE.x = SCALE.y = 1;
+			addTween(SCALE);
+			addTween(ROTATE);
+			SCALE.x = SCALE.y = 1;
+			*/
 			
 			
 			// define payer movement keys
@@ -132,12 +140,23 @@
 			{
 				pathDistance[i] = 0;
 			}
+			
+			// initialize variables from gamedata.xml file
+			COEFF_D = LoadXmlData.COEFF_D; // used in S-curve calculation		
+			VB = LoadXmlData.VB; // base speed of father
+			CT_VB = LoadXmlData.CT_VB; // Ctvb : coeff de transmission de la vitesse de base father -> child
+			D_MAX = LoadXmlData.D_MAX;
+			S_MIN = LoadXmlData.S_MIN;
+			S_MAX = LoadXmlData.S_MAX;
+			
 			// and basic speed vb on each path (pathBaseSpeed is an array)
+			vbArray = new Array(VB, VB, VB);
 			if (_vb == null	) 
 			{
 				pathBaseSpeed = vbArray; //NOTE may have to concat() to make a true copy
 			} 
-
+			
+			trace("player created");
 		}
 		
 /*		override public function added():void 
@@ -171,7 +190,7 @@
 			// play sprite animation
 			animation();
 			
-			previousPos = position.clone(); //store current position as next previous position
+			previousPos = position.clone(); //store current position as next previous position	
 			
 		}
 		
@@ -284,7 +303,7 @@
 			for (var i:int = 0; i < 3; i++) 
 			{
 				// first map distance on path to s-curve significant numbers
-				var mapped:Number = FP.scale(pathDistance[i], 0, 1000, -3, -1);
+				var mapped:Number = FP.scale(pathDistance[i], 0, D_MAX, S_MIN, S_MAX);
 				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp(-mapped)));
 				
 			}

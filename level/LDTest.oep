@@ -4,15 +4,15 @@
 		<bgColor>#202020</bgColor>
 		<defaultWidth>1000</defaultWidth>
 		<defaultHeight>480</defaultHeight>
-		<minWidth>32</minWidth>
-		<minHeight>32</minHeight>
+		<minWidth>30</minWidth>
+		<minHeight>30</minHeight>
 		<maxWidth>2000</maxWidth>
-		<maxHeight>600</maxHeight>
+		<maxHeight>480</maxHeight>
 		<workingDirectory>gfx</workingDirectory>
 	</settings>
 	
 	<objects>
-		<object name="player" image="player.png" width="30" height="30"/>
+		<object name="player" image="player.png" width="30" height="30" limit="1"/>
 	</objects> 
 	
 	<tilesets>
