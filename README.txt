@@ -1,6 +1,6 @@
 Bugs:
 ----
-> fix bug with path tielset (couple of tiles showig at beginning of levels)
+> bug with path tileset (couple of tiles showing at beginning of levels)
 >> the display bug in the level may be linked to LF / CRLF conversion???
 
 To do list:
@@ -10,14 +10,13 @@ To do list:
 > get grid size from xml to stay flexible
 > stress test level size in ogmo and flash
 > implement moovesmooth
-> grandchild tarnsmission (child does not follow grandchild)
-> how the f*** do i make robot child follow father?
 > how does flashdev profiler work?
-> instead of using father reference, use player but add a state struct with the three states: father, child, grandchild
 > add variable dark mask (restricting player view)
 > center player in right 3rd of screen
 > scale animation framerate to player speed
-
+> how the f*** am I going to swtich control over from father to child?
+> may have to scale hitbox to player size if child is small
+> refactor paths so that they all derive from one class
 Architecture
 ------------
 

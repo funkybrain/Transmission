@@ -1,5 +1,6 @@
 ﻿package game 
 {
+	import flash.display.Sprite;
 	import flash.geom.Point;
 	import net.flashpunk.graphics.Emitter;
 	import net.flashpunk.graphics.Graphiclist;
@@ -22,7 +23,13 @@
 		 * Player graphic.
 		 */
 		[Embed(source = '../../assets/spritesheetAvatar.png')] private const PLAYER:Class;
-		public var avatar:Spritemap = new Spritemap(PLAYER, 30, 30);
+		public var father:Spritemap = new Spritemap(PLAYER, 30, 30);
+		
+		[Embed(source = '../../assets/spritesheetAvatarFils.png')] private const CHILD:Class;
+		public var child:Spritemap = new Spritemap(CHILD, 30, 30);
+		
+		[Embed(source = '../../assets/spriteSheetGrandChild.png')] private const GRAND_CHILD:Class;
+		public var grandChild:Spritemap = new Spritemap(GRAND_CHILD, 30, 30);
 		
 		/**
 		 * Tweeners.
@@ -59,7 +66,15 @@
 		public var pathIndex:uint; // stores an index to target the required path when calling an array
 		public var distance:Number = 0; // stores frame by frame distance
 		public var vbArray:Array;
-
+		
+		public var moveHistory:Vector.<Point> = new Vector.<Point>(); // List<Point> to store player move history
+		private var moveIndex:uint;
+		
+				
+		public var animatedTile:PathTile;
+		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
+		public var row:int, col:int; 
+		
 		/**
 		 * Player state.
 		 */
@@ -69,6 +84,12 @@
 		 * Animation properties.
 		 */
 		public var frames:Array;
+		
+		/**
+		 * define hitbox origin.
+		 */		
+		private var offsetOriginX:int;
+		private var offsetOriginY:int;
 		
 		/**
 		 * Movement constants.
@@ -102,20 +123,23 @@
 			previousPos = position.clone();
 			
 			// set the Entity's graphic property to a Spritemap object
-			graphic = avatar;
+			graphic = father;
 			frames = new Array( 0, 1, 2, 3 );
-			avatar.add("walk", frames, 5, true);
+			father.add("walk", frames, 5, true);
+			child.add("walk", frames, 5, true);
+			grandChild.add("walk", frames, 5, true);
+			
 			// note: if you're goiing down the route of fixed framrate, use 
 			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
 			
 			//hitbox based on image size
 			
 			// set hitbox origin at c. 2/5th right and 2/3rd down from entity origin
-			var offsetOriginX:int = -1.5*(avatar.width/5);
-			var offsetOriginY:int = -1.7*(avatar.height/3);
+			offsetOriginX = -1.5*(father.width/5);
+			offsetOriginY = -1.7*(father.height/3);
 			// set hitbox width and height
-			var boxWidth:int = avatar.width / 3;
-			var boxHeight:int = avatar.height / 4;					
+			var boxWidth:int = father.width / 3;
+			var boxHeight:int = father.height / 4;					
 			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
 			
 			/*
@@ -179,9 +203,22 @@
 			// update speed on paths based on new pathDistance
 			scurve();
 			
+			
+			
+			//check if a new animated tile needs to be placed where player has walked
+			var shiftX:Number, shiftY:Number; // need to locate the center of the entity
+			
+			//shiftX = x + father.width / 2;
+			//shiftY = y + father.height / 2;
+			//addNewTile(shiftX, shiftY, 30); //TODO 30 is the grid step (move to property please!)
+			
+			shiftX = x - offsetOriginX;
+			shiftY = y - offsetOriginY;
+			addNewTile(shiftX, shiftY, 30);
+			
 			// move player based on maximum speeds returned by the s-curve
-			acceleration(pathIndex);			
-					
+			acceleration(pathIndex);
+			
 			// calculate distance traveled since last frame and add to that path total
 			distance = Point.distance(position, previousPos);
 			pathDistance[pathIndex] += distance;
@@ -195,8 +232,51 @@
 			// play sprite animation
 			animation();
 			
-			previousPos = position.clone(); //store current position as next previous position	
+			//store current position as next previous position
+			previousPos = position.clone();
 			
+			//store current player position in move hisotory 
+			if (velocity.x!=0 || velocity.y!=0) 
+			{
+				moveIndex = moveHistory.push(previousPos);
+				
+				//pop oldest move history from List to keep only the last 10 moves
+				if (moveIndex==50) 
+				{
+					moveHistory.shift();
+				}
+			//BUG: if player never moves, will get a rangeError. populate the List to player start position?
+			}
+			
+			
+			//trace (moveHistory.length);
+		}
+		
+		public function addNewTile(_x:int, _y:int, _step:int ):void
+		{
+			// convert x,y into row, col
+			var tileExists:Boolean = false;
+			
+			col = Math.floor(_x / _step);
+			row = Math.floor(_y / _step);
+			
+			// loop through vector to see if a path of index (row,col) already exists
+			for each (var value:PathTile in pathTileList)
+			{
+				if (value.row==row && value.col == col) 
+				{
+					tileExists = true;
+					break;
+				}				
+			}
+			//trace(tileExists);
+			if (tileExists==false) 
+			{
+				// add new animated tile to Vector and Level
+				var index:int = pathTileList.push(new PathTile(col, row, 30, pathIndex)); //TODO ditto: don't hardwire step
+				//trace("path index: " + pathIndex);
+				FP.world.add(pathTileList[index-1]);
+			}
 		}
 		
 		private function getTotalDistanceTravelled():void
@@ -322,10 +402,29 @@
 		 */
 		private function animation():void
 		{
+			// switch to the correct Spritemap to play the animation
+			var who:Spritemap;
+			
+			switch (state) 
+			{
+				case "father":
+					who = father;
+					break;
+				case "childAlive":
+					who = father;
+					break;	
+				case "child":
+					who = child;
+					break;
+				case "grandChild":
+					who = grandChild;
+					break;	
+			}
+			
 			if (velocity.x != 0 || velocity.y != 0)
 			{
-				avatar.play("walk");
-			} else avatar.setFrame(0);
+				who.play("walk");
+			} else who.setFrame(0);
 			
 			// control facing direction
 			//if (spdX != 0) avatar.flipped = spdX < 0;

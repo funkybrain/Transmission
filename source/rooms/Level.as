@@ -63,13 +63,9 @@
 		
 		public var player:Player;
 		public var child:Robot;
-		public var grandChild:Robot;
-		public var childIsAlive:Boolean = false;
+		public var robotChildIsAlive:Boolean = false;
+
 		
-		public var animatedTile:PathTile;
-		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
-		
-		 
 		/**
 		 * Constructor.
 		 */
@@ -132,6 +128,7 @@
 		public function onTimeToChild():void
 		{
 			player.state = "childAlive"; // child appears as a robot. Nothing transmitted yet.
+			robotChildIsAlive = true;
 			player.timeFatherToChild.start(); // start countdown to actual transmission to child			
 			child = new Robot(player.x, player.y);
 			add(child);
@@ -143,10 +140,17 @@
 		 */
 		public function onTimeFatherToChild():void
 		{
-			//remove robot child from game and transmit properties from father to child
+			//remove robot child from game
+			robotChildIsAlive == false;
 			remove(child);
+			//transmit properties from father to child
 			transmitFatherToChild();
+			//set player state to child
 			player.state = "child";
+			//change player graphic to that of child
+			player.graphic = player.child;
+			
+			//start countdown to grandchild transmission
 			player.timeToGrandChild.start();
 		}
 		
@@ -156,6 +160,7 @@
 		public function onTimeToGrandChild():void
 		{
 			player.state = "grandChild";
+			player.graphic = player.grandChild;
 		}
 		
 		public function transmitFatherToChild():void
@@ -269,21 +274,18 @@
 			// update debug text
 			updateDebugText();
 			
-			//check if a new animated tile needs to be placed where player has walked
-			var shiftX:Number, shiftY:Number; // need to locate the center of the entity
-			shiftX = player.x + player.avatar.width / 2;
-			shiftY = player.y + player.avatar.height / 2;
-			addNewTile(shiftX, shiftY, 30); //TODO 30 is the grid step (move to property please!)
-
-			
 			//update SoundManager - required so the tweens actually get updated
 			//sound.update();
 			
-			// if son is aliiven follow father
-			if (childIsAlive) 
+			// if son is alive follow father
+			if (robotChildIsAlive) 
 			{
-				// follow father for a certain amount of tiime then disappear
-				// upon disappearence, transmit values to father, which then becomes son
+				child.x = player.moveHistory[0].x;
+				child.y = player.moveHistory[0].y;
+				if (player.velocity.x!=0 || player.velocity.y!=0) 
+				{
+					child.robotSprite.play("walk");
+				} else child.robotSprite.setFrame(0);
 			}
 			
 			// camera following
@@ -298,33 +300,10 @@
 			super.render();
 			debug.drawHitBox(player);
 			debugHUD.render();
+			debug.drawHitBoxOrigin(player);
 		}
 		
-		//BUG why is first tile always red?
-		public function addNewTile(_x:int, _y:int, _step:int ):void
-		{
-			// convert x,y into row, col
-			var row:int, col:int, tileExists:Boolean=false;
-			col = Math.floor(_x / _step);
-			row = Math.floor(_y / _step);
-			
-			// loop through vector to see if a path of index (row,col) already exists
-			for each (var value:PathTile in pathTileList)
-			{
-				if (value.row==row && value.col == col) 
-				{
-					tileExists = true;
-					break;
-				}				
-			}
-			
-			if (tileExists==false) 
-			{
-				// add new animated tile to Vector and Level
-				var index:int = pathTileList.push(new PathTile(col, row, 30, player.pathIndex)); //TODO ditto: don't hardwire step
-				add(pathTileList[index-1]);
-			}
-		}
+		
 		
 		/**
 		 * update all the debug overlay info.
@@ -353,7 +332,7 @@
 			var father_var:String = "Red - Vb: " + Number(player.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(player.pathDistance[0]).toFixed(2) + " r: " + Number(player.pathDistToTotalRatio[0]).toFixed(2) + " V: " + Number(player.pathMaxVel[0]).toFixed(2) + "\n"
 									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " V: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
 									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " V: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
-									+"Timer: " + Math.floor(timer) + " state: " + player.state +"\n";
+									+"Timer: " + Math.floor(timer) + " State: " + player.state + " Row: " + player.row + " Col: " + player.col +"\n";
 			debugText.text = father_var;
 			debugText.size = 11;
 			debugHUD.x = FP.camera.x + 10;

@@ -51,7 +51,7 @@
 			var e:Entity, type:String, pathType:uint;
 			e = collideTypes(pathCollideType, x, y);
 			
-			//trace(e.type);
+			//trace("collision type: " + e.type);
 			
 			switch (e.type)
 			{
@@ -68,9 +68,10 @@
 				pathType = 3; // no path
 				
 			}
-			//trace(pathType);
+			//trace("pathType: " + pathType);
 			return pathType;
 		}
+		
 		
 		
 		

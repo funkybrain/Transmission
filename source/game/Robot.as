@@ -13,7 +13,7 @@
 		 * Player graphic.
 		 */
 		[Embed(source = '../../assets/spritesheetAvatarFils.png')] private const PLAYER:Class;
-		public var robot:Spritemap = new Spritemap(PLAYER, 30, 30);
+		public var robotSprite:Spritemap = new Spritemap(PLAYER, 30, 30);
 		
 		/**
 		 * Animation properties.
@@ -25,11 +25,14 @@
 			this.x = _x;
 			this.y = _y;
 			
+			type = "robot";
+			
 			// set the Entity's graphic property to a Spritemap object
-			graphic = robot;
+			graphic = robotSprite;
 			frames = new Array( 0, 1, 2, 3 );
-			robot.add("walk", frames, 5, true);
+			robotSprite.add("walk", frames, 5, true);
 		}
+		
 		
 	}
 

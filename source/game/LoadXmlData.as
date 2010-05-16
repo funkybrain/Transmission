@@ -7,7 +7,11 @@ package game
 	import flash.events.*
 	import net.flashpunk.FP;
 	import rooms.Level;
+
 	
+	/**
+	* Constructor 
+	*/
 	public class LoadXmlData
 	{
 		public var gameData:XML;

@@ -24,6 +24,15 @@ package game
 			}
 		}
 		
+		public function drawHitBoxOrigin(e:Entity):void {
+			//TODO draw entity's hitbox origin on screen, currently displaying entity origin
+			if (flag==true) 
+			{
+				Draw.line(e.x - 2, e.y - 2, e.x + 2, e.y + 2);
+				Draw.line(e.x + 2, e.y - 2, e.x - 2, e.y + 2);
+				
+			}
+		}
 
 		
 	}

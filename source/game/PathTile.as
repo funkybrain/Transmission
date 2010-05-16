@@ -3,6 +3,8 @@ package game
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.graphics.Image;
+	import net.flashpunk.tweens.misc.VarTween;
+	import net.flashpunk.utils.Ease;
 	
 	/**
 	 * This class is used as
@@ -27,6 +29,7 @@ package game
 		 * Animation properties.
 		 */
 		private var frames:Array;
+		private var fadeIn:VarTween;
 		
 		/**
 		 * Row and Col properties used to position animated tile in world.
@@ -58,6 +61,7 @@ package game
 		private function playTileAnimation(_tile:uint):void
 		{
 			var t:uint = _tile, spriteName:Spritemap;
+			trace("tile: " + t);
 			
 			switch (t)
 			{
@@ -76,9 +80,16 @@ package game
 			}
 			
 			graphic = spriteName;
+			spriteName.alpha = 0.1;
 			frames = new Array( 0, 1, 2, 3 );
 			spriteName.add("appear", frames, 2, true); // will loop
 			spriteName.play("appear");
+			
+			//fade sprite in
+			fadeIn = new VarTween();
+			addTween(fadeIn);
+			fadeIn.tween(spriteName, "alpha", 1, 5, Ease.backIn);
+			fadeIn.start();
 		}
 		
 	}
