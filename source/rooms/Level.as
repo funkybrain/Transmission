@@ -55,14 +55,20 @@
 		/**
 		 * Game (transmission) specific variables.
 		 */
-		private var TIMER_CHILD:Number = 30;	
+		public var data:LoadXmlData;
+		 
+		private var TIMER_CHILD:Number = LoadXmlData.timer_ToChild;
+		private var TIMER_FATHERTOCHILD:Number = LoadXmlData.timer_FatherToChild;
+		private var TIMER_CHILDTOGRANDCHILD:Number = LoadXmlData.timer_ChildToGrandChild;
+		
 		public var player:Player;
 		public var child:Robot;
 		public var grandChild:Robot;
 		public var childIsAlive:Boolean = false;
+		
 		public var animatedTile:PathTile;
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
-		public var data:LoadXmlData;
+		
 		 
 		/**
 		 * Constructor.
@@ -70,8 +76,6 @@
 		public function Level()
 		{
 			super(LEVEL);
-			
-
 			
 			width = level.width;
 			height = level.height;
@@ -91,7 +95,7 @@
 			debugText = new Text("hello", 10, 10, 400, 50);
 			debugText.font = "Arial";
 			
-			// add SoundManager object to world
+			//add SoundManager object to world
 			//sound = new SoundManager();
 
 			//add(new Particles);
@@ -107,10 +111,15 @@
 			}
 
 			
-			//set transmission time for father (one-shot alarm)
-			player.timeToChild = new Alarm(TIMER_CHILD, onTimeToSon, 2);
-			player.addTween(player.timeToChild, true);
+			//set all transmission timer alarms (one-shot alarms)
+			player.timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
+			player.addTween(player.timeToChild, true); // add and start alarm on instantiation
 			
+			player.timeFatherToChild = new Alarm(TIMER_FATHERTOCHILD, onTimeFatherToChild, 2);
+			player.addTween(player.timeFatherToChild, false); // add but don't start yet!
+			
+			player.timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
+			player.addTween(player.timeToGrandChild, false); // add but don't start yet!
 			
 			// refresh screen color
 			FP.screen.color = 0x808080;
@@ -118,16 +127,35 @@
 		}
 		
 		/**
-		 * Transmit father to son
+		 * Child appears with father
 		 */
-		public function onTimeToSon():void
+		public function onTimeToChild():void
 		{
-			trace("ring ring son is ready");
+			player.state = "childAlive"; // child appears as a robot. Nothing transmitted yet.
+			player.timeFatherToChild.start(); // start countdown to actual transmission to child			
 			child = new Robot(player.x, player.y);
 			add(child);
 			
-			//TODO: later on this will be a two-step process. for now, send directly transmitted behaviour to player
+		}
+		
+		/**
+		 * Transmit father to child
+		 */
+		public function onTimeFatherToChild():void
+		{
+			//remove robot child from game and transmit properties from father to child
+			remove(child);
 			transmitFatherToChild();
+			player.state = "child";
+			player.timeToGrandChild.start();
+		}
+		
+		/**
+		 * Transmit child to grandchild
+		 */
+		public function onTimeToGrandChild():void
+		{
+			player.state = "grandChild";
 		}
 		
 		public function transmitFatherToChild():void
@@ -228,7 +256,7 @@
 				trace("vitesse de base child: ("+ i + ") " + player.pathBaseSpeed[i]);
 			}
 		} 
-		// end transmitFatherToSon()
+		// end transmitFatherToChild()
 		
 		/**
 		 * Update the level.
@@ -260,6 +288,8 @@
 			
 			// camera following
 			cameraFollow();
+			
+			//trace(player.state);
 			
 		}
 		
@@ -302,10 +332,28 @@
 		public function updateDebugText():void
 		{
 			// draw debug information on screen
+			var timer:Number;
+			switch (player.state) 
+			{
+				case "father":
+					timer = player.timeToChild.remaining;
+					break;
+				case "childAlive":
+					timer = player.timeFatherToChild.remaining;
+					break;	
+				case "child":
+					timer = player.timeToGrandChild.remaining;
+					break;
+				case "grandChild":
+					timer = 0;
+					break;
+				
+			}
+			
 			var father_var:String = "Red - Vb: " + Number(player.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(player.pathDistance[0]).toFixed(2) + " r: " + Number(player.pathDistToTotalRatio[0]).toFixed(2) + " V: " + Number(player.pathMaxVel[0]).toFixed(2) + "\n"
 									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " V: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
 									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " V: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
-									+"Timer child: " + Math.floor(player.timeToChild.remaining) + "\n";
+									+"Timer: " + Math.floor(timer) + " state: " + player.state +"\n";
 			debugText.text = father_var;
 			debugText.size = 11;
 			debugHUD.x = FP.camera.x + 10;

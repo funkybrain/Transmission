@@ -34,7 +34,8 @@
 		 * Alarms.
 		 */
 		public var timeToChild:Alarm;
-		public var timeToGrandson:Alarm;
+		public var timeFatherToChild:Alarm;
+		public var timeToGrandChild:Alarm;
 		
 	
 		/**
@@ -59,6 +60,10 @@
 		public var distance:Number = 0; // stores frame by frame distance
 		public var vbArray:Array;
 
+		/**
+		 * Player state.
+		 */
+		public var state:String = "father";
 		
 		/**
 		 * Animation properties.
@@ -103,7 +108,7 @@
 			// note: if you're goiing down the route of fixed framrate, use 
 			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
 			
-			//TODO: transformations to set the hitbox based on image size
+			//hitbox based on image size
 			
 			// set hitbox origin at c. 2/5th right and 2/3rd down from entity origin
 			var offsetOriginX:int = -1.5*(avatar.width/5);
@@ -297,7 +302,7 @@
 		/**
 		 * S-curve calculation.
 		 */
-		private function scurve():void //TODO s-curves are here
+		private function scurve():void
 		{			
 			//maxSpeed[i] = avatar.speedBasePath[i] + avatar.coeff_d * ( 1 / (1 + exp(-adjust)))*avatar.coefSpeedBaseChild[i];   
 			for (var i:int = 0; i < 3; i++) 

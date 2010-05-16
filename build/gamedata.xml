@@ -18,7 +18,7 @@
 	<timers>
 		<timeToChild>30</timeToChild>
 		<timeFatherToChild>30</timeFatherToChild>
-		<timeToGrandChild>30</timeToGrandChild>
+		<!--timeToGrandChild>30</timeToGrandChild-->
 		<timeChildToGrandChild>30</timeChildToGrandChild>
 	</timers>
 	
