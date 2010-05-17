@@ -34,8 +34,9 @@
 		/**
 		 * Tweeners.
 		 */
-		public const SCALE:LinearMotion = new LinearMotion;
+		//public const SCALE:LinearMotion = new LinearMotion;
 		//public const ROTATE:NumTween = new NumTween;
+		public const fadeOut:VarTween = new VarTween;
 		
 		/**
 		 * Alarms.
@@ -43,6 +44,7 @@
 		public var timeToChild:Alarm;
 		public var timeFatherToChild:Alarm;
 		public var timeToGrandChild:Alarm;
+		public var timeGrandChildToEnd:Alarm;
 		
 	
 		/**
@@ -79,6 +81,7 @@
 		 * Player state.
 		 */
 		public var state:String = "father";
+		public var deathImminent:Boolean = false;
 		
 		/**
 		 * Animation properties.

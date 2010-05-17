@@ -1,5 +1,6 @@
 ﻿package rooms
 {
+
 	//import game.Background;
 	//import game.Particles;
 	
@@ -19,6 +20,7 @@
 	import net.flashpunk.graphics.Anim;
 	import net.flashpunk.graphics.Text;
 	import net.flashpunk.tweens.misc.Alarm;
+	import net.flashpunk.utils.Ease;
 	
 	public class Level extends LevelLoader
 	{
@@ -63,6 +65,7 @@
 		private var TIMER_CHILD:Number = LoadXmlData.timer_ToChild;
 		private var TIMER_FATHERTOCHILD:Number = LoadXmlData.timer_FatherToChild;
 		private var TIMER_CHILDTOGRANDCHILD:Number = LoadXmlData.timer_ChildToGrandChild;
+		private var TIMER_GRANDCHILDTOEND:Number = LoadXmlData.timer_GrandChildToEnd;
 		
 		public var player:Player;
 		public var child:Robot;
@@ -137,6 +140,9 @@
 			player.timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
 			player.addTween(player.timeToGrandChild, false); // add but don't start yet!
 			
+			player.timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeToEnd, 2);
+			player.addTween(player.timeGrandChildToEnd, false); // add but don't start yet!
+			
 			// refresh screen color
 			FP.screen.color = 0x808080;
 
@@ -181,6 +187,16 @@
 		{
 			player.state = "grandChild";
 			player.graphic = player.grandChild;
+			player.timeGrandChildToEnd.start() // start final countdown to end
+			// will check in update to start death sequence before end
+		}
+		
+		/**
+		 * Death of grandchild and game end
+		 */
+		public function onTimeToEnd():void
+		{
+			// move to end credit?
 		}
 		
 		public function transmitFatherToChild():void
@@ -284,12 +300,15 @@
 		// end transmitFatherToChild()
 		
 		/**
-		 * Update the level.
+		 * UPDATE LOOP FOR GAME
 		 */
 		override public function update():void 
 		{
 			// update entities
 			super.update();
+			
+			//test to see if we're near game end
+			checkGrandChildNearDeath();
 			
 			// update debug text
 			updateDebugText();
@@ -317,12 +336,38 @@
 			setAnimationSpeed();
 		}
 		
+		/**
+		 * RENDER LOOP FOR GAME
+		 */
 		override public function render():void 
 		{
 			super.render();
 			debug.drawHitBox(player);
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
+		}
+		
+		/**
+		 * GrandChild Death
+		 */
+		public function checkGrandChildNearDeath():void
+		{
+			
+			if (player.timeGrandChildToEnd.remaining <= 10 && player.deathImminent==false) 
+			{
+				startDeathSequence(10); // 10 seconds to death
+				player.deathImminent = true;
+			}
+		}
+		
+		public function startDeathSequence(time:Number):void
+		{
+			//fade player sprite out
+			player.fadeOut.tween(player.grandChild, "alpha", 0, time, Ease.backIn);
+			player.addTween(player.fadeOut);
+			player.fadeOut.start();
+			// go to end credits
+			// removeAll();
 		}
 		
 		/**

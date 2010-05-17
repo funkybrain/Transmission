@@ -21,7 +21,7 @@ package game
 		public static var gameDataLoaded:Boolean = false;
 		
 		public static var timer_ToChild:Number;
-		public static var timer_ToGrandChild:Number;
+		public static var timer_GrandChildToEnd:Number;
 		public static var timer_FatherToChild:Number;
 		public static var timer_ChildToGrandChild:Number;
 		public static var COEFF_D:Number;	
@@ -54,9 +54,10 @@ package game
 			
 			// timers
 			timer_ToChild = Number(gameData.timers.timeToChild.text());
-			timer_ToGrandChild = Number(gameData.timers.timeToGrandChild.text());
+			//timer_ToGrandChild = Number(gameData.timers.timeToGrandChild.text());
 			timer_FatherToChild = Number(gameData.timers.timeFatherToChild.text());
 			timer_ChildToGrandChild = Number(gameData.timers.timeChildToGrandChild.text());
+			timer_GrandChildToEnd = Number(gameData.timers.timeGrandChildToEnd.text());
 			
 			trace("done assigning data");
 			

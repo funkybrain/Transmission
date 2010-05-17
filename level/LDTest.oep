@@ -13,8 +13,8 @@
 	
 	<objects>
 		<object name="player" image="player.png" width="30" height="30" limit="1"/>
-		<object name="anim_man" image="slot_man.png" width="10" height="10" />
-		<object name="anim_rouage" image="slot_rouage.png" width="10" height="10" />
+		<object name="anim_man" image="slot_man.png" width="30" height="30" />
+		<object name="anim_rouage" image="slot_rouage.png" width="30" height="30" />
 		<object name="image_fond" image="backgroundSprite.png" width="3000" height="480" limit="1" />
 	
 	</objects> 
@@ -32,8 +32,8 @@
 		<tiles name="path_red" gridSize="30" drawGridSize="30" />
 		<tiles name="path_green" gridSize="30" drawGridSize="30" />
 		<tiles name="path_blue" gridSize="30" drawGridSize="30" />
-		<objects name="objects" gridSize="30" drawGridSize="30" />
-		<objects name="animations" gridSize="10" drawGridSize="30" />
+		<objects name="player" gridSize="30" drawGridSize="30" />
+		<objects name="animations" gridSize="30" drawGridSize="30" />
 		
 	</layers>
 </project>
