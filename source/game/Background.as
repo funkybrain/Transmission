@@ -15,7 +15,7 @@
 		/**
 		 * Embedded background graphic.
 		 */
-		[Embed(source = '../../assets/background.png')] private static const BACKGROUND:Class;
+		[Embed(source = '../../assets/backgroundSprite.png')] private static const BACKGROUND:Class;
 		
 		/**
 		 * Constructor.
@@ -36,8 +36,8 @@
 		 */
 		override public function update():void 
 		{
-			x -= FP.elapsed * 20;
-			y -= FP.elapsed * 10;
+			//x -= FP.elapsed * 20;
+			//y -= FP.elapsed * 10;
 		}
 	}
 }

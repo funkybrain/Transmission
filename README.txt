@@ -1,7 +1,7 @@
 Bugs:
 ----
-> bug with path tileset (couple of tiles showing at beginning of levels)
->> the display bug in the level may be linked to LF / CRLF conversion???
+> bug with path tileset (couple of random tiles showing at beginning of levels)
+>> FIXED: level was wrapping due to width not being an exact multiplier of grid
 
 To do list:
 ----------
@@ -14,9 +14,10 @@ To do list:
 > add variable dark mask (restricting player view)
 > center player in right 3rd of screen
 > scale animation framerate to player speed
-> how the f*** am I going to swtich control over from father to child?
+
 > may have to scale hitbox to player size if child is small
 > refactor paths so that they all derive from one class
+
 Architecture
 ------------
 

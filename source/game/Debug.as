@@ -9,7 +9,7 @@ package game
 	public class Debug
 	{	
 		// flags debug mode on or off for the entire game
-		public static var flag:Boolean=true;
+		public static var flag:Boolean=false;
 		
 		public function Debug() 
 		{

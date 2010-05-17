@@ -9,7 +9,7 @@ package game
 		/**
 		 * Embedded sound library
 		 */
-		[Embed(source = '../../sounds/TransMusBoxSong.mp3', mimeType = 'audio/mpeg')]
+		[Embed(source = '../../sounds/TransmissionHistoireChemin1.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC:Class;
 
 		/**
@@ -25,7 +25,7 @@ package game
 			mainTheme.volume = 1;
 			mainTheme.play();
 			
-			processRules();
+			//processRules();
 			
 		}
 		
@@ -40,7 +40,7 @@ package game
 			fader = new SfxFader(mainTheme, onFaderTweenFinish, 0);
 			this.addTween(fader);
 			fader.fadeTo(0, 10, null);
-			fader.start();
+			//fader.start();
 		
 		}
 		

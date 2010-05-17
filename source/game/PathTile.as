@@ -61,7 +61,7 @@ package game
 		private function playTileAnimation(_tile:uint):void
 		{
 			var t:uint = _tile, spriteName:Spritemap;
-			trace("tile: " + t);
+			//trace("tile: " + t);
 			
 			switch (t)
 			{
@@ -81,14 +81,14 @@ package game
 			
 			graphic = spriteName;
 			spriteName.alpha = 0.1;
-			frames = new Array( 0, 1, 2, 3 );
-			spriteName.add("appear", frames, 2, true); // will loop
+			frames = new Array( 0, 1, 2, 3, 4 );
+			spriteName.add("appear", frames, 4, false); // won't loop
 			spriteName.play("appear");
 			
 			//fade sprite in
 			fadeIn = new VarTween();
 			addTween(fadeIn);
-			fadeIn.tween(spriteName, "alpha", 1, 5, Ease.backIn);
+			fadeIn.tween(spriteName, "alpha", 1, 4, Ease.backIn);
 			fadeIn.start();
 		}
 		

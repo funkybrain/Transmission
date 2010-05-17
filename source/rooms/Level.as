@@ -12,6 +12,7 @@
 	import game.Player;
 	import game.Robot;
 	import game.SoundManager;
+	import game.Background;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Text;
@@ -22,7 +23,7 @@
 		/**
 		 * Level XML.
 		 */
-		[Embed(source = '../../level/Level3_thin.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
+		[Embed(source = '../../level/Level4_thin.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
 		
 		/**
 		 * Fonts.
@@ -92,10 +93,11 @@
 			debugText.font = "Arial";
 			
 			//add SoundManager object to world
-			//sound = new SoundManager();
+			sound = new SoundManager();
 
 			//add(new Particles);
-			//add(new Background);
+			
+			add(new Background);
 
 						
 			//add player to world
@@ -275,7 +277,7 @@
 			updateDebugText();
 			
 			//update SoundManager - required so the tweens actually get updated
-			//sound.update();
+			sound.update();
 			
 			// if son is alive follow father
 			if (robotChildIsAlive) 

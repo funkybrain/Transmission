@@ -6,17 +6,18 @@
 		<defaultHeight>480</defaultHeight>
 		<minWidth>30</minWidth>
 		<minHeight>30</minHeight>
-		<maxWidth>2000</maxWidth>
+		<maxWidth>3000</maxWidth>
 		<maxHeight>480</maxHeight>
 		<workingDirectory>gfx</workingDirectory>
 	</settings>
 	
 	<objects>
 		<object name="player" image="player.png" width="30" height="30" limit="1"/>
+		<object name="anim_pos" image="slot_anim.png" width="10" height="10" />
 	</objects> 
 	
 	<tilesets>
-		<tileset name="Paths" image="spritesheetBVR.png" tileWidth="30" tileHeight="30"/>
+		<tileset name="Paths" image="spriteSheetPath.png" tileWidth="30" tileHeight="30"/>
 	</tilesets> 
 	
 	<layers>
@@ -28,6 +29,7 @@
 		<tiles name="path_green" gridSize="30" drawGridSize="30" />
 		<tiles name="path_blue" gridSize="30" drawGridSize="30" />
 		<objects name="objects" gridSize="30" drawGridSize="30" />
+		<objects name="animations" gridSize="10" drawGridSize="30" />
 		
 	</layers>
 </project>

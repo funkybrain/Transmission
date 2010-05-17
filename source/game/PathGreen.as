@@ -14,7 +14,7 @@
 		/**
 		 * Embed the tileset graphic.
 		 */
-		[Embed(source = '../../assets/spritesheetBVR.png')] private static const TILES:Class;
+		[Embed(source = '../../assets/spriteSheetPath.png')] private static const TILES:Class;
 		
 		/**
 		 * Floors information.
