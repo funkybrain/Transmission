@@ -13,8 +13,10 @@
 	import game.Robot;
 	import game.SoundManager;
 	import game.Background;
+	import game.Animation;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
+	import net.flashpunk.graphics.Anim;
 	import net.flashpunk.graphics.Text;
 	import net.flashpunk.tweens.misc.Alarm;
 	
@@ -65,7 +67,9 @@
 		public var player:Player;
 		public var child:Robot;
 		public var robotChildIsAlive:Boolean = false;
-
+		
+		// List<Animation> to store background animations
+		public var animationList:Vector.<Animation> = new Vector.<Animation>();
 		
 		/**
 		 * Constructor.
@@ -101,11 +105,25 @@
 
 						
 			//add player to world
-
 			for each (var p:XML in level.objects[0].player)
 			{
 				player = new Player(p.@x, p.@y);
 				add(player);
+			}
+			
+			//add animations to world
+			for each (var q:XML in level.animations.anim_man)
+			{
+				// add new animation to Vector and Level
+				var index_one:int = animationList.push(new Animation(q.@x, q.@y, "man"));
+				add(animationList[index_one-1]);
+			}
+
+			for each (var r:XML in level.animations.anim_rouage)
+			{
+				// add new animation to Vector and Level
+				var index_two:int = animationList.push(new Animation(r.@x, r.@y, "rouage"));
+				add(animationList[index_two-1]);
 			}
 
 			
@@ -295,6 +313,8 @@
 			
 			//trace(player.state);
 			
+			//set backgound animation framerates based on player speed
+			setAnimationSpeed();
 		}
 		
 		override public function render():void 
@@ -305,7 +325,21 @@
 			debug.drawHitBoxOrigin(player);
 		}
 		
-		
+		/**
+		 * adjust the framerates of the background animatins based on player speed
+		 */
+		public function setAnimationSpeed():void
+		{
+			// first map player velocity to framerate
+			var rate:Number = FP.scale(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 2, 0, 1.5);	
+			//trace(player.velocity.x);
+			
+			//TODO smooth with time.elpased and/or tween
+			for each (var value:Animation in animationList)
+			{
+				value.spriteName.rate = rate;
+			}
+		}
 		
 		/**
 		 * update all the debug overlay info.

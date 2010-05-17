@@ -241,7 +241,7 @@
 				moveIndex = moveHistory.push(previousPos);
 				
 				//pop oldest move history from List to keep only the last 10 moves
-				if (moveIndex==50) 
+				if (moveIndex==60) 
 				{
 					moveHistory.shift();
 				}

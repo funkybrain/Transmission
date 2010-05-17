@@ -2,7 +2,7 @@
 	<name>Transmission LD Test</name>
 	<settings>
 		<bgColor>#202020</bgColor>
-		<defaultWidth>1000</defaultWidth>
+		<defaultWidth>3000</defaultWidth>
 		<defaultHeight>480</defaultHeight>
 		<minWidth>30</minWidth>
 		<minHeight>30</minHeight>
@@ -13,7 +13,10 @@
 	
 	<objects>
 		<object name="player" image="player.png" width="30" height="30" limit="1"/>
-		<object name="anim_pos" image="slot_anim.png" width="10" height="10" />
+		<object name="anim_man" image="slot_man.png" width="10" height="10" />
+		<object name="anim_rouage" image="slot_rouage.png" width="10" height="10" />
+		<object name="image_fond" image="backgroundSprite.png" width="3000" height="480" limit="1" />
+	
 	</objects> 
 	
 	<tilesets>
@@ -22,6 +25,7 @@
 	
 	<layers>
 	<!-- colors #AARRGGBB-->
+		<objects name="background" gridSize="90" drawGridSize="90" />
 		<grid name="mask_red" color="#FFFF0000" gridSize="10" drawGridSize="30" exportAsObjects="true" />
 		<grid name="mask_green" color="#FF00FF00" gridSize="10" drawGridSize="30" exportAsObjects="true" />
 		<grid name="mask_blue" color="#FF0000FF" gridSize="10" drawGridSize="30" exportAsObjects="true" />
