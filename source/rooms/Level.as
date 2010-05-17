@@ -1,7 +1,5 @@
 ﻿package rooms
 {
-
-	//import game.Background;
 	//import game.Particles;
 	
 	import game.Debug;
@@ -53,7 +51,6 @@
 		 */		
 
 		public var debug:Debug;
-		public var sound:SoundManager;
 		public var debugText:Text;
 		public var debugHUD:Entity;
 
@@ -99,8 +96,7 @@
 			debugText = new Text("hello", 10, 10, 400, 50);
 			debugText.font = "Arial";
 			
-			//add SoundManager object to world
-			sound = new SoundManager();
+
 
 			//add(new Particles);
 			
@@ -314,7 +310,7 @@
 			updateDebugText();
 			
 			//update SoundManager - required so the tweens actually get updated
-			sound.update();
+			player.sound.update();
 			
 			// if son is alive follow father
 			if (robotChildIsAlive) 

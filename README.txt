@@ -9,6 +9,7 @@ Next: release 1.3
 > fade out du petit-fils implemente (10s avant la fin)
 > Ogmo: ajout des icones plus parlantes pour placer les animations
 > Ogmo: renomme la couche "object" en "player" (placement du joueur au depart du niveau)
+> started working on path music xfade...
 
 To do list:
 ----------

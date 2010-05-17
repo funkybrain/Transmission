@@ -62,18 +62,19 @@
 		public var S_MAX:Number; // s-cruve max abcisse
 					
 		/**
-		 * Movement variables.
+		 * Movement properties
 		 */
-		public var previousPos:Point; // store previous player position
-		public var pathIndex:uint; // stores an index to target the required path when calling an array
-		public var distance:Number = 0; // stores frame by frame distance
-		public var vbArray:Array;
+		public var previousPos:Point; // previous player position
+		public var pathIndex:uint; // index to target the required path when calling an array
+		public var distance:Number = 0; // frame by frame distance
+		public var vbArray:Array; // initial speed array
 		
 		public var moveHistory:Vector.<Point> = new Vector.<Point>(); // List<Point> to store player move history
-		private var moveIndex:uint;
+		private var _moveIndex:uint; // current index of List<Point>
+		public var pathHistory:Array = new Array(); // store the path index along with move history
+		private var _pathIndex:uint; // current index of pathHistory
 		
-				
-		public var animatedTile:PathTile;
+		public var animatedTile:PathTile; // used to place animated tiles
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
 		public var row:int, col:int; 
 		
@@ -95,18 +96,10 @@
 		private var offsetOriginY:int;
 		
 		/**
-		 * Movement constants.
+		 * Sound properties
 		 */
-		//public const ACCELX:Number = 1000;
-		//public const ACCELY:Number = 1000;
-		//public const DRAG:Number = 800;
-				
-		/**
-		 * Movement properties.
-		 */
-		
-		//public var spdX:Number = 0;
-		//public var spdY:Number = 0;
+		public var sound:SoundManager;
+						
 		
 		/**
 		 * Particle emitter.
@@ -136,7 +129,6 @@
 			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
 			
 			//hitbox based on image size
-			
 			// set hitbox origin at c. 2/5th right and 2/3rd down from entity origin
 			offsetOriginX = -1.5*(father.width/5);
 			offsetOriginY = -1.7*(father.height/3);
@@ -152,10 +144,7 @@
 			avatar.x = -avatar.originX;
 			avatar.y = -avatar.originY;
 			avatar.smooth = true;
-			
-			addTween(SCALE);
-			addTween(ROTATE);
-			SCALE.x = SCALE.y = 1;
+
 			*/
 			
 			
@@ -188,7 +177,10 @@
 				pathBaseSpeed = vbArray; //NOTE may have to concat() to make a true copy
 			} 
 			
-			trace("player created");
+			// kick-off soundtrack as player comes into existence
+			sound = new SoundManager();
+			var pathNum:uint = getCurrentPath();
+			sound.pathSound[pathNum].play();
 		}
 		
 /*		override public function added():void 
@@ -197,24 +189,18 @@
 		}*/
 		
 		/**
-		 * Update the player.
+		 * PLAYER UPDATE LOOP
 		 */
 		override public function update():void 
 		{
+			// find out what path the player is on
 			pathIndex = getCurrentPath();
 			
 			// update speed on paths based on new pathDistance
 			scurve();
 			
-			
-			
 			//check if a new animated tile needs to be placed where player has walked
-			var shiftX:Number, shiftY:Number; // need to locate the center of the entity
-			
-			//shiftX = x + father.width / 2;
-			//shiftY = y + father.height / 2;
-			//addNewTile(shiftX, shiftY, 30); //TODO 30 is the grid step (move to property please!)
-			
+			var shiftX:Number, shiftY:Number; // need to locate the center of the entity		
 			shiftX = x - offsetOriginX;
 			shiftY = y - offsetOriginY;
 			addNewTile(shiftX, shiftY, 30);
@@ -229,7 +215,7 @@
 			// calculate distance traveled on all paths
 			getTotalDistanceTravelled();
 			
-			// calculate ratios
+			// calculate path distance ratios
 			getPathRatios();
 			
 			// play sprite animation
@@ -238,23 +224,51 @@
 			//store current position as next previous position
 			previousPos = position.clone();
 			
-			//store current player position in move hisotory 
+			//store current player position in move history 
 			if (velocity.x!=0 || velocity.y!=0) 
 			{
-				moveIndex = moveHistory.push(previousPos);
+				_moveIndex = moveHistory.push(previousPos);
+				_pathIndex = pathHistory.push(pathIndex);
 				
-				//pop oldest move history from List to keep only the last 10 moves
-				if (moveIndex==60) 
+				//pop oldest move history from List to keep only the last 60 moves
+				if (_moveIndex==60) 
 				{
 					moveHistory.shift();
+					pathHistory.shift();
 				}
 			//BUG: if player never moves, will get a rangeError. populate the List to player start position?
 			}
 			
-			
-			//trace (moveHistory.length);
+			// play music based on current path and latest path change
+			playPathMusic();
+
 		}
 		
+		
+		/**
+		 * Play music track based on path
+		 */
+		public function playPathMusic():void
+		{
+			//BUG taht's not gonna work. need to only store index when path changes
+			// and THEN compare to the index 60 positions later?
+			// and if they ARE the same, then xfade!
+			// need a previousPathIndex and storedPathIndex variable to store it?
+			// how do I store the next 60 positions from that point onwards?
+			// some kind of push counter?
+			
+			// compare the path index separated by 60 player positions
+			// if they are different, x-fade between the two corresponding path sounds
+			if (_pathIndex >=60 && pathHistory[0]!=pathHistory[59]) 
+			{
+				sound.pathFader[pathHistory[0]].crossFade(sound.pathSound[pathHistory[59]], false, 5, 1, Ease.backIn);
+				sound.pathFader[pathHistory[0]].start();
+			}
+		}
+		 
+		/**
+		 * animated tile placement method
+		 */
 		public function addNewTile(_x:int, _y:int, _step:int ):void
 		{
 			// convert x,y into row, col
@@ -282,6 +296,9 @@
 			}
 		}
 		
+		/**
+		 * Calculate total distance travelled, all paths included
+		 */
 		private function getTotalDistanceTravelled():void
 		{
 			var total:Number = 0;
@@ -294,6 +311,9 @@
 			totaldistance = total;
 		}
 		
+		/**
+		 * Calculate path distance ratios
+		 */
 		private function getPathRatios():void
 		{
 			for (var i:int = 0; i < 3; i++) 
@@ -305,7 +325,7 @@
 		}
 		
 		/**
-		 * Accelerates the player based on input.
+		 * Moves the player based on input.
 		 */
 		private function acceleration(pathType:uint):void
 		{
@@ -353,7 +373,6 @@
 				
 			}
 			
-			
 			if (Input.check("D"))
 			{
 				if ((e = collideTypes(pathCollideType, x, y + pathMaxVel[pathType])))
@@ -366,8 +385,6 @@
 				//trace("down");
 
 			}
-			//trace("position: x=" + position.x + " y=" + position.y);
-			//trace("velocity: x=" + velocity.x + " y=" + velocity.y);
 			
 			// add position to velocity vector
 			position.x = (position.add(velocity)).x;
@@ -401,7 +418,7 @@
 		}
 		
 		/**
-		 * Handles animation.
+		 * Handles animation based on current player state.
 		 */
 		private function animation():void
 		{
@@ -427,71 +444,10 @@
 			if (velocity.x != 0 || velocity.y != 0)
 			{
 				who.play("walk");
-			} else who.setFrame(0);
+			} else {
+				who.setFrame(0);
+			}
 			
-			// control facing direction
-			//if (spdX != 0) avatar.flipped = spdX < 0;
-			
-			// avatar scale tweening
-			//avatar.scaleX = SCALE.x;
-			//avatar.scaleY = SCALE.y;
-			
-			// avatar rotation
-			/*if (onSolid)
-			{
-				avatar.angle = 0;
-				ROTATE.active = false;
-				ROTATE.value = 0;
-			}
-			else avatar.angle = (spdX / MAXX) * 10 + ROTATE.value;*/
-		}
-		
-		/**
-		 * Horizontal collision handler.
-		 */
-		/*override protected function collideX(e:Entity):void 
-		{
-			if (spdX > 100 || spdX < -100) SCALE.setMotion(1, 1.2, 1, 1, .2, Ease.quadIn);
-			spdX = 0;
-		}*/
-		
-		/**
-		 * Vertical collision handler.
-		 */
-		/*override protected function collideY(e:Entity):void 
-		{
-			if (spdY > 0)
-			{
-				SCALE.setMotion(1.2, 1, 1, 1, .2, Ease.quadIn);
-				spdY = 0;
-				spdX /= 2;
-			}
-			else
-			{
-				SCALE.setMotion(1.2, 1, 1, 1, .1, Ease.quadOut);
-				spdY /= 2;
-			}
-		}*/
-		
-				/**
-		 * Makes the player jump on input.
-		 */
-		/*private function jumping():void
-		{
-			if (onSolid && Input.pressed("JUMP"))
-			{
-				spdY = JUMP;
-				onSolid = false;
-				if (spdX < 0 && avatar.flipped) spdX *= LEAP;
-				else if (spdX > 0 && !avatar.flipped) spdX *= LEAP;
-				
-				SCALE.setMotion(1, 1.2, 1, 1, .2, Ease.quadIn);
-				ROTATE.tween(0, 360 * -FP.sign(spdX), FP.scale(Math.abs(spdX), 0, MAXX, .7, .5), Ease.quadInOut);
-				
-				var i:int = 10;
-				while (i --) emitter.emit("dust", x - 10 + FP.rand(20) , y + 16);
-			}
-		}*/
-
+		}	
 	}
 }
