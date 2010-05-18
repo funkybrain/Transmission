@@ -105,6 +105,7 @@
 		private var _pathSwitchTable:Array = new Array(); // store path index when changed
 		private var _pathSwitched:Boolean = false;
 		private var _pathSwitchClonedPosition:Boolean = false;
+		private var _whichFader:SfxFader;
 						
 		
 		/**
@@ -225,12 +226,13 @@
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
-			trace("pathSwitchTable: " + _pathSwitchTable);
+
 			
 			//store player location if path has changed
 			if (_pathSwitchTable[0]!=_pathSwitchTable[1] && _pathSwitchClonedPosition==false) 
 			{
 				trace("player has changed path!");
+				trace("pathSwitchTable: " + _pathSwitchTable);
 				_pathSwitchClonedPosition = true;
 				 // stop storing _pathSwitchTable[0] until 30 pixels have passed
 				_pathSwitched = true;
@@ -304,17 +306,16 @@
 			{
 				var idFader:int = _pathSwitchTable[0];
 				var idSound:int = _pathSwitchTable[1];
-				var whichFader:SfxFader = sound.pathFader[idFader];
+				_whichFader = sound.pathFader[idFader];
 				var toSfx:Sfx = sound.pathSound[idSound];
 				
-				whichFader.crossFade(toSfx, false, 5, 1, Ease.backIn);
-				whichFader.start();
-				trace("start xfade");
-				/*				
-				* sound.pathFader[sound.pathFader[_pathSwitchTable[0]]].crossFade(sound.pathSound[_pathSwitchTable[1]], false, 5, 1, Ease.backIn);
-				sound.pathFader[sound.pathFader[_pathSwitchTable[0]]].start();
-				*/
+				_whichFader.crossFade(toSfx, false, 5, 1, Ease.backIn);
+				_whichFader.start();
+				
+				trace("start xfade" + " from: " + idFader + " to: " + idSound);
+
 			}
+				trace("fader pct: " + _whichFader.percent);
 		}
 		 
 		/**
