@@ -6,10 +6,11 @@ Bugs:
 Next: release 1.3
 -----------------
 > ajout du timer GrandChildToEnd pour gerer la fin du jeu (dans gamedata.xml)
-> fade out du petit-fils implemente (10s avant la fin)
+> fade out (la mort) du petit-fils implemente (10s avant la fin)
 > Ogmo: ajout des icones plus parlantes pour placer les animations
 > Ogmo: renomme la couche "object" en "player" (placement du joueur au depart du niveau)
-> started working on path music xfade...
+> xfade des musiques entre les 3 chemins implementes (pas facile de confirmer que ça marche vu la similarité des trois sons)
+> nouvelles animations de chemins par son altesse Mouloud
 
 To do list:
 ----------

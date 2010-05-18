@@ -9,6 +9,7 @@
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.tweens.misc.*;
 	import net.flashpunk.tweens.motion.LinearMotion;
+	import net.flashpunk.tweens.sound.SfxFader;
 	import net.flashpunk.utils.Ease;
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
@@ -98,7 +99,12 @@
 		/**
 		 * Sound properties
 		 */
-		public var sound:SoundManager;
+		public var sound:SoundManager; // obj ref to handle all sounds
+		private var _pathSwitchLocation:Point = new Point(); // location where path changed
+		private var _pathPreviousIndex:uint; // path index of previous frame
+		private var _pathSwitchTable:Array = new Array(); // store path index when changed
+		private var _pathSwitched:Boolean = false;
+		private var _pathSwitchClonedPosition:Boolean = false;
 						
 		
 		/**
@@ -144,16 +150,13 @@
 			avatar.x = -avatar.originX;
 			avatar.y = -avatar.originY;
 			avatar.smooth = true;
-
 			*/
-			
 			
 			// define payer movement keys
 			Input.define("R", Key.RIGHT);
 			Input.define("L", Key.LEFT);
 			Input.define("U", Key.UP);
 			Input.define("D", Key.DOWN);
-			
 			
 			// Initialize
 			// distance (0) on each path type
@@ -179,14 +182,20 @@
 			
 			// kick-off soundtrack as player comes into existence
 			sound = new SoundManager();
-			var pathNum:uint = getCurrentPath();
-			sound.pathSound[pathNum].play();
+			
 		}
 		
-/*		override public function added():void 
+		/**
+		 * play music at game start
+		 */
+		override public function added():void
 		{
-			emitter = (FP.world.classFirst(Particles) as Particles).emitter;
-		}*/
+			_pathPreviousIndex = getCurrentPath(); // find path player is on to play the correct file
+			sound.pathSound[_pathPreviousIndex].play();
+			// intialize switch variables
+			_pathSwitchTable[0] = _pathSwitchTable[1] = _pathPreviousIndex;
+			_pathSwitchLocation = position.clone();
+		}
 		
 		/**
 		 * PLAYER UPDATE LOOP
@@ -195,6 +204,12 @@
 		{
 			// find out what path the player is on
 			pathIndex = getCurrentPath();
+			
+			//store current path index
+			if (_pathSwitched==false) 
+			{
+				_pathSwitchTable[0] = pathIndex;
+			}
 			
 			// update speed on paths based on new pathDistance
 			scurve();
@@ -207,6 +222,39 @@
 			
 			// move player based on maximum speeds returned by the s-curve
 			acceleration(pathIndex);
+			
+			//store new path index
+			_pathSwitchTable[1] = getCurrentPath();
+			trace("pathSwitchTable: " + _pathSwitchTable);
+			
+			//store player location if path has changed
+			if (_pathSwitchTable[0]!=_pathSwitchTable[1] && _pathSwitchClonedPosition==false) 
+			{
+				trace("player has changed path!");
+				_pathSwitchClonedPosition = true;
+				 // stop storing _pathSwitchTable[0] until 30 pixels have passed
+				_pathSwitched = true;
+				 // store position where path changed
+				_pathSwitchLocation = position.clone();
+				
+			}
+			
+			
+			// if distance since last path switch is grater than 30 pixel, test for real switch
+			if (Point.distance(position,_pathSwitchLocation) > 30 && _pathSwitched == true) 
+			{
+				trace("distance > 30px");
+				if (_pathSwitchTable[0]!=_pathSwitchTable[1]) // paths are still different after 30px
+				{
+					trace("permanent path change");
+					// play music based on current path and latest path change
+					playPathMusic();
+				}
+				_pathSwitched = false;
+				_pathSwitchClonedPosition = false;
+				trace("dist: " + Point.distance(position, _pathSwitchLocation));				
+			}
+
 			
 			// calculate distance traveled since last frame and add to that path total
 			distance = Point.distance(position, previousPos);
@@ -239,8 +287,7 @@
 			//BUG: if player never moves, will get a rangeError. populate the List to player start position?
 			}
 			
-			// play music based on current path and latest path change
-			playPathMusic();
+
 
 		}
 		
@@ -250,19 +297,23 @@
 		 */
 		public function playPathMusic():void
 		{
-			//BUG taht's not gonna work. need to only store index when path changes
-			// and THEN compare to the index 60 positions later?
-			// and if they ARE the same, then xfade!
-			// need a previousPathIndex and storedPathIndex variable to store it?
-			// how do I store the next 60 positions from that point onwards?
-			// some kind of push counter?
-			
-			// compare the path index separated by 60 player positions
-			// if they are different, x-fade between the two corresponding path sounds
-			if (_pathIndex >=60 && pathHistory[0]!=pathHistory[59]) 
+			//compare the two stores path indexes (seperated by 30 pixels distance)
+			//if they are different, then player has really changed path
+			//as opposed to crossed an intersection
+			if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
 			{
-				sound.pathFader[pathHistory[0]].crossFade(sound.pathSound[pathHistory[59]], false, 5, 1, Ease.backIn);
-				sound.pathFader[pathHistory[0]].start();
+				var idFader:int = _pathSwitchTable[0];
+				var idSound:int = _pathSwitchTable[1];
+				var whichFader:SfxFader = sound.pathFader[idFader];
+				var toSfx:Sfx = sound.pathSound[idSound];
+				
+				whichFader.crossFade(toSfx, false, 5, 1, Ease.backIn);
+				whichFader.start();
+				trace("start xfade");
+				/*				
+				* sound.pathFader[sound.pathFader[_pathSwitchTable[0]]].crossFade(sound.pathSound[_pathSwitchTable[1]], false, 5, 1, Ease.backIn);
+				sound.pathFader[sound.pathFader[_pathSwitchTable[0]]].start();
+				*/
 			}
 		}
 		 

@@ -358,7 +358,7 @@
 			if (player.timeGrandChildToEnd.remaining==0) 
 			{
 				//death is nigh
-				FP.screen.scale = 0.9;
+				//FP.screen.scale = 0.9;
 			}
 		}
 		

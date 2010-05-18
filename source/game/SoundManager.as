@@ -31,9 +31,9 @@ package game
 			pathSound[1] = new Sfx(MUSIC_GREEN, null);
 			pathSound[2] = new Sfx(MUSIC_BLUE, null);
 			
-			pathFader[0] = new SfxFader(pathSound[0], null, 0);
-			pathFader[1] = new SfxFader(pathSound[1], null, 0);
-			pathFader[2] = new SfxFader(pathSound[2], null, 0);
+			pathFader[0] = new SfxFader(pathSound[0], onFaderComplete, 0);
+			pathFader[1] = new SfxFader(pathSound[1], onFaderComplete, 0);
+			pathFader[2] = new SfxFader(pathSound[2], onFaderComplete, 0);
 
 			processRules();
 		}
@@ -46,6 +46,11 @@ package game
 				this.addTween(fader);
 			}
 			//fader.start();		
+		}
+		
+		private function onFaderComplete():void
+		{
+			//placeholder
 		}
 
 		
