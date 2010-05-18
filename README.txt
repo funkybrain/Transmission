@@ -49,5 +49,3 @@ To do list:
 - masque vertical lié au ratio de distance le plus petit (bcp de changements = ouverture)
 
 > Vérifier possibilité de dézoomer l'écran
-
-> X-fade les musiques des trois chemins
