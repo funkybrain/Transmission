@@ -423,7 +423,10 @@
 			debugHUD.y = FP.camera.y + 10;
 
 			//trace(debugText.text);
-			debugHUD.graphic = debugText;
+			if (Debug.flag==true) 
+			{
+				debugHUD.graphic = debugText;
+			}
 		}
 		
 		/**
