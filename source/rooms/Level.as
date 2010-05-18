@@ -358,6 +358,12 @@
 				startDeathSequence(10); // 10 seconds to death
 				player.deathImminent = true;
 			}
+			
+			if (player.timeGrandChildToEnd.remaining==0) 
+			{
+				//death is nigh
+				FP.screen.scale = 0.9;
+			}
 		}
 		
 		public function startDeathSequence(time:Number):void
@@ -366,6 +372,7 @@
 			player.fadeOut.tween(player.grandChild, "alpha", 0, time, Ease.backIn);
 			player.addTween(player.fadeOut);
 			player.fadeOut.start();
+			
 			// go to end credits
 			// removeAll();
 		}
