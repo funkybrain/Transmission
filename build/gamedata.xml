@@ -16,10 +16,10 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>20</timeToChild>
-		<timeFatherToChild>10</timeFatherToChild>
-		<timeChildToGrandChild>30</timeChildToGrandChild>
-		<timeGrandChildToEnd>60</timeGrandChildToEnd>
+		<timeToChild>60</timeToChild>
+		<timeFatherToChild>30</timeFatherToChild>
+		<timeChildToGrandChild>120</timeChildToGrandChild>
+		<timeGrandChildToEnd>120</timeGrandChildToEnd>
 	</timers>
 	
 	

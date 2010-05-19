@@ -49,8 +49,6 @@ To do list:
 
 > Vérifier possibilité de dézoomer l'écran
 
-> X-fade les musiques des trois chemins
-
 Next: release 1.3
 -----------------
 > ajout du timer GrandChildToEnd pour gerer la fin du jeu (dans gamedata.xml)
@@ -59,3 +57,4 @@ Next: release 1.3
 > Ogmo: renomme la couche "object" en "player" (placement du joueur au depart du niveau)
 > xfade des musiques entre les 3 chemins implementes (pas facile de confirmer que ça marche vu la similarité des trois sons)
 > nouvelles animations de chemins par son altesse Mouloud
+
