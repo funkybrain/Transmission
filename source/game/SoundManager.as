@@ -9,13 +9,13 @@ package game
 		/**
 		 * Embedded sound library
 		 */
-		[Embed(source = '../../sounds/TransmissionHistoireChemin1.mp3', mimeType = 'audio/mpeg')]
+		[Embed(source = '../../sounds/Chemin1.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC_RED:Class;
 
-		[Embed(source = '../../sounds/TransmissionHistoireChemin2.mp3', mimeType = 'audio/mpeg')]
+		[Embed(source = '../../sounds/Chemin2.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC_GREEN:Class;
 
-		[Embed(source = '../../sounds/TransmissionHistoireChemin3.mp3', mimeType = 'audio/mpeg')]
+		[Embed(source = '../../sounds/Chemin3.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC_BLUE:Class;
 	
 

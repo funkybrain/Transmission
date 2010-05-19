@@ -13,6 +13,7 @@
 	import game.SoundManager;
 	import game.Background;
 	import game.Animation;
+	import game.Shutter;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Anim;
@@ -72,6 +73,11 @@
 		public var animationList:Vector.<Animation> = new Vector.<Animation>();
 		
 		/**
+		 * Special effects
+		 */
+		public var rightShutter:Shutter = new Shutter();
+		
+		/**
 		 * Constructor.
 		 */
 		public function Level()
@@ -95,11 +101,8 @@
 			
 			debugText = new Text("hello", 10, 10, 400, 50);
 			debugText.font = "Arial";
-			
 
-
-			//add(new Particles);
-			
+			// add background image
 			add(new Background);
 
 						
@@ -141,6 +144,9 @@
 			
 			// refresh screen color
 			FP.screen.color = 0x808080;
+			
+			//add shutters to main window
+			add(rightShutter);
 
 		}
 		
@@ -303,6 +309,9 @@
 			// update entities
 			super.update();
 			
+			// update shuuter positions
+			updateShutters();
+			
 			//test to see if we're near game end
 			checkGrandChildNearDeath();
 			
@@ -341,6 +350,17 @@
 			debug.drawHitBox(player);
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
+		}
+		
+		/**
+		 * Update shutter positions
+		 */
+		public function updateShutters():void
+		{
+			var xpos:int = FP.camera.x + FP.screen.width - rightShutter.hBlind.width;
+			var ypos:int = FP.camera.y;
+			rightShutter.x = xpos;
+			rightShutter.y = ypos;
 		}
 		
 		/**

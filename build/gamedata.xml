@@ -9,7 +9,7 @@
 	<!-- variables utilisées pour le calcul de S-Curve-->
 	<scurve>
 		<COEFF_D>2</COEFF_D>
-		<D_MAX>1000</D_MAX>
+		<D_MAX>1200</D_MAX>
 		<S_MIN>-3</S_MIN>
 		<S_MAX>-1</S_MAX>
 	</scurve>
@@ -18,8 +18,8 @@
 	<timers>
 		<timeToChild>60</timeToChild>
 		<timeFatherToChild>30</timeFatherToChild>
-		<timeChildToGrandChild>120</timeChildToGrandChild>
-		<timeGrandChildToEnd>120</timeGrandChildToEnd>
+		<timeChildToGrandChild>60</timeChildToGrandChild>
+		<timeGrandChildToEnd>60</timeGrandChildToEnd>
 	</timers>
 	
 	

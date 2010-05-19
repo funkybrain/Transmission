@@ -105,12 +105,8 @@
 		private var _pathSwitchTable:Array = new Array(); // store path index when changed
 		private var _pathSwitched:Boolean = false;
 		private var _pathSwitchClonedPosition:Boolean = false;
-<<<<<<< HEAD
-=======
 		private var fromSound:SfxFader;
 		private var toSound:SfxFader;
-
->>>>>>> xfadebug
 						
 		
 		/**
@@ -189,6 +185,8 @@
 			// kick-off soundtrack as player comes into existence
 			sound = new SoundManager();
 			
+			// to avoid crash in case child appears before player has moved
+			moveHistory.push(new Point());
 		}
 		
 		/**
@@ -239,7 +237,7 @@
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
-			trace("pathSwitchTable: " + _pathSwitchTable);
+			
 			
 			//store player location if path has changed
 			if (_pathSwitchTable[0]!=_pathSwitchTable[1] && _pathSwitchClonedPosition==false) 
@@ -250,6 +248,7 @@
 				_pathSwitched = true;
 				 // store position where path changed
 				_pathSwitchLocation = position.clone();
+				trace("pathSwitchTable: " + _pathSwitchTable);
 				
 			}
 			
