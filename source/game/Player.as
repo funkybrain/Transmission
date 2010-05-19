@@ -105,6 +105,12 @@
 		private var _pathSwitchTable:Array = new Array(); // store path index when changed
 		private var _pathSwitched:Boolean = false;
 		private var _pathSwitchClonedPosition:Boolean = false;
+<<<<<<< HEAD
+=======
+		private var fromSound:SfxFader;
+		private var toSound:SfxFader;
+
+>>>>>>> xfadebug
 						
 		
 		/**
@@ -191,7 +197,15 @@
 		override public function added():void
 		{
 			_pathPreviousIndex = getCurrentPath(); // find path player is on to play the correct file
-			sound.pathSound[_pathPreviousIndex].play();
+			
+			// start all sounds but only turn up volume on current path
+			for each (var music:Sfx in sound.pathSound) 
+			{
+					music.play()
+					music.volume = 0;
+			}
+			sound.pathSound[_pathPreviousIndex].volume = 1;
+			
 			// intialize switch variables
 			_pathSwitchTable[0] = _pathSwitchTable[1] = _pathPreviousIndex;
 			_pathSwitchLocation = position.clone();
@@ -302,19 +316,23 @@
 			//as opposed to crossed an intersection
 			if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
 			{
-				var idFader:int = _pathSwitchTable[0];
-				var idSound:int = _pathSwitchTable[1];
-				var whichFader:SfxFader = sound.pathFader[idFader];
-				var toSfx:Sfx = sound.pathSound[idSound];
+
+				var idFrom:int = _pathSwitchTable[0];
+				var idTo:int = _pathSwitchTable[1];
+				fromSound = sound.pathFader[idFrom];
+				toSound = sound.pathFader[idTo];
 				
-				whichFader.crossFade(toSfx, false, 5, 1, Ease.backIn);
-				whichFader.start();
+				fromSound.fadeTo(0, 4, Ease.expoOut);
+				toSound.fadeTo(1, 4, Ease.sineIn);
+				fromSound.start();
+				toSound.start();
+				
 				trace("start xfade");
-				/*				
-				* sound.pathFader[sound.pathFader[_pathSwitchTable[0]]].crossFade(sound.pathSound[_pathSwitchTable[1]], false, 5, 1, Ease.backIn);
-				sound.pathFader[sound.pathFader[_pathSwitchTable[0]]].start();
-				*/
+				trace("playing sound: " + idFrom);
+				trace("moving to sound: " + idTo);
+				
 			}
+
 		}
 		 
 		/**

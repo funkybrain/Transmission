@@ -25,7 +25,7 @@
 		/**
 		 * Level XML.
 		 */
-		[Embed(source = '../../level/Level4_thin.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
+		[Embed(source = '../../level/Level_Romain.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
 		
 		/**
 		 * Fonts.
@@ -104,7 +104,7 @@
 
 						
 			//add player to world
-			for each (var p:XML in level.objects[0].player)
+			for each (var p:XML in level.player[0].player)
 			{
 				player = new Player(p.@x, p.@y);
 				add(player);
@@ -423,7 +423,10 @@
 			debugHUD.y = FP.camera.y + 10;
 
 			//trace(debugText.text);
-			debugHUD.graphic = debugText;
+			if (Debug.flag==true) 
+			{
+				debugHUD.graphic = debugText;
+			}
 		}
 		
 		/**
