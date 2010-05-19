@@ -1,15 +1,16 @@
-﻿Bugs:
+Bugs:
 ----
 > bug with path tileset (couple of random tiles showing at beginning of levels)
 >> FIXED: level was wrapping due to width not being an exact multiplier of grid
 
-> does SFX.Crossfade automatically start sounds or do i need to start them manually?
-
-
-Next: release 1.4
+Next: release 1.3
 -----------------
-> 
-
+> ajout du timer GrandChildToEnd pour gerer la fin du jeu (dans gamedata.xml)
+> fade out (la mort) du petit-fils implemente (10s avant la fin)
+> Ogmo: ajout des icones plus parlantes pour placer les animations
+> Ogmo: renomme la couche "object" en "player" (placement du joueur au depart du niveau)
+> xfade des musiques entre les 3 chemins implementes (pas facile de confirmer que ça marche vu la similarité des trois sons)
+> nouvelles animations de chemins par son altesse Mouloud
 
 To do list:
 ----------
@@ -50,12 +51,3 @@ To do list:
 > Vérifier possibilité de dézoomer l'écran
 
 > X-fade les musiques des trois chemins
-
-Next: release 1.3
------------------
-> ajout du timer GrandChildToEnd pour gerer la fin du jeu (dans gamedata.xml)
-> fade out (la mort) du petit-fils implemente (10s avant la fin)
-> Ogmo: ajout des icones plus parlantes pour placer les animations
-> Ogmo: renomme la couche "object" en "player" (placement du joueur au depart du niveau)
-> xfade des musiques entre les 3 chemins implementes (pas facile de confirmer que ça marche vu la similarité des trois sons)
-> nouvelles animations de chemins par son altesse Mouloud
