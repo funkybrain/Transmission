@@ -23,6 +23,7 @@ package game
 		public static var timer_ToChild:Number;
 		public static var timer_GrandChildToEnd:Number;
 		public static var timer_FatherToChild:Number;
+		public static var timer_FatherToDeath:Number;
 		public static var timer_ChildToGrandChild:Number;
 		public static var COEFF_D:Number;	
 		public static var D_MAX:Number;	
@@ -30,6 +31,7 @@ package game
 		public static var S_MAX:Number;				
 		public static var VB:Number;
 		public static var CT_VB:Number;
+		public static var DEBUG:Boolean;
 		
 		public function LoadXmlData() 
 		{
@@ -54,11 +56,15 @@ package game
 			
 			// timers
 			timer_ToChild = Number(gameData.timers.timeToChild.text());
-			//timer_ToGrandChild = Number(gameData.timers.timeToGrandChild.text());
+			timer_FatherToDeath = Number(gameData.timers.timeFatherToDeath.text());
 			timer_FatherToChild = Number(gameData.timers.timeFatherToChild.text());
 			timer_ChildToGrandChild = Number(gameData.timers.timeChildToGrandChild.text());
 			timer_GrandChildToEnd = Number(gameData.timers.timeGrandChildToEnd.text());
 			
+			// debug
+			DEBUG = gameData.debug.text() as Boolean;
+			
+
 			trace("done assigning data");
 			
 			FP.world = new Level;

@@ -44,6 +44,7 @@
 		 */
 		public var timeToChild:Alarm;
 		public var timeFatherToChild:Alarm;
+		public var timeFatherToDeath:Alarm;
 		public var timeToGrandChild:Alarm;
 		public var timeGrandChildToEnd:Alarm;
 		
@@ -69,6 +70,7 @@
 		public var pathIndex:uint; // index to target the required path when calling an array
 		public var distance:Number = 0; // frame by frame distance
 		public var vbArray:Array; // initial speed array
+		public var playerCeilingVelocity:Point = new Point(); // maximum speed player can move to
 		
 		public var moveHistory:Vector.<Point> = new Vector.<Point>(); // List<Point> to store player move history
 		private var _moveIndex:uint; // current index of List<Point>
@@ -230,7 +232,7 @@
 			var shiftX:Number, shiftY:Number; // need to locate the center of the entity		
 			shiftX = x - offsetOriginX;
 			shiftY = y - offsetOriginY;
-			addNewTile(shiftX, shiftY, 30);
+			addNewTile(shiftX, shiftY, Path.TILE_GRID);
 			
 			// move player based on maximum speeds returned by the s-curve
 			acceleration(pathIndex);
@@ -297,7 +299,7 @@
 					moveHistory.shift();
 					pathHistory.shift();
 				}
-			//BUG: if player never moves, will get a rangeError. populate the List to player start position?
+			
 			}
 			
 
@@ -358,7 +360,7 @@
 			if (tileExists==false) 
 			{
 				// add new animated tile to Vector and Level
-				var index:int = pathTileList.push(new PathTile(col, row, 30, pathIndex)); //TODO ditto: don't hardwire step
+				var index:int = pathTileList.push(new PathTile(col, row, _step, pathIndex));
 				//trace("path index: " + pathIndex);
 				FP.world.add(pathTileList[index-1]);
 			}
@@ -419,7 +421,8 @@
 			{
 				if ((e = collideTypes(pathCollideType, x - pathMaxVel[pathType], y)))
 				{
-					velocity.x = -pathMaxVel[pathType];
+					//velocity.x = -pathMaxVel[pathType];
+					velocity.x = -VB; // make going backward a pain in the ass!
 				} else 
 				{
 					velocity.x = 0;
@@ -462,8 +465,11 @@
 			x = position.x;
 			y = position.y;
 			
-			//trace("position: x=" + position.x + " y=" + position.y + "\n");
-			
+			//store the max velocity available to player at this time
+			if (velocity.length!=0) 
+			{
+				playerCeilingVelocity = velocity.clone();
+			}  
 		}
 		// end acceleration()
 		

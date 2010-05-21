@@ -9,43 +9,36 @@
 	/**
 	 * Path entity that contains the collision grid.
 	 */
-	public class PathRed extends Entity
+	public class PathRed extends Path
 	{
 		/**
 		 * Embed the tileset graphic.
 		 */
 		[Embed(source = '../../assets/spriteSheetPath.png')] private static const TILES:Class;
 		
-		/**
-		 * Floors information.
-		 */
-		public var tiles:Tilemap;
-		public var grid:Grid;
-		private var mylevel:XML;
-		private var debug:Draw;
 		
 		/**
 		 * Constructor. Load the floors from the level XML.
 		 */
 		public function PathRed(level:XML) 
 		{
+			
+			super(level, TILES);
 			// set entity type
 			type = "red";
-			layer = 20;
-			mylevel = level;
 			
 			// create and populate the tilemap from the level XML
-			graphic = tiles = new Tilemap(TILES, level.width, level.height, 30, 30);
+
 			for each (var tile:XML in level.path_red[0].tile)
 			{
-				tiles.setTile(tile.@x / 30, tile.@y / 30, tiles.getIndex(tile.@tx / 30, tile.@ty / 30));
+				tiles.setTile(tile.@x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
 			}
 			
 			// create and populate the collision grid mask from the level XML
-			mask = grid = new Grid(level.width, level.height, 10, 10);
+			
 			for each (var solid:XML in level.mask_red[0].rect)
 			{
-				grid.setRect(solid.@x / 10, solid.@y / 10, solid.@w / 10, solid.@h / 10);
+				grid.setRect(solid.@x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
 				
 			}
 		}
@@ -54,9 +47,9 @@
 		{
 			super.render();
 			
-			if (Debug.flag==true) 
+			if (_debug) 
 			{
-				for each (var solid:XML in mylevel.mask_red[0].rect)
+				for each (var solid:XML in _mylevel.mask_red[0].rect)
 				{
 					Draw.rect(solid.@x , solid.@y , solid.@w , solid.@h, 0xFF0000, 0.9);
 				}

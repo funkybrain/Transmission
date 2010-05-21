@@ -1,5 +1,8 @@
 <data>
-
+	
+	<!-- debug for overlay-->
+	<debug>false</debug>
+	
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
 		<VB>0.3</VB>
@@ -17,9 +20,11 @@
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
 		<timeToChild>60</timeToChild>
-		<timeFatherToChild>30</timeFatherToChild>
+		<timeFatherToChild>30</timeFatherToChild><!-- robot AI father takes over-->
+		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
+		<timeFatherToDeath>60</timeFatherToDeath><!-- robot AI father goes poof!-->
 		<timeChildToGrandChild>60</timeChildToGrandChild>
-		<timeGrandChildToEnd>60</timeGrandChildToEnd>
+		<timeGrandChildToEnd>160</timeGrandChildToEnd>
 	</timers>
 	
 	

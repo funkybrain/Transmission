@@ -19,6 +19,7 @@
 	import net.flashpunk.graphics.Anim;
 	import net.flashpunk.graphics.Text;
 	import net.flashpunk.tweens.misc.Alarm;
+	import net.flashpunk.tweens.misc.NumTween;
 	import net.flashpunk.utils.Ease;
 	
 	public class Level extends LevelLoader
@@ -32,7 +33,6 @@
 		 * Fonts.
 		 */
 		[Embed(source = '../../assets/fonts/arial.ttf', fontFamily = 'Arial')] private static const FNT_ARIAL:Class;
-		
 
 		 
 		/**
@@ -62,20 +62,37 @@
 		 
 		private var TIMER_CHILD:Number = LoadXmlData.timer_ToChild;
 		private var TIMER_FATHERTOCHILD:Number = LoadXmlData.timer_FatherToChild;
+		private var TIMER_FATHERTODEATH:Number = LoadXmlData.timer_FatherToDeath;
 		private var TIMER_CHILDTOGRANDCHILD:Number = LoadXmlData.timer_ChildToGrandChild;
 		private var TIMER_GRANDCHILDTOEND:Number = LoadXmlData.timer_GrandChildToEnd;
 		
 		public var player:Player;
-		public var child:Robot;
+		public var robotChild:Robot;
+		public var robotFather:Robot;
+		
 		public var robotChildIsAlive:Boolean = false;
+		public var robotFatherIsAlive:Boolean = false;
+		
+		// store ratio in easy to manipulate variables
+		public var r:Number; 
+		public var v:Number; 
+		public var b:Number;
+		public var maxRatio:Number;
+		public var minRatio:Number;
 		
 		// List<Animation> to store background animations
 		public var animationList:Vector.<Animation> = new Vector.<Animation>();
 		
 		/**
-		 * Special effects
+		 * Special effects and Tweens
 		 */
-		public var rightShutter:Shutter = new Shutter();
+		public var rightShutter:Shutter = new Shutter(800,0);
+		public var shutterSpring:NumTween = new NumTween();
+		private var _lastShutterPosH:Number = FP.camera.x + FP.screen.width / 2;
+		private var _shutterX:int;
+		private var _shutterY:int;
+
+
 		
 		/**
 		 * Constructor.
@@ -103,7 +120,13 @@
 			debugText.font = "Arial";
 
 			// add background image
-			add(new Background);
+			for each (var b:XML in level.background[0].image_fond)
+			{
+				add (new Background(b.@x, b.@y));
+				
+			}
+			
+			//add(new Background);
 
 						
 			//add player to world
@@ -136,6 +159,9 @@
 			player.timeFatherToChild = new Alarm(TIMER_FATHERTOCHILD, onTimeFatherToChild, 2);
 			player.addTween(player.timeFatherToChild, false); // add but don't start yet!
 			
+			player.timeFatherToDeath = new Alarm(TIMER_FATHERTODEATH, onTimeFatherToDeath, 2);
+			player.addTween(player.timeFatherToDeath, false); // add but don't start yet!
+			
 			player.timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
 			player.addTween(player.timeToGrandChild, false); // add but don't start yet!
 			
@@ -147,6 +173,7 @@
 			
 			//add shutters to main window
 			add(rightShutter);
+			addTween(shutterSpring);
 
 		}
 		
@@ -155,26 +182,59 @@
 		 */
 		public function onTimeToChild():void
 		{
-			player.state = "childAlive"; // child appears as a robot. Nothing transmitted yet.
+			// child appears as a robot. Nothing transmitted yet.
+			player.state = "childAlive";
 			robotChildIsAlive = true;
-			player.timeFatherToChild.start(); // start countdown to actual transmission to child			
-			child = new Robot(player.x, player.y);
-			add(child);
+			
+			// start countdown to actual transmission to child
+			player.timeFatherToChild.start(); 			
+			
+			// start countdown to father death
+			player.timeFatherToDeath.start();
+			
+			// add robot child
+			robotChild = new Robot(player.x, player.y,"robotchild");
+			add(robotChild);
 			
 		}
 		
 		/**
+		 * Make father disapear
+		 */
+		public function onTimeFatherToDeath():void
+		{
+			//remove robot father from game
+			robotFatherIsAlive == false;
+			remove(robotFather);
+			trace("oh, shit, father just went awol...");
+		}
+		
+		/**
 		 * Transmit father to child
+		 * player now controls child and father becomes a robot
 		 */
 		public function onTimeFatherToChild():void
 		{
+			
+			// add robot child
+			robotFather = new Robot(player.x, player.y, "robotfather");
+			robotFatherIsAlive = true;
+			add(robotFather);
+			
+			//transport father to robot child position
+			player.x = robotChild.x;
+			player.y = robotChild.y;
+			
 			//remove robot child from game
 			robotChildIsAlive == false;
-			remove(child);
+			remove(robotChild);
+			
 			//transmit properties from father to child
 			transmitFatherToChild();
+			
 			//set player state to child
 			player.state = "child";
+			
 			//change player graphic to that of child
 			player.graphic = player.child;
 			
@@ -205,9 +265,9 @@
 		{
 			//BUG: Romain n'utilise plus des vb(pour chaque chemin) lors de la transmission dans le dernier proto. Normal?
 			// store ratio in easy to manipulate variables
-			var r:Number = player.pathDistToTotalRatio[0]; 
+			/*var r:Number = player.pathDistToTotalRatio[0]; 
 			var v:Number = player.pathDistToTotalRatio[1]; 
-			var b:Number = player.pathDistToTotalRatio[2];
+			var b:Number = player.pathDistToTotalRatio[2];*/
    
 			// cas 1: un chemin à 100%
 			if(r>=0.99 || v>=0.99 || b>=0.99) {
@@ -309,8 +369,19 @@
 			// update entities
 			super.update();
 			
-			// update shuuter positions
-			updateShutters();
+			// update path ratios
+			r = player.pathDistToTotalRatio[0]; 
+			v = player.pathDistToTotalRatio[1]; 
+			b = player.pathDistToTotalRatio[2];
+			maxRatio = Math.max(r,v,b);
+			minRatio = Math.min(r,v,b);
+			
+			// update shutter positions
+			if (player.x>FP.screen.width/2-10) 
+			{
+				updateShutters();
+				
+			}
 			
 			//test to see if we're near game end
 			checkGrandChildNearDeath();
@@ -324,12 +395,12 @@
 			// if son is alive follow father
 			if (robotChildIsAlive) 
 			{
-				child.x = player.moveHistory[0].x;
-				child.y = player.moveHistory[0].y;
+				robotChild.x = player.moveHistory[0].x;
+				robotChild.y = player.moveHistory[0].y;
 				if (player.velocity.x!=0 || player.velocity.y!=0) 
 				{
-					child.robotSprite.play("walk");
-				} else child.robotSprite.setFrame(0);
+					robotChild.robotChild.play("walk");
+				} else robotChild.robotChild.setFrame(0);
 			}
 			
 			// camera following
@@ -357,10 +428,31 @@
 		 */
 		public function updateShutters():void
 		{
-			var xpos:int = FP.camera.x + FP.screen.width - rightShutter.hBlind.width;
-			var ypos:int = FP.camera.y;
-			rightShutter.x = xpos;
-			rightShutter.y = ypos;
+			var xmin:Number = FP.camera.x + FP.screen.width / 2;					
+			var xmax:Number = FP.camera.x + FP.screen.width;
+			
+			var xtarget:Number = FP.scaleClamp(maxRatio, 0.3, 0.9, xmin, xmax);
+			
+			/*if (shutterSpring.active==false && int(xtarget) != int(_lastShutterPosH)) 
+			{
+				shutterSpring.tween(_lastShutterPosH, xtarget, 3);					
+				shutterSpring.start();
+				trace("start tween shutter");
+				trace("moving from: " + (_lastShutterPosH - FP.camera.x));
+				trace("moving to: " + (xtarget - FP.camera.x));
+				trace("speed: " + player.playerCeilingVelocity.length);
+				
+			}*/
+			//BUG i don't think the tween is working, even though the xtarget position seems ok
+			//_shutterX = shutterSpring.value;
+			_shutterX = xtarget;
+			_shutterY = FP.camera.y;
+
+			rightShutter.x = _shutterX;
+			rightShutter.y = _shutterY;
+			
+			// store current position for next loop
+			_lastShutterPosH = rightShutter.x;
 		}
 		
 		/**
@@ -443,7 +535,7 @@
 			debugHUD.y = FP.camera.y + 10;
 
 			//trace(debugText.text);
-			if (Debug.flag==true) 
+			if (LoadXmlData.DEBUG==true) 
 			{
 				debugHUD.graphic = debugText;
 			}
