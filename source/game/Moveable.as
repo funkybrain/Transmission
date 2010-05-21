@@ -46,6 +46,9 @@
 		 * and returns the value of that path (uint) that will be used in
 		 * e.g. pathMaxVel[] array 
 		 */
+		
+		 //BUG got scarry bug right here, not reproduceable
+		 // use a throw statement?
 		public function getCurrentPath():uint
 		{
 			var e:Entity, type:String, pathType:uint;

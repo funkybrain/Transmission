@@ -20,10 +20,12 @@
 		/**
 		 * Constructor.
 		 */
-		public function Background() 
+		public function Background(x:int, y:int ) 
 		{
 			// set the background graphic and parallax rates.
 			graphic = new Backdrop(BACKGROUND);
+			this.x = x;
+			this.y = y;
 			graphic.scrollX = .5;
 			graphic.scrollY = .5;
 			

@@ -1,8 +1,9 @@
 <level>
-  <width>3000</width>
+  <width>6000</width>
   <height>480</height>
   <background>
     <image_fond x="0" y="0"/>
+    <image_fond x="3000" y="0"/>
   </background>
   <mask_red>
     <rect x="0" y="220" w="560" h="10"/>
