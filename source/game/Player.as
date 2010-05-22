@@ -1,5 +1,6 @@
 ﻿package game 
 {
+	import adobe.utils.CustomActions;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import net.flashpunk.graphics.Emitter;
@@ -47,6 +48,7 @@
 		public var timeFatherToDeath:Alarm;
 		public var timeToGrandChild:Alarm;
 		public var timeGrandChildToEnd:Alarm;
+		public var timers:Vector.<Alarm> = new Vector.<Alarm>(); // store all alarms
 		
 	
 		/**
@@ -403,23 +405,31 @@
 			velocity.x = 0;
 			velocity.y = 0;			
 			var sign:int, e:Entity;
+			var pathMaxSpeed:Number;
 			
+			//BUG the erratic bug may come from the fact that at high speeds I don't pixel-check move
+			
+			// check if god mode is on to set unique value for fast playthrough
+			if (LoadXmlData.GODMODE==true) 
+			{
+				pathMaxSpeed = 4;	
+			} else pathMaxSpeed = pathMaxVel[pathType];
 			
 			if (Input.check("R"))
 			{
-				if ((e = collideTypes(pathCollideType, x + pathMaxVel[pathType], y)))
+				if ((e = collideTypes(pathCollideType, x + pathMaxSpeed, y)))
 				{
-					velocity.x = pathMaxVel[pathType];
+					velocity.x = pathMaxSpeed;
 				} else 
 				{
 					velocity.x = 0;
 				}
-				//trace("right");
+				
 			}
 						
 			if (Input.check("L"))
 			{
-				if ((e = collideTypes(pathCollideType, x - pathMaxVel[pathType], y)))
+				if ((e = collideTypes(pathCollideType, x - pathMaxSpeed, y)))
 				{
 					//velocity.x = -pathMaxVel[pathType];
 					velocity.x = -VB; // make going backward a pain in the ass!
@@ -427,37 +437,38 @@
 				{
 					velocity.x = 0;
 				}	
-				//trace("left");
+				
 				
 			}
 			
 			if (Input.check("U"))
 			{
-				if ((e = collideTypes(pathCollideType, x, y - pathMaxVel[pathType])))
+				if ((e = collideTypes(pathCollideType, x, y - pathMaxSpeed)))
 				{
-					velocity.y = -pathMaxVel[pathType];
+					velocity.y = -pathMaxSpeed;
 				} else 
 				{
 					velocity.y = 0;
 				}
-				//trace("up");
+				
 				
 			}
 			
 			if (Input.check("D"))
 			{
-				if ((e = collideTypes(pathCollideType, x, y + pathMaxVel[pathType])))
+				if ((e = collideTypes(pathCollideType, x, y + pathMaxSpeed)))
 				{
-					velocity.y = +pathMaxVel[pathType];
+					velocity.y = +pathMaxSpeed;
 				} else 
 				{
 					velocity.y = 0;
 				}	
-				//trace("down");
+				
 
 			}
 			
 			// add position to velocity vector
+			
 			position.x = (position.add(velocity)).x;
 			position.y = (position.add(velocity)).y;
 			

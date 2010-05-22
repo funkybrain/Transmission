@@ -33,6 +33,7 @@ package game
 		public static var VB:Number;
 		public static var CT_VB:Number;
 		public static var DEBUG:Boolean;
+		public static var GODMODE:Boolean;
 		
 		public function LoadXmlData() 
 		{
@@ -63,14 +64,27 @@ package game
 			timer_GrandChildToEnd = Number(gameData.timers.timeGrandChildToEnd.text());
 			
 			// debug
-			DEBUG = gameData.debug.text() as Boolean;
+			DEBUG = stringToBoolean(gameData.debug.text());
+			GODMODE = stringToBoolean(gameData.godmode.text());
 			
+			trace(GODMODE);
 
 			trace("done assigning data");
 			
 			FP.world = new Game;
 			
 		}
+		
+		
+		// helper function
+		public static function stringToBoolean($string:String):Boolean
+		{
+		
+          return ($string.toLowerCase() == "true" || $string.toLowerCase() == "1");
+		
+		}
+
+
 		
 	}
 

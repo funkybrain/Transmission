@@ -21,6 +21,7 @@ package game
 	import net.flashpunk.tweens.misc.Alarm;
 	import net.flashpunk.tweens.misc.NumTween;
 	import net.flashpunk.utils.Ease;
+	import flash.geom.Point;
 	
 	public class Game extends World
 	{
@@ -40,7 +41,8 @@ package game
 		 */
 		public const FOLLOW_TRAIL:Number = 50;
 		public const FOLLOW_RATE:Number = .9;
-		
+		public var levelWidth:uint;
+		public var levelHeight:uint;
 				
 		/**
 		 * class properties used as object references.
@@ -64,6 +66,9 @@ package game
 		public var player:Player;
 		public var robotChild:Robot;
 		public var robotFather:Robot;
+		
+		public var playerMoving:Boolean = false;
+		public var vectorZero:Point = new Point();
 		
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
@@ -95,6 +100,10 @@ package game
 			// create first level
 			level_1 = new Level();
 			
+			// set intial camera clamp value to level width/height
+			levelWidth = level_1.width;
+			levelHeight = level_1.height;
+			
 			// add level objects to world
 			level_1.addObjectsToWorld(this)
 			
@@ -116,7 +125,7 @@ package game
 			
 			//set all transmission timer alarms (one-shot alarms)
 			player.timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
-			player.addTween(player.timeToChild, true); // add and start alarm on instantiation
+			player.addTween(player.timeToChild, true); // add and start alarm
 			
 			player.timeFatherToChild = new Alarm(TIMER_FATHERTOCHILD, onTimeFatherToChild, 2);
 			player.addTween(player.timeFatherToChild, false); // add but don't start yet!
@@ -129,6 +138,9 @@ package game
 			
 			player.timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeToEnd, 2);
 			player.addTween(player.timeGrandChildToEnd, false); // add but don't start yet!
+			
+			player.timers.push(player.timeToChild, player.timeFatherToChild, player.timeFatherToDeath,
+				player.timeToGrandChild, player.timeGrandChildToEnd);
 			
 			// refresh screen color
 			FP.screen.color = 0x808080;
@@ -368,7 +380,8 @@ package game
 			// camera following
 			cameraFollow();
 			
-			//trace(player.state);
+			// freeze or unfreeze timers?
+			checkTimers();
 			
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
@@ -383,6 +396,45 @@ package game
 			debug.drawHitBox(player);
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
+		}
+		
+		/**
+		 * Check state of player to see if timers should be frozen/unfrozen
+		 */
+		public function checkTimers():void
+		{
+			// need to check alarm states
+			// those only affect those that have already started
+			
+			if (playerMoving==false && player.velocity.equals(vectorZero)==false) 
+			{
+				playerMoving = true;
+			}
+			
+			if (playerMoving==true && player.velocity.equals(vectorZero)==true) 
+			{
+				playerMoving = false;
+			}
+			
+			for each (var timer:Alarm in player.timers) 
+			{
+				// shit, can't pause alarms?
+				if (timer.active == true)
+				{
+					if (playerMoving == false) 
+					{
+						timer.active = false;
+					}
+				}
+				
+				if (timer.active == false)
+				{
+					if (playerMoving == true) 
+					{
+						timer.active = true;
+					}
+				}
+			}
 		}
 		
 		/**
@@ -482,7 +534,7 @@ package game
 					timer = player.timeToGrandChild.remaining;
 					break;
 				case "grandChild":
-					timer = 0;
+					timer = player.timeGrandChildToEnd.remaining;
 					break;
 				
 			}
@@ -518,9 +570,9 @@ package game
 			FP.camera.y = int(targetY + FP.point.y);
 			
 			// keep camera in room bounds
-			//TODO what happens when two levels are side by side re. clamping camera to room?
-			FP.camera.x = FP.clamp(FP.camera.x, 0, level_1.width - FP.width);
-			FP.camera.y = FP.clamp(FP.camera.y, 0, level_1.height - FP.height);
+			
+			FP.camera.x = FP.clamp(FP.camera.x, 0, levelWidth - FP.width);
+			FP.camera.y = FP.clamp(FP.camera.y, 0, levelHeight - FP.height);
 		}
 		
 		/**

@@ -9,15 +9,15 @@ Bugs:
 
 Next: release 1.5
 -----------------
-
+> refactored world ceation (now Game class does the logic, and Level only loads level data)
+> god mode pour se deplacer rapidement dans le niveau (ajoute a gamedata)
+> tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
 
 To do list:
 ----------
 > figure out how to handle intersections
 > figure out how particles work
 > how does flashdev profiler work?
-
-> stress test level size in ogmo and flash
 
 > implement moovesmooth
 
@@ -26,7 +26,6 @@ To do list:
 > center player in right 3rd of screen
 
 > may have to scale hitbox to player size if child is small
-
 
 > A x min avant la fin du timer:
 - fade music out
@@ -38,18 +37,16 @@ To do list:
 
 > Intro - prévoir un trigger de lancement des timers quand la joueur arrive au début des chemins
 
-> Afficher compteur de distance (mouloud pour DA/font)
-
-> prévoir god-mode pour faire le LD très vite
-
 > Afficher masque noir sur l'écran
 - masque vertical lié au ratio de distance le plus petit (bcp de changements = ouverture)
-> freeze all timers when player stops
+
 > Vérifier possibilité de dézoomer l'écran
 
 > how can we load multiple levels and put them end-to-end?
 - test loading another level and offsetting all coordinates by width of first level
-- refactor code so that world creation and level creation are two seperate things (MAKE BRANCH FIRST!)
+
+> injecter les nouvelles formules de Rom
+
 
 Next: release 1.3
 -----------------
