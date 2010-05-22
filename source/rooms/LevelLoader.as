@@ -1,12 +1,11 @@
 ﻿package rooms 
 {
 	import flash.utils.ByteArray;
-	import net.flashpunk.World;
 	
 	/**
 	 * Just a base level class for loading XML.
 	 */
-	public class LevelLoader extends World
+	public class LevelLoader
 	{
 		/**
 		 * The loading XML file.

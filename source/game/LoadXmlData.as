@@ -6,6 +6,7 @@ package game
 	import flash.errors.*
 	import flash.events.*
 	import net.flashpunk.FP;
+	import net.flashpunk.World;
 	import rooms.Level;
 
 	
@@ -67,8 +68,8 @@ package game
 
 			trace("done assigning data");
 			
-			FP.world = new Level;
-						
+			FP.world = new Game;
+			
 		}
 		
 	}
