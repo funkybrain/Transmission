@@ -73,6 +73,7 @@ package game
 		
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
+
 		
 		// store ratio in easy to manipulate variables
 		public var r:Number; 
@@ -191,10 +192,12 @@ package game
 		public function onTimeFatherToChild():void
 		{
 			
-			// add robot child
+			// add robot father
 			robotFather = new Robot(player.x, player.y, "robotfather");
 			robotFatherIsAlive = true;
 			add(robotFather);
+			
+			//TODO need to make robotater follow ai pathfinding
 			
 			//transport father to robot child position
 			player.x = robotChild.x;
@@ -226,6 +229,10 @@ package game
 			player.graphic = player.grandChild;
 			player.timeGrandChildToEnd.start() // start final countdown to end
 			// will check in update to start death sequence before end
+			
+			//transmit properties from child to grandchild
+			transmitChildToGrandChild();
+
 		}
 		
 		/**
@@ -238,103 +245,81 @@ package game
 		
 		public function transmitFatherToChild():void
 		{
-			//BUG: Romain n'utilise plus des vb(pour chaque chemin) lors de la transmission dans le dernier proto. Normal?
-			// store ratio in easy to manipulate variables
-			/*var r:Number = player.pathDistToTotalRatio[0]; 
-			var v:Number = player.pathDistToTotalRatio[1]; 
-			var b:Number = player.pathDistToTotalRatio[2];*/
-   
-			// cas 1: un chemin à 100%
-			if(r>=0.99 || v>=0.99 || b>=0.99) {
-				for (var j:int = 0; j < 3; j++) {
-					if(player.pathDistToTotalRatio[j]>=0.99) {
-						player.pathBaseSpeed[j] = player.VB + 2 * player.CT_VB;
-					} else {
-						player.pathBaseSpeed[j] = player.VB - player.CT_VB;
-					}
+		
+			var ratx:Number = Math.max(r, v, b); // ratio du chemin le plus parcouru
+			var ratz:Number = Math.min(r, v, b); // ratio du chemin le moins parcouru
+			var classement:Array = player.pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order
+			trace("classement: " + classement);
+			
+			// Modèle 1-a: 0.6<ratx<1 et 0=<ratz<0.2
+			if (ratx > 0.6 && ratz < 0.2)
+			{
+				// set child special speed
+				player.pathChildSpeed[classement[2]] = player.VB + 0.8 * ratx;
+				player.pathChildSpeed[classement[1]] = player.VB - 0.2 * ratx;
+				player.pathChildSpeed[classement[0]] = player.VB - 0.2 * ratx;
+				
+				// reset base speed to VB
+				for (var j:int = 0; j < player.pathBaseSpeed.length; j++) 
+				{
+					player.pathBaseSpeed[j] = player.CT_VB;
 				}
+				trace("Modèle 1a");
 			} 
-			else if (r>=0.60 && r/3.0>=v && v>=b) { // cas 2: un chemin à 60%
-				player.pathBaseSpeed[0] = player.VB + 1.5 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB - player.CT_VB;
-				trace("Perseverance cas1");
+			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
+			else if (ratx >= 0.43 && ratx <= 0.6 && ratz <= 0.15)
+			{
+				// set child special speed
+				player.pathChildSpeed[classement[2]] = player.VB + 0.6 * ratx;
+				player.pathChildSpeed[classement[1]] = player.VB;
+				player.pathChildSpeed[classement[0]] = player.VB;
+				// reset base speed to VB
+				for (var m:int = 0; m < player.pathBaseSpeed.length; m++) 
+				{
+					player.pathBaseSpeed[m] = player.CT_VB;
+				}
+				trace("Modèle 1b");
 			}
-			else if (r>=0.60 && r/3.0>=b && b>=v) { // cas 2: un chemin à 60%
-				player.pathBaseSpeed[0] = player.VB + 1.5 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB - player.CT_VB;
-				trace("Perseverance cas1");
+			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
+			else if (ratx >= 0.34 && ratx <= 0.6 && ratz >= 0.15 && ratz <= 0.33)
+			{ 
+				// set child special speed
+				player.pathChildSpeed[classement[2]] = player.VB;
+				player.pathChildSpeed[classement[1]] = player.VB;
+				player.pathChildSpeed[classement[0]] = player.VB;
+				// reset base speed to VB
+				for (var k:int = 0; k < player.pathBaseSpeed.length; k++) 
+				{
+					player.pathBaseSpeed[k] = player.CT_VB;
+				}
+				player.transmitModel = 2;
+				trace("Modèle 2");
 			}
-			else if (v>=0.60 && v/3.0>=r && r>=b) { // cas 2: un chemin à 60%
-				player.pathBaseSpeed[0] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 1.5 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB - player.CT_VB;
-				trace("Perseverance cas1");
-			}
-			else if (v>=0.60 && v/3.0>=b && b>=r) { // cas 2: un chemin à 60%
-				player.pathBaseSpeed[0] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 1.5 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB - player.CT_VB;
-				trace("Perseverance cas1");
-			}
-			else if (b>=0.60 && b/3.0>=v && v>=r) { // cas 2: un chemin à 60%
-				player.pathBaseSpeed[0] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 1.5 * player.CT_VB;
-				trace("Perseverance cas1");
-			}
-			else if (b>=0.60 && b/3.0>=r && r>=v) { // cas 2: un chemin à 60%
-				player.pathBaseSpeed[0] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB - player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 1.5 * player.CT_VB;
-				trace("Perseverance cas1");
-			}
-			else if(r>=0.35 && r<=0.50 && v>0.20 && v<0.50 && b<0.20 && b<0.50) { // Cas 1 :Ouverture 
-				player.pathBaseSpeed[0] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 0.50 * player.CT_VB;
-				trace("Ouverture cas1");
-			}
-			else if(v>=0.35 && v<=0.50 && r>0.20 && r<0.50 && b>0.20 && b<0.50) { // Cas 1 :Ouverture 
-				player.pathBaseSpeed[0] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 0.50 * player.CT_VB;
-				trace("Ouverture cas1");
-			} 
-			else if(r>=0.35 && r<=0.50 && b>0.20 && b<0.50 && v>0.20 && v<0.50) { // Cas 1 :Ouverture 
-				player.pathBaseSpeed[0] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 0.50 * player.CT_VB;
-				trace("Ouverture cas1");
-			}
-			else if(v>=0.35 && v<=0.50 && b>0.20 && b<0.50 && r>0.20 && r<0.50) { // Cas 1 :Ouverture 
-				player.pathBaseSpeed[0] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 0.50 * player.CT_VB;
-				trace("Ouverture cas1");
-			} 
-			else if(b>=0.35 && b<=0.50 && v>0.20 && v<0.50 && r>0.20 && r<0.50) { // Cas 1 :Ouverture 
-				player.pathBaseSpeed[0] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 0.50 * player.CT_VB;
-				trace("Ouverture cas1");
-			} 
-			else if(b>=0.35 && b<=0.50 && r>0.20 && r<0.50 && v>0.20 && v<0.50) { // Cas 1 :Ouverture 
-				player.pathBaseSpeed[0] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[1] = player.VB + 0.50 * player.CT_VB;
-				player.pathBaseSpeed[2] = player.VB + 0.50 * player.CT_VB;
-				trace("Ouverture cas1");
-			}		 
-			else {
+			else
+			{
 				trace("cas moyen!");
 			}
       
 			for (var i:int = 0; i < 3; i++) {
 				trace("vitesse de base child: ("+ i + ") " + player.pathBaseSpeed[i]);
 			}
+			
+			// remettre toues les distances à zero
+			for (var s:int = 0; s < player.pathDistance.length; s++) 
+			{
+				//store father distances
+				player.fatherStoredDistances[s] = player.pathDistance[s];
+				//reset distances to zero
+				player.pathDistance[s] = 0;
+			}
 		} 
 		// end transmitFatherToChild()
+		
+		public function transmitChildToGrandChild():void
+		{
+			// transmition formulas here
+		}
+		// end transmitChildToGrandChild()
 		
 		/**
 		 * UPDATE LOOP FOR GAME
@@ -388,6 +373,7 @@ package game
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
 		}
+		// end Game UPDATE LOOP
 		
 		/**
 		 * RENDER LOOP FOR GAME
@@ -399,6 +385,7 @@ package game
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
 		}
+		// end Game RENDER LOOP
 		
 		/**
 		 * Check state of player to see if timers and sound should be frozen/unfrozen
@@ -462,6 +449,7 @@ package game
 				}
 			}
 		}
+		// end checkTimers()
 		
 		/**
 		 * Update shutter positions
@@ -494,6 +482,7 @@ package game
 			// store current position for next loop
 			_lastShutterPosH = rightShutter.x;
 		}
+		// end updateShutters()
 		
 		/**
 		 * GrandChild Death
@@ -526,7 +515,7 @@ package game
 		}
 		
 		/**
-		 * adjust the framerates of the background animatins based on player speed
+		 * adjust the framerates of the background animations based on player speed
 		 */
 		public function setAnimationSpeed():void
 		{

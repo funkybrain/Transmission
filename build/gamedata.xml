@@ -6,8 +6,9 @@
 	
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
-		<VB>0.3</VB>
-		<CT_VB>0.2</CT_VB>
+		<VB>0.3</VB>	<!-- Vb pere-->
+		<CT_VB>0.2</CT_VB>	<!--Vb  fils et petit fils-->
+		<TC>20</TC> <!-- chrono pour vitesse 3 files et petit fils-->
 	</vitesse>
 
 	<!-- variables utilisées pour le calcul de S-Curve-->
@@ -20,12 +21,12 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>60</timeToChild>
-		<timeFatherToChild>30</timeFatherToChild><!-- robot AI father takes over-->
+		<timeToChild>15</timeToChild>
+		<timeFatherToChild>20</timeFatherToChild><!-- robot AI father takes over-->
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
 		<timeFatherToDeath>60</timeFatherToDeath><!-- robot AI father goes poof!-->
 		<timeChildToGrandChild>60</timeChildToGrandChild>
-		<timeGrandChildToEnd>160</timeGrandChildToEnd>
+		<timeGrandChildToEnd>60</timeGrandChildToEnd>
 	</timers>
 	
 	

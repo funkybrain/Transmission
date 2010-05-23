@@ -15,11 +15,11 @@ Next: release 1.5
 
 > tous les sons s'arrettent lorsque le joueur est immobile
 
+> nouvelles formules de transmissions pere->fils implementees (sauf vitesse 3)
+
 To do list:
 ----------
-> figure out how to handle intersections
-> figure out how particles work
-> how does flashdev profiler work?
+> fade music in/out when player starts/stops
 
 > implement moovesmooth
 
@@ -46,8 +46,6 @@ To do list:
 
 > how can we load multiple levels and put them end-to-end?
 - test loading another level and offsetting all coordinates by width of first level
-
-> injecter les nouvelles formules de Rom
 
 
 Next: release 1.3

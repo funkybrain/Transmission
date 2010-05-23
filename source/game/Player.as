@@ -64,6 +64,8 @@
 		public var D_MAX:Number; // max distance used in mapping for s-curve data
 		public var S_MIN:Number; // s-cruve mini abcisse
 		public var S_MAX:Number; // s-cruve max abcisse
+		
+		public var transmitModel:uint;
 					
 		/**
 		 * Movement properties
@@ -83,6 +85,16 @@
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
 		public var row:int, col:int; 
 		
+		/**
+		 * Special speed properties for child
+		 */
+		public var pathChildSpeed:Array = new Array();
+		 
+		/**
+		 * Save father data upon transmission
+		 */
+		public var fatherStoredDistances:Array = new Array();
+		 
 		/**
 		 * Player state.
 		 */
@@ -116,7 +128,7 @@
 		/**
 		 * Particle emitter.
 		 */
-		//public var emitter:Emitter;
+		
 		
 		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
@@ -247,13 +259,13 @@
 			//store player location if path has changed
 			if (_pathSwitchTable[0]!=_pathSwitchTable[1] && _pathSwitchClonedPosition==false) 
 			{
-				trace("player has changed path!");
+				//trace("player has changed path!");
 				_pathSwitchClonedPosition = true;
 				 // stop storing _pathSwitchTable[0] until 30 pixels have passed
 				_pathSwitched = true;
 				 // store position where path changed
 				_pathSwitchLocation = position.clone();
-				trace("pathSwitchTable: " + _pathSwitchTable);
+				//trace("pathSwitchTable: " + _pathSwitchTable);
 				
 			}
 			
@@ -261,16 +273,16 @@
 			// if distance since last path switch is grater than 30 pixel, test for real switch
 			if (Point.distance(position,_pathSwitchLocation) > 30 && _pathSwitched == true) 
 			{
-				trace("distance > 30px");
+				//trace("distance > 30px");
 				if (_pathSwitchTable[0]!=_pathSwitchTable[1]) // paths are still different after 30px
 				{
-					trace("permanent path change");
+					//trace("permanent path change");
 					// play music based on current path and latest path change
 					playPathMusic();
 				}
 				_pathSwitched = false;
 				_pathSwitchClonedPosition = false;
-				trace("dist: " + Point.distance(position, _pathSwitchLocation));				
+				//trace("dist: " + Point.distance(position, _pathSwitchLocation));				
 			}
 
 			
@@ -331,10 +343,10 @@
 				fromSound.start();
 				toSound.start();
 				
-				trace("start xfade");
+/*				trace("start xfade");
 				trace("playing sound: " + idFrom);
 				trace("moving to sound: " + idTo);
-				
+*/				
 			}
 
 		}
@@ -412,9 +424,13 @@
 			
 			// check if god mode is on to set unique value for fast playthrough
 			if (LoadXmlData.GODMODE==true) 
-			{
+			{ // use god speed
 				pathMaxSpeed = 4;	
-			} else pathMaxSpeed = pathMaxVel[pathType];
+			} else // use normal velocity calculations
+			{
+				pathMaxSpeed = pathInstantVel[pathType];
+			}
+			
 			
 			if (Input.check("R"))
 			{
@@ -478,30 +494,56 @@
 			y = position.y;
 			
 			//store the max velocity available to player at this time
-			if (velocity.length!=0) 
+			/*if (velocity.length!=0) 
 			{
 				playerCeilingVelocity = velocity.clone();
-			}  
+			} */ 
 		}
 		// end acceleration()
+		
+		
 		
 		/**
 		 * S-curve calculation.
 		 */
 		private function scurve():void
 		{			
-			//maxSpeed[i] = avatar.speedBasePath[i] + avatar.coeff_d * ( 1 / (1 + exp(-adjust)))*avatar.coefSpeedBaseChild[i];   
+			
 			for (var i:int = 0; i < 3; i++) 
 			{
-				// first map distance on path to s-curve significant numbers
-				var mapped:Number = FP.scale(pathDistance[i], 0, D_MAX, S_MIN, S_MAX);
-				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp(-mapped)));
+				// use s-curve calculations to figure out max velocity
+				{					
+					//maxSpeed[i] = avatar.speedBasePath[i] + avatar.coeff_d * ( 1 / (1 + exp(-adjust)))*avatar.coefSpeedBaseChild[i];
+					// first map distance on path to s-curve significant numbers
+					var mapped:Number = FP.scale(pathDistance[i], 0, D_MAX, S_MIN, S_MAX);
+					pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp( -mapped)));
+					
+					//BUG pathDistance doesn't seem to update in some cases after father>child trannsmit??
+				}
+				
+				// if player state is child, figure out which speed to use
+				if (state == "child" && (pathMaxVel[i] < pathChildSpeed[i]) && transmitModel!=2) 
+				{
+					// max velovity is fixed to pathChildSpeed (defined in transmission calcs)
+					pathInstantVel[i] = pathChildSpeed[i];
+					
+					trace("vitesse 1 car modele 1");
+					trace("vitesse 1 sur path (" +i +"): " + pathChildSpeed[i]);
+					trace("vitesse 2 sur path (" +i +"): " + pathMaxVel[i]);
+				}
+				else
+				{
+					pathInstantVel[i] = pathMaxVel[i];
+				}
+			
 				
 			}
 			//trace("mapped: " + FP.scale(pathDistance[2], 0, 800, -3, -1) + " vb blue: " + pathBaseSpeed[2] + " maxVel blue : " + pathMaxVel[2]);
 			//trace("base speed: " + pathBaseSpeed[i]);
 			//trace("maxVel: " + pathMaxVel[i]);
 		}
+		
+		
 		
 		/**
 		 * Handles animation based on current player state.
