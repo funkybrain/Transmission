@@ -1,5 +1,6 @@
 package game 
 {
+	import net.flashpunk.Sfx;
 	import net.flashpunk.World;
 	import rooms.Level;
 	import game.Debug;
@@ -380,8 +381,9 @@ package game
 			// camera following
 			cameraFollow();
 			
-			// freeze or unfreeze timers?
+			// freeze or unfreeze timers and sounds
 			checkTimers();
+			
 			
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
@@ -399,7 +401,7 @@ package game
 		}
 		
 		/**
-		 * Check state of player to see if timers should be frozen/unfrozen
+		 * Check state of player to see if timers and sound should be frozen/unfrozen
 		 */
 		public function checkTimers():void
 		{
@@ -418,7 +420,7 @@ package game
 			
 			for each (var timer:Alarm in player.timers) 
 			{
-				// shit, can't pause alarms?
+				// freeze sound and timers
 				if (timer.active == true)
 				{
 					if (playerMoving == false) 
@@ -427,11 +429,35 @@ package game
 					}
 				}
 				
+				if (playerMoving == false) 
+				{
+					for each (var noiseOut:Sfx in player.sound.pathSound) 
+					{
+						if (noiseOut.playing) 
+						{
+							noiseOut.stop();	
+						}	
+					}
+				}
+				
+				//unfreeze sound and timers
 				if (timer.active == false)
 				{
 					if (playerMoving == true) 
 					{
-						timer.active = true;
+						timer.active = true;	
+					}
+				}
+				
+				if (playerMoving == true) 
+				{
+					for each (var noiseIn:Sfx in player.sound.pathSound ) 
+					{
+						if (!noiseIn.playing) 
+						{
+							noiseIn.resume();	
+						}
+							
 					}
 				}
 			}

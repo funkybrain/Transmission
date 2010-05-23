@@ -203,10 +203,11 @@
 			// start all sounds but only turn up volume on current path
 			for each (var music:Sfx in sound.pathSound) 
 			{
-					music.play()
+					//music.play() //player movement controls play 
 					music.volume = 0;
 			}
 			sound.pathSound[_pathPreviousIndex].volume = 1;
+
 			
 			// intialize switch variables
 			_pathSwitchTable[0] = _pathSwitchTable[1] = _pathPreviousIndex;

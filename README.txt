@@ -13,6 +13,8 @@ Next: release 1.5
 > god mode pour se deplacer rapidement dans le niveau (ajoute a gamedata)
 > tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
 
+> tous les sons s'arrettent lorsque le joueur est immobile
+
 To do list:
 ----------
 > figure out how to handle intersections
