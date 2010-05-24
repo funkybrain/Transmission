@@ -149,7 +149,7 @@
 			child.add("walk", frames, 5, true);
 			grandChild.add("walk", frames, 5, true);
 			
-			// note: if you're goiing down the route of fixed framrate, use 
+			// NOTE: if you're going down the route of fixed framrate, use 
 			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
 			
 			//hitbox based on image size
@@ -436,7 +436,7 @@
 			{
 				if ((e = collideTypes(pathCollideType, x + pathMaxSpeed, y)))
 				{
-					velocity.x = pathMaxSpeed;
+					velocity.x = pathMaxSpeed * (FP.frameRate * FP.elapsed);
 				} else 
 				{
 					velocity.x = 0;
@@ -449,7 +449,7 @@
 				if ((e = collideTypes(pathCollideType, x - pathMaxSpeed, y)))
 				{
 					//velocity.x = -pathMaxVel[pathType];
-					velocity.x = -VB; // make going backward a pain in the ass!
+					velocity.x = -VB* (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
 				} else 
 				{
 					velocity.x = 0;
@@ -462,7 +462,7 @@
 			{
 				if ((e = collideTypes(pathCollideType, x, y - pathMaxSpeed)))
 				{
-					velocity.y = -pathMaxSpeed;
+					velocity.y = -pathMaxSpeed * (FP.frameRate * FP.elapsed);
 				} else 
 				{
 					velocity.y = 0;
@@ -475,7 +475,7 @@
 			{
 				if ((e = collideTypes(pathCollideType, x, y + pathMaxSpeed)))
 				{
-					velocity.y = +pathMaxSpeed;
+					velocity.y = +pathMaxSpeed * (FP.frameRate * FP.elapsed);
 				} else 
 				{
 					velocity.y = 0;
