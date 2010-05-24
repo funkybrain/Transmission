@@ -66,6 +66,10 @@
 		public var S_MAX:Number; // s-cruve max abcisse
 		
 		public var transmitModel:uint;
+		public var transmitIndexX:Number;
+		public var transmitIndexY:Number;
+		public var transmitIndexZ:Number;
+		public var Dxtotale:Number;
 					
 		/**
 		 * Movement properties
@@ -74,8 +78,7 @@
 		public var pathIndex:uint; // index to target the required path when calling an array
 		public var distance:Number = 0; // frame by frame distance
 		public var vbArray:Array; // initial speed array
-		public var playerCeilingVelocity:Point = new Point(); // maximum speed player can move to
-		
+				
 		public var moveHistory:Vector.<Point> = new Vector.<Point>(); // List<Point> to store player move history
 		private var _moveIndex:uint; // current index of List<Point>
 		public var pathHistory:Array = new Array(); // store the path index along with move history
@@ -84,6 +87,12 @@
 		public var animatedTile:PathTile; // used to place animated tiles
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
 		public var row:int, col:int; 
+		
+		public var typeVitesse:String; // debug property
+		private var _type3:Boolean = false; // flag to ensure once child is going at type 3 vel, it stays there
+		// store the greater of pathMaxVel and PathChildSpeed
+		private var _maxPathSpeed:Array = new Array();
+
 		
 		/**
 		 * Special speed properties for child
@@ -94,7 +103,10 @@
 		 * Save father data upon transmission
 		 */
 		public var fatherStoredDistances:Array = new Array();
-		 
+		public var fatherStoredVelocities:Array = new Array();
+		public var childStoredDistances:Array = new Array();
+		public var childStoredVelocities:Array = new Array(); 
+
 		/**
 		 * Player state.
 		 */
@@ -129,7 +141,9 @@
 		 * Particle emitter.
 		 */
 		
-		
+		/**
+		 * CONSTRUCTOR
+		 */
 		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
 			this.x = _x;
@@ -203,6 +217,8 @@
 			
 			// to avoid crash in case child appears before player has moved
 			moveHistory.push(new Point());
+			
+			
 		}
 		
 		/**
@@ -241,7 +257,7 @@
 			}
 			
 			// update speed on paths based on new pathDistance
-			scurve();
+			calculateSpeed();
 			
 			//check if a new animated tile needs to be placed where player has walked
 			var shiftX:Number, shiftY:Number; // need to locate the center of the entity		
@@ -249,8 +265,8 @@
 			shiftY = y - offsetOriginY;
 			addNewTile(shiftX, shiftY, Path.TILE_GRID);
 			
-			// move player based on maximum speeds returned by the s-curve
-			acceleration(pathIndex);
+			// move player based on maximum speeds returned by the calculateSpeed method
+			move(pathIndex);
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
@@ -410,9 +426,9 @@
 		}
 		
 		/**
-		 * Moves the player based on input.
+		 * Moves the player based on input
 		 */
-		private function acceleration(pathType:uint):void
+		private function move(pathType:uint):void
 		{
 			// evaluate input
 			velocity.x = 0;
@@ -493,54 +509,87 @@
 			x = position.x;
 			y = position.y;
 			
-			//store the max velocity available to player at this time
-			/*if (velocity.length!=0) 
-			{
-				playerCeilingVelocity = velocity.clone();
-			} */ 
+			
 		}
 		// end acceleration()
 		
 		
 		
 		/**
-		 * S-curve calculation.
+		 * Calculate pllayer velocity based on path and state (father, child, grandchild)
 		 */
-		private function scurve():void
+		private function calculateSpeed():void
 		{			
+			var coeff_type3:Number = 0.25;
+			var DyDz:Number;
 			
+			// work out the combined distance of the two paths where previous avatar was slowest
+			if (state=="child" || state=="grandChild") 
+			{
+				DyDz = pathDistance[transmitIndexY] + pathDistance[transmitIndexZ];
+			}
+
+			// store the fastest velocity out of the three paths	
+			pathFastest = Math.max(pathMaxVel[0], pathMaxVel[1], pathMaxVel[2]);
+
+			// start loop
 			for (var i:int = 0; i < 3; i++) 
 			{
-				// use s-curve calculations to figure out max velocity
-				{					
-					//maxSpeed[i] = avatar.speedBasePath[i] + avatar.coeff_d * ( 1 / (1 + exp(-adjust)))*avatar.coefSpeedBaseChild[i];
-					// first map distance on path to s-curve significant numbers
-					var mapped:Number = FP.scale(pathDistance[i], 0, D_MAX, S_MIN, S_MAX);
-					pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp( -mapped)));
-					
-					//BUG pathDistance doesn't seem to update in some cases after father>child trannsmit??
-				}
+				// use s-curve calculations to figure out max velocity							
+				// first map distance on path to s-curve significant numbers
+				var mapped:Number = FP.scale(pathDistance[i], 0, D_MAX, S_MIN, S_MAX);
+				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp( -mapped)));
 				
-				// if player state is child, figure out which speed to use
-				if (state == "child" && (pathMaxVel[i] < pathChildSpeed[i]) && transmitModel!=2) 
-				{
-					// max velovity is fixed to pathChildSpeed (defined in transmission calcs)
-					pathInstantVel[i] = pathChildSpeed[i];
-					
-					trace("vitesse 1 car modele 1");
-					trace("vitesse 1 sur path (" +i +"): " + pathChildSpeed[i]);
-					trace("vitesse 2 sur path (" +i +"): " + pathMaxVel[i]);
-				}
-				else
+				// find out the greater of pathMaxVel and PathChildSpeed
+				_maxPathSpeed[i] = Math.max(pathMaxVel[i], pathChildSpeed[i]);
+				
+				// if player is father or followed by robot child (before transmission)
+				if (state=="father" || state=="childAlive") 
 				{
 					pathInstantVel[i] = pathMaxVel[i];
+					typeVitesse = "normale (pere)";
+				}
+				
+				if (state=="child" || state=="grandChild") 
+				{
+					
+					// check if type 3 comes into effect
+					if (DyDz > (0.25 * Dxtotale))
+					{
+						/*									
+						trace("Dz: " + pathDistance[transmitIndexZ].toFixed(2));
+						trace("Dy: " + pathDistance[transmitIndexY].toFixed(2));
+						trace("Dx: " + Dxtotale.toFixed(2));
+						trace("DyDz: " + DyDz.toFixed(2));
+						trace("0.25*Dx: " + (coeff_type3 * Dxtotale).toFixed(2));*/
+						if (!_type3) 
+						{
+							trace("DyDz sup à  0.25 x Dxtotale - vitesse 3");	
+						}
+						_type3 = true;
+						
+					}
+			
+					if (_type3) // must keep this speed till death 
+					{
+						pathInstantVel[i] = pathFastest;
+						typeVitesse = "type 3 - constant (Vmax)";
+						
+					} else if (pathMaxVel[i] < pathChildSpeed[i]) 
+					{
+						typeVitesse = "type 1 - constant (child modele 1)";
+						pathInstantVel[i] = _maxPathSpeed[i];
+						
+					} else
+					{
+						typeVitesse = "type 2 - comme pere (child modele 1)";
+						pathInstantVel[i] = _maxPathSpeed[i];
+					}
 				}
 			
-				
+			
 			}
-			//trace("mapped: " + FP.scale(pathDistance[2], 0, 800, -3, -1) + " vb blue: " + pathBaseSpeed[2] + " maxVel blue : " + pathMaxVel[2]);
-			//trace("base speed: " + pathBaseSpeed[i]);
-			//trace("maxVel: " + pathMaxVel[i]);
+
 		}
 		
 		

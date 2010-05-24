@@ -7,8 +7,7 @@
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
 		<VB>0.3</VB>	<!-- Vb pere-->
-		<CT_VB>0.2</CT_VB>	<!--Vb  fils et petit fils-->
-		<TC>20</TC> <!-- chrono pour vitesse 3 files et petit fils-->
+		<CT_VB>0.3</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
 	</vitesse>
 
 	<!-- variables utilisées pour le calcul de S-Curve-->

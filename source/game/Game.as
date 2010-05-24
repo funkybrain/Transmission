@@ -22,6 +22,7 @@ package game
 	import net.flashpunk.tweens.misc.Alarm;
 	import net.flashpunk.tweens.misc.NumTween;
 	import net.flashpunk.utils.Ease;
+	import net.flashpunk.utils.Draw;
 	import flash.geom.Point;
 	
 	public class Game extends World
@@ -115,6 +116,7 @@ package game
 			// add player to world
 			player = level_1.addPlayerToWorld(this);
 			
+			
 			// add debug hud to world
 			debug = new Debug();
 			debugHUD = new Entity();
@@ -122,7 +124,7 @@ package game
 			debugHUD.y = 10;
 			add(debugHUD);
 			
-			debugText = new Text("hello", 10, 10, 400, 50);
+			debugText = new Text("hello", 10, 10, 400, 100);
 			debugText.font = "Arial";
 			
 			//set all transmission timer alarms (one-shot alarms)
@@ -207,6 +209,8 @@ package game
 			robotChildIsAlive == false;
 			remove(robotChild);
 			
+			trace(player.state);
+			
 			//transmit properties from father to child
 			transmitFatherToChild();
 			
@@ -225,13 +229,15 @@ package game
 		 */
 		public function onTimeToGrandChild():void
 		{
-			player.state = "grandChild";
+			
 			player.graphic = player.grandChild;
 			player.timeGrandChildToEnd.start() // start final countdown to end
 			// will check in update to start death sequence before end
 			
 			//transmit properties from child to grandchild
-			transmitChildToGrandChild();
+			//transmitChildToGrandChild();
+			transmitFatherToChild(); // use one method for both transmissions
+			player.state = "grandChild";
 
 		}
 		
@@ -241,6 +247,7 @@ package game
 		public function onTimeToEnd():void
 		{
 			// move to end credit?
+			trace("this is is end");
 		}
 		
 		public function transmitFatherToChild():void
@@ -249,7 +256,25 @@ package game
 			var ratx:Number = Math.max(r, v, b); // ratio du chemin le plus parcouru
 			var ratz:Number = Math.min(r, v, b); // ratio du chemin le moins parcouru
 			var classement:Array = player.pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order
-			trace("classement: " + classement);
+			
+			// debug stuff
+			for (var h:int = 0; h < 3; h++) 
+			{
+				trace("classement: " + classement[h]);
+				switch (h) 
+				{
+					case 0:
+						trace("ratio z: " + player.pathDistToTotalRatio[classement[h]]);
+						break;
+					case 1:
+						trace("ratio y: " + player.pathDistToTotalRatio[classement[h]]);
+						break;
+					case 2:
+						trace("ratio x: " + player.pathDistToTotalRatio[classement[h]]);
+						break;
+				}
+
+			}
 			
 			// Modèle 1-a: 0.6<ratx<1 et 0=<ratz<0.2
 			if (ratx > 0.6 && ratz < 0.2)
@@ -301,23 +326,89 @@ package game
 			}
       
 			for (var i:int = 0; i < 3; i++) {
-				trace("vitesse de base child: ("+ i + ") " + player.pathBaseSpeed[i]);
+				trace("nouvelle VB: ("+ i + ") " + player.pathChildSpeed[i]);
 			}
 			
 			// remettre toues les distances à zero
-			for (var s:int = 0; s < player.pathDistance.length; s++) 
+			for (var s:int = 0; s < 3; s++) 
 			{
-				//store father distances
-				player.fatherStoredDistances[s] = player.pathDistance[s];
+				//store distances and velocities
+				if (player.state == "father" || player.state == "childAlive") 
+				{
+					player.fatherStoredDistances[s] = player.pathDistance[s];
+					player.fatherStoredVelocities[s] = player.pathMaxVel[s];
+				} else	{
+					player.childStoredDistances[s] = player.pathDistance[s];
+					player.childStoredVelocities[s] = player.pathMaxVel[s];
+				}
+	
 				//reset distances to zero
 				player.pathDistance[s] = 0;
 			}
+			
+			
+			var sortpaths:Array = new Array();
+			var sortspeeds:Array = new Array();
+			
+			// transmettre les index de chemin pour calcul de vitesse _type3
+			if (player.state == "father" || player.state == "childAlive") 
+			{
+				// calculate all the stuff needed to set-up _type3 velocities
+				sortpaths = player.fatherStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				player.Dxtotale = player.fatherStoredDistances[sortpaths[0]]; //store the highest value DxTotal
+				
+				sortspeeds = player.fatherStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
+				
+				player.transmitIndexY = sortspeeds[1];
+				player.transmitIndexZ = sortspeeds[2];
+
+				trace("pere -> fils");
+				trace("chemin le plus emprunté: " + sortpaths[0]);
+				trace("Dxtotale: " + Number(player.Dxtotale).toFixed(1));
+				trace("chemins les plus lents: " + player.transmitIndexY + " " + player.transmitIndexZ);
+				trace("distance sur ces chemins: " + Number(player.fatherStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(player.fatherStoredDistances[sortpaths[2]]).toFixed(1));
+				
+
+			} else {
+				
+				// calculate all the stuff needed to set-up _type3 velocities
+				sortpaths = player.childStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				player.Dxtotale = player.childStoredDistances[sortpaths[0]]; //store the highest value DxTotal
+			
+				
+				sortspeeds= player.childStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
+				
+				player.transmitIndexY = sortspeeds[1];
+				player.transmitIndexZ = sortspeeds[2];
+
+				trace("fils -> petit_fils");
+				trace("chemin le plus emprunté: " + sortpaths[0]);
+				trace("Dxtotale: " + Number(player.Dxtotale).toFixed(1));
+				trace("chemins les plus lents: " + player.transmitIndexY + " " + player.transmitIndexZ);
+				trace("distance sur ces chemins: " + Number(player.fatherStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(player.fatherStoredDistances[sortpaths[2]]).toFixed(1));
+
+			}
+			
+			
 		} 
 		// end transmitFatherToChild()
 		
-		public function transmitChildToGrandChild():void
+		
+		
+		public function transmitChildToGrandChild():void // may not need this
 		{
 			// transmition formulas here
+			
+		/*	remettre toues les distances à zero
+			for (var s:int = 0; s < player.pathDistance.length; s++) 
+			{
+				//store father distances
+				player.childStoredDistances[s] = player.pathDistance[s];
+				//reset distances to zero
+				player.pathDistance[s] = 0;
+			}*/
 		}
 		// end transmitChildToGrandChild()
 		
@@ -381,9 +472,12 @@ package game
 		override public function render():void 
 		{
 			super.render();
+			Draw.rect(FP.camera.x + 10, FP.camera.y + 10, 300, 80,0x24323F, 0.95);// overlay for debug text
 			debug.drawHitBox(player);
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
+			
+			
 		}
 		// end Game RENDER LOOP
 		
@@ -554,10 +648,13 @@ package game
 				
 			}
 			
-			var father_var:String = "Red - Vb: " + Number(player.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(player.pathDistance[0]).toFixed(2) + " r: " + Number(player.pathDistToTotalRatio[0]).toFixed(2) + " V: " + Number(player.pathMaxVel[0]).toFixed(2) + "\n"
-									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " V: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
-									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " V: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
-									+"Timer: " + Math.floor(timer) + " State: " + player.state + " Row: " + player.row + " Col: " + player.col +"\n";
+			var father_var:String = "Red - Vb: " + Number(player.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(player.pathDistance[0]).toFixed(2) + " r: " + Number(player.pathDistToTotalRatio[0]).toFixed(2) + " Vr: " + Number(player.pathMaxVel[0]).toFixed(2) + "\n"
+									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " Vv: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
+									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " Vb: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
+									+"Timer: " + Math.floor(timer) + " State: " + player.state.toUpperCase() +"\n"//+ " Row: " + player.row + " Col: " + player.col 
+									+"modele de vitesse: " + player.typeVitesse + "\n"
+									+"Vinstantanée: " + Number(player.pathInstantVel[player.pathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n";
+									
 			debugText.text = father_var;
 			debugText.size = 11;
 			debugHUD.x = FP.camera.x + 10;

@@ -9,18 +9,19 @@ Bugs:
 
 Next: release 1.5
 -----------------
+
+> tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
+> tous les sons s'arrettent lorsque le joueur est immobile
+> nouvelles formules de transmissions implementees pour les trois generations!
+
+> smoothed acceleration with FP.elapsed
 > refactored world ceation (now Game class does the logic, and Level only loads level data)
 > god mode pour se deplacer rapidement dans le niveau (ajoute a gamedata)
-> tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
-
-> tous les sons s'arrettent lorsque le joueur est immobile
-
-> nouvelles formules de transmissions pere->fils implementees (sauf vitesse 3)
 
 To do list:
 ----------
 > fade music in/out when player starts/stops
-
+> can we avoid the slowdown when player only crosses path without changing?
 > implement moovesmooth
 
 > preloader!

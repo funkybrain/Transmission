@@ -27,8 +27,8 @@
 		 */
 		public var pathBaseSpeed:Array = new Array(); // basic speed modifier on each path
 		public var pathMaxVel:Array = new Array(); // max velocity on each path type
-		public var pathInstantVel:Array = new Array(); // the actual velocity used in all movement calculations
-		
+		public var pathInstantVel:Array = new Array(); // the actual velocity used in all movement calculations		
+		public var pathFastest:Number; // the maximum speed of all paths
 		
 		public var totaldistance:Number=0; // total distance traveled on all paths
 		public var pathDistance:Array = new Array(); // distance travelled on each path
