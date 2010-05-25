@@ -13,7 +13,8 @@
 // http://scienceblogs.com/goodmath/2007/09/puzzling_graphs_problem_modeli.php
 // for an example.
 
-package {
+package ai
+{
     import flash.geom.Point;
                            
     public class Graph {
@@ -23,7 +24,12 @@ package {
         public function vertexGeom(v:Object):Point {
             return new Point(0.0, 0.0);
         }
-
+		
+		/**
+		 * 
+		 * @param	n	a Node object
+		 * @return		takes each vertice of a Node and store it's coordinates as a array of Points
+		 */
         public function nodeGeom(n:Object):Array {
             var results:Array = new Array();
             var nodes:Array = nodeVertices(n);
@@ -33,6 +39,11 @@ package {
             return results;
         }
         
+		/**
+		 * 
+		 * @param	n	a Node object
+		 * @return		returns the center coordinate of a Node as a Point?
+		 */
         public function nodeCenter(n:Object):Point {
             var center:Point = new Point(0.0, 0.0);
             var nodes:Array = nodeVertices(n);

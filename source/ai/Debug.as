@@ -10,7 +10,8 @@ package {
   import flash.external.ExternalInterface;
   import flash.text.*;
   
-  public class Debug extends Sprite {
+  public class Debug extends Sprite
+  {
     
     CONFIG::debugging {
       private var txt:TextField;
@@ -18,7 +19,8 @@ package {
       private static var singleton:Debug;
     }
     
-    public function Debug(parent:Sprite) {
+    public function Debug(parent:Sprite)
+	{
       CONFIG::debugging {
         // There can be only one!!
         if (singleton) {
@@ -44,7 +46,8 @@ package {
       }
     }
     
-    public static function trace(...args):void {
+    public static function trace(...args):void
+	{
       CONFIG::debugging {
         for (var i:int = 0; i < args.length; i++) {
           if (typeof args[i] == "number") {

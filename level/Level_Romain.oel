@@ -567,4 +567,31 @@
     <anim_rouage x="1050" y="30"/>
     <anim_man x="60" y="0"/>
   </animations>
+  <waypoints>
+    <waypoint x="360" y="210"/>
+    <waypoint x="600" y="120"/>
+    <waypoint x="750" y="150"/>
+    <waypoint x="750" y="90"/>
+    <waypoint x="960" y="210"/>
+    <waypoint x="960" y="150"/>
+    <waypoint x="1020" y="270"/>
+    <waypoint x="1200" y="210"/>
+    <waypoint x="1200" y="270"/>
+    <waypoint x="1260" y="270"/>
+    <waypoint x="1500" y="150"/>
+    <waypoint x="1500" y="210"/>
+    <waypoint x="1560" y="210"/>
+    <waypoint x="1710" y="330"/>
+    <waypoint x="1800" y="210"/>
+    <waypoint x="1890" y="210"/>
+    <waypoint x="1890" y="270"/>
+    <waypoint x="2040" y="90"/>
+    <waypoint x="2340" y="120"/>
+    <waypoint x="2340" y="210"/>
+    <waypoint x="2670" y="210"/>
+    <waypoint x="2610" y="210"/>
+    <waypoint x="2610" y="150"/>
+    <waypoint x="2730" y="270"/>
+    <waypoint x="2970" y="210"/>
+  </waypoints>
 </level>
