@@ -29,6 +29,8 @@
 		 * Level XML.
 		 */
 		[Embed(source = '../../level/Level_Romain.oel', mimeType = 'application/octet-stream')] private static const LEVEL:Class;
+		[Embed(source = '../../level/Level_Test_Manu.oel', mimeType = 'application/octet-stream')] private static const LEVEL_TEST:Class;
+		
 		
 		/**
 		 * Size of the level (so it knows where to keep the player + camera in).
@@ -47,7 +49,16 @@
 		 */
 		public function Level()
 		{
-			super(LEVEL);
+			var loadLevel:Class;
+			
+			if (LoadXmlData.LD) 
+			{
+				loadLevel = LEVEL;
+			} else {
+				loadLevel = LEVEL_TEST;
+			}
+			
+			super(loadLevel);
 
 			width = level.width;
 			height = level.height;

@@ -11,8 +11,8 @@ Bugs:
 
 Next: release 1.6
 -----------------
-> mise en place les bases de l'algorithme de pathfinding A*
-
+> mis en place les bases de l'algorithme de pathfinding A*
+> ajout d'une variable LD pour basculer entre vrai LD et LD de debuggage (pour manu) 
 
 
 
