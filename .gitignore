@@ -12,4 +12,4 @@ build/transmission.swf
 obj/TransmissionConfig.old
 assets/*.db
 assets/*.swf
-sounds/*.*
+sounds/*.mp3
