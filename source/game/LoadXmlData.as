@@ -34,6 +34,7 @@ package game
 		public static var CT_VB:Number;
 		public static var DEBUG:Boolean;
 		public static var GODMODE:Boolean;
+		public static var LD:Boolean;
 		
 		public function LoadXmlData() 
 		{
@@ -66,15 +67,16 @@ package game
 			// debug
 			DEBUG = stringToBoolean(gameData.debug.text());
 			GODMODE = stringToBoolean(gameData.godmode.text());
-			
-			trace(GODMODE);
+			LD = stringToBoolean(gameData.LD.text());
 
-			trace("done assigning data");
-			trace("starting intro movie");
-			
+
+			trace("done assigning data in LoadXmlData");
+
+			//trace("starting intro movie");
 			// remove comment to play intro movie
 			//var playIntro:Intro = new Intro();
-			
+
+			//trace("creating world");			
 			// comment out to pplay intro movie
 			FP.world = new Game;
 			

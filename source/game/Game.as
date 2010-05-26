@@ -72,6 +72,8 @@ package game
 		public var robotChild:Robot;
 		public var robotFather:Robot;
 		
+		public var robotFatherPath:FindPath;
+		
 		public var playerMoving:Boolean = false;
 		public var vectorZero:Point = new Point();
 		
@@ -218,6 +220,12 @@ package game
 			robotFatherIsAlive = true;
 			add(robotFather);
 			
+			// creat path that robot father must follow
+			robotFatherPath = new FindPath();
+			
+			// create AI node graph
+			generateAIGraph(robotFather.x, robotFather.y);
+			
 			//TODO need to make robotater follow ai pathfinding
 			
 			//transport father to robot child position
@@ -297,6 +305,14 @@ package game
 			// in comes end menu
 			add(new Outro());
 			
+		}
+		
+		/**
+		 * AI calculations
+		 */
+		public function generateAIGraph(startX:int, startY:int):void
+		{
+			// generate the graph based on father start position
 		}
 		
 		public function transmitFatherToChild():void

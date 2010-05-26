@@ -2,18 +2,21 @@
 // Copyright 2007 Amit J Patel, amitp@cs.stanford.edu
 // License: MIT (see LICENSE file)
 
-package {
+package ai
+{
     import flash.display.Graphics;
     import flash.geom.Point;
     
     // This class implements static helper functions, some of which
     // work on a graph
     
-    public class Utils {
+    public class Utils
+	{
         public static var graph:Graph;
 
         // Given r, g, b from 0 to 1, compute a Flash color integer
-        public static function makeColor(r:Number, g:Number, b:Number):int {
+        public static function makeColor(r:Number, g:Number, b:Number):int
+		{
             var ri:int = Math.max(0, Math.min(255, Math.round(255.0*r)));
             var gi:int = Math.max(0, Math.min(255, Math.round(255.0*g)));
             var bi:int = Math.max(0, Math.min(255, Math.round(255.0*b)));
@@ -22,7 +25,8 @@ package {
         
         // For vertices 0..n-1, compute midpoint i as halfway between
         // vertex i and i+1; return an array of midpoints.
-        public static function computePolygonMidpoints(vertices:Array):Array {
+        public static function computePolygonMidpoints(vertices:Array):Array 
+		{
             var midpoints:Array = [];
             for (var i:int = 0; i != vertices.length; i++) {
                 var q:Point = Point.interpolate
@@ -33,7 +37,8 @@ package {
         }
         
         public static function drawArrow(graphics:Graphics,
-                                         p:Point, q:Point):void {
+                                         p:Point, q:Point):void 
+		{
             var stem_length:Number = 0.7;
             var head_length:Number = 0.4;
             var stem_width:Number = 0.05;
@@ -56,23 +61,27 @@ package {
             graphics.lineTo(s.x + dx*0.05, s.y + dy*0.05);
         }
 
-        public static function drawExploredNodes(pathfinder:Pathfinder, graphics:Graphics):void {
+        public static function drawExploredNodes(pathfinder:Pathfinder, graphics:Graphics):void
+		{
             // Draw the explored nodes, showing h/f/g as
             // R/G/B. Choose a color scale by looking for the
             // maximum h.
             var maxF:Number = 0.0;
             var minF:Number = Infinity;
             var n:String;
-            for (n in pathfinder.visited) {
+            for (n in pathfinder.visited) 
+			{
                 var info:Object = pathfinder.visited[n];
-                if (!info.open) {
+                if (!info.open)
+				{
                     maxF = Math.max(maxF, info.f);
                     minF = Math.min(minF, info.f);
                 }
             }
             var hScale:Number = (1-pathfinder.alpha)/Math.max(pathfinder.alpha, 1-pathfinder.alpha);
             var gScale:Number = pathfinder.alpha/Math.max(pathfinder.alpha, 1-pathfinder.alpha);
-            for (n in pathfinder.visited) {
+            for (n in pathfinder.visited) 
+			{
                 var info2:Object = pathfinder.visited[n];
                 var color:int = makeColor(hScale*info2.h/maxF, info2.f/maxF, gScale*info2.g/maxF);
 
@@ -90,7 +99,8 @@ package {
         }
 
         // Draw arrows showing the parent pointers
-        public static function drawParentPointers(pathfinder:Pathfinder, graphics:Graphics):void {
+        public static function drawParentPointers(pathfinder:Pathfinder, graphics:Graphics):void
+		{
             for (var n:String in pathfinder.visited) {
                 var info:Object = pathfinder.visited[n];
                 if (info.parent) {
@@ -106,7 +116,8 @@ package {
         // Draw the path found by the pathfinder. Note that the path
         // is stored in reverse order: the last element is the
         // beginning of the path.
-        public static function drawPath(path:Array, graphics:Graphics):void {
+        public static function drawPath(path:Array, graphics:Graphics):void
+		{
             // NOTE: fill settings are being corrupted for some reason,
             // and filling with alpha=0 is a workaround. :(
             graphics.beginFill(0x000000, 0.0);
@@ -142,7 +153,8 @@ package {
 
         // Draw the node, either regular or a curved variant.
         public static function drawNode(graphics:Graphics, n:Object,
-                                        curved:Boolean):void {
+                                        curved:Boolean):void
+		{
             var vertices:Array = graph.nodeGeom(n);
             var midpoints:Array = computePolygonMidpoints(vertices);
 
@@ -161,7 +173,8 @@ package {
             }
         }
 
-        public static function drawGrid(graphics:Graphics, costs:Object):void {
+        public static function drawGrid(graphics:Graphics, costs:Object):void
+		{
             graphics.clear();
             var nodes:Array = graph.allNodes();
             for (var i:int = 0; i != nodes.length; i++) {

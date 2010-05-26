@@ -2,8 +2,10 @@
 // Copyright 2007 Amit J Patel, amitp@cs.stanford.edu
 // License: MIT (see LICENSE file)
 
-package {
-    import Graph;
+package ai
+{
+	
+    import ai.Graph;
 
     // This class implements A* and related algorithms.  A* works by
     // using two estimates from each point: the cost from the start to
@@ -27,19 +29,22 @@ package {
     // OPEN is always expanding as the f values are increasing.  When
     // h exactly matches the cost of reaching the goal, A* follows
     // only that path and no others.
-    public class Pathfinder {
+	
+    public class Pathfinder 
+	{
         public var graph:Graph;
         public var start:Object;
         public var goal:Object;
-
+		
+		// This function (h) is the cost from the current node to the goal
         public var heuristic:Function;
 
-        // A function that takes two adjacent nodes and returns the
+        // A function (g) that takes two adjacent nodes and returns the
         // cost of traversing from one to the other. This function
         // does not have to be symmetric. Return Infinity if the
         // traversal is impossible.
         public var cost:Function;
-        
+		
         // Alpha can be between 0 (BFS) and 1 (Dijkstra's), with 0.5 being A*
         public var alpha:Number = 0.4999;
 
@@ -60,7 +65,8 @@ package {
         public var path:Array = null;
         
         public function Pathfinder(graph:Graph, start:Object, goal:Object,
-                                   heuristic:Function, cost:Function) {
+                                   heuristic:Function, cost:Function) 
+		{
             this.graph = graph;
             this.start = start;
             this.goal = goal;
@@ -70,21 +76,30 @@ package {
             initialize(start);
         }
 
-        public function initialize(start:Object):void {
+		// Initialize
+        public function initialize(start:Object):void 
+		{
             // Initialize the VISITED set and OPEN set by inserting
             // the start point
             var initialVisited:Object = {
                 node: start, open: 1, closed: 0, parent: null,
-                g: 0, h: heuristic(start, goal), f: NaN};
+                g: 0, h: heuristic(start, goal), f: NaN };
+				
             initialVisited.f = (alpha*initialVisited.g + (1-alpha)*initialVisited.h)
                 /Math.max(alpha, 1-alpha);
 
             visited[graph.nodeToString(start)] = initialVisited;
             open.push(initialVisited);
         }
-
-        public function findPath():Boolean {
-            while (open.length > 0) {
+		
+		/**
+		 * This is the heart of A* pathfinding. Will build the path Array to store path found
+		 * @return	returns true if able to find the path
+		 */
+        public function findPath():Boolean 
+		{
+            while (open.length > 0) 
+			{
                 // Find the best node (lowest f). After sorting it
                 // will be the last element in the array, and we
                 // remove it from OPEN and also update its open flag.
@@ -94,20 +109,23 @@ package {
                 best.open = 0;
 
                 // If we find the goal, we're done.
-                if (graph.nodesEqual(goal, best.node)) {
+                if (graph.nodesEqual(goal, best.node)) 
+				{
                     reconstructPath();
                     return true;
                 }
                 
                 // Add the neighbors of this node to OPEN
                 var next:Object = graph.nodeNeighbors(best.node);
-                for (var j:int = 0; j != next.length; j++) {
+                for (var j:int = 0; j != next.length; j++) 
+				{
                     var c:Number = cost(best.node, next[j]);
                     if (!isFinite(c)) continue; // cannot pass
 
                     // Every node needs to be in VISITED; be sure it's there.
                     var e:Object = visited[graph.nodeToString(next[j])];
-                    if (!e) {
+                    if (!e) 
+					{
                         e = {node: next[j], open: 0, closed: 0, parent: null,
                              g: Infinity, h: 0, f: 0};
                         visited[graph.nodeToString(next[j])] = e;
@@ -117,8 +135,10 @@ package {
                     // better than the old cost. The old cost starts
                     // at Infinity, so it's always better the first
                     // time we see this node.
-                    if (best.g + c < e.g) {
-                        if (!e.open) {
+                    if (best.g + c < e.g) 
+					{
+                        if (!e.open)
+						{
                             e.open = 1;
                             open.push(e);
                         }
@@ -134,7 +154,8 @@ package {
         }
 
         // Reconstruct the path from the goal back to the start
-        public function reconstructPath():void {
+        public function reconstructPath():void 
+		{
             path = new Array();
             var pathVisited:Object = visited[graph.nodeToString(goal)];
             while (pathVisited && pathVisited.node != start) {

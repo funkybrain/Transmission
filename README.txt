@@ -18,20 +18,14 @@ Bugs:
 
 
 
+Next: release 1.6
+--------------------
+> mis en place les bases de l'algorithme de pathfinding A*
+> ajout d'une variable LD pour basculer entre vrai LD et LD de debuggage (pour manu) 
 > ajout du fade-in au debut du jeu (class Curtain)
 > mis en place de la fonctionalite pour lire une video d'intro (class Intro) avant de commencer le jeu
 > ajout du menu de fin (placeholder) et redémarrage du jeu avec ENTER
 
-Next: release 1.5
------------------
-
-> tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
-> tous les sons s'arrettent lorsque le joueur est immobile
-> nouvelles formules de transmissions implementees pour les trois generations!
-
-> smoothed acceleration with FP.elapsed
-> refactored world ceation (now Game class does the logic, and Level only loads level data)
-> god mode pour se deplacer rapidement dans le niveau (ajoute a gamedata)
 
 To do list:
 ----------
@@ -41,7 +35,7 @@ To do list:
 
 > preloader!
 
-> center player in right 3rd of screen
+> center player in right 3rd of screen?
 
 > may have to scale hitbox to player size if child is small
 
@@ -53,19 +47,18 @@ To do list:
 > Fin du jeu
 - Lancer l'écran de crédit avec possibilité de relancer le jeu
 
-> Intro - prévoir un trigger de lancement des timers quand la joueur arrive au début des chemins
+> Intro - prévoir un trigger de lancement des timers quand la joueur arrive au début des chemins?
 
 > Afficher masque noir sur l'écran
 - masque vertical lié au ratio de distance le plus petit (bcp de changements = ouverture)
 
-> Vérifier possibilité de dézoomer l'écran
+> Vérifier possibilité de dézoomer l'écran (ok)
 
-> how can we load multiple levels and put them end-to-end?
-- test loading another level and offsetting all coordinates by width of first level
+> Test loading another level and offsetting all coordinates by width of first level
 
 > clean-up assets that are 100 pixels behind camera position
 
-Next: release 1.3
+Release 1.3
 -----------------
 > ajout du timer GrandChildToEnd pour gerer la fin du jeu (dans gamedata.xml)
 > fade out (la mort) du petit-fils implemente (10s avant la fin)
@@ -74,7 +67,7 @@ Next: release 1.3
 > xfade des musiques entre les 3 chemins implementes (pas facile de confirmer que ça marche vu la similarité des trois sons)
 > nouvelles animations de chemins par son altesse Mouloud
 
-Next: release 1.4
+Release 1.4
 -----------------
 > masque foncé pour restreindre la vision du joueur lors du déplacement
 > fixed bug en debut de partie si le joueur n'avance pas
@@ -85,3 +78,12 @@ Next: release 1.4
 > vitesse de recul = VB dans tous les cas
 > possibilité de mettre plusieurs background bout à bout
 > gridsize for tilemaps now read from xml file
+
+Release 1.5
+-----------------
+> tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
+> tous les sons s'arrettent lorsque le joueur est immobile
+> nouvelles formules de transmissions implementees pour les trois generations!
+> smoothed acceleration with FP.elapsed
+> refactored world ceation (now Game class does the logic, and Level only loads level data)
+> god mode pour se deplacer rapidement dans le niveau (ajoute a gamedata)
