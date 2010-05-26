@@ -70,7 +70,12 @@ package game
 			trace(GODMODE);
 
 			trace("done assigning data");
+			trace("starting intro movie");
 			
+			// remove comment to play intro movie
+			//var playIntro:Intro = new Intro();
+			
+			// comment out to pplay intro movie
 			FP.world = new Game;
 			
 		}

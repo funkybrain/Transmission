@@ -102,7 +102,7 @@
 		public function fill(rect:Rectangle, color:uint = 0, alpha:Number = 1):void
 		{
 			var xx:int, yy:int, buffer:BitmapData;
-			if (alpha >= 1)
+			if (alpha > 1)
 			{
 				_rect.width = rect.width;
 				_rect.height = rect.height;

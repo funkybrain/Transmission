@@ -1,11 +1,24 @@
 ﻿Tips:
 ----
 FP.choose() is your friend
+Embedding assets: http://www.bit-101.com/blog/?p=853
+Define a private Class variable, put the cursor just above it and right-click click on your image, insert to document:
+>FlashDevelop will automatically insert the correct “Embed” tag in your code.
+
+To play intro movie:
+> must target one symbol in the .swf that contains all other symbols
+> make sure the registration point of that symbol is at the top-left corner
+> include the fade to black inside last few frames
+> also don't forget to tick export as AS in library
 
 Bugs:
 ----
 > bug with path tileset (couple of random tiles showing at beginning of levels)
 >> FIXED: level was wrapping due to width not being an exact multiplier of grid
+
+> ajout du fade-in au debut du jeu (class Curtain)
+> mis en place de la fonctionalite pour lire une video d'intro (class Intro)
+
 
 Next: release 1.5
 -----------------
@@ -48,6 +61,7 @@ To do list:
 > how can we load multiple levels and put them end-to-end?
 - test loading another level and offsetting all coordinates by width of first level
 
+> clean-up assets that are 100 pixels behind camera position
 
 Next: release 1.3
 -----------------

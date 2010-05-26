@@ -1,5 +1,6 @@
 package game 
 {
+	import net.flashpunk.graphics.Canvas;
 	import net.flashpunk.Sfx;
 	import net.flashpunk.World;
 	import rooms.Level;
@@ -89,11 +90,16 @@ package game
 		/**
 		 * Special effects and Tweens
 		 */
+		
+		// Shutters 
 		public var rightShutter:Shutter = new Shutter(800,0);
 		public var shutterSpring:NumTween = new NumTween();
 		private var _lastShutterPosH:Number = FP.camera.x + FP.screen.width / 2;
 		private var _shutterX:int;
 		private var _shutterY:int;
+		
+		// Fade in screen
+		private var _fadeInCurtain:Curtain;
 
 		/**
 		 * Constructor.
@@ -153,7 +159,18 @@ package game
 			add(rightShutter);
 			addTween(shutterSpring);
 			
+			// fade game in
+			fadeIn(FP.width, FP.height);
+			
 		} // end constructor
+		
+		
+		public function fadeIn(w:int, h:int):void
+		{
+			_fadeInCurtain = new Curtain(w, h);
+			add(_fadeInCurtain);
+			trace("fade In");
+		}
 		
 		/**
 		 * Child appears with father
