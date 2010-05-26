@@ -2,6 +2,7 @@ package game
 {
 	import net.flashpunk.graphics.Canvas;
 	import net.flashpunk.Sfx;
+	import net.flashpunk.tweens.sound.SfxFader;
 	import net.flashpunk.World;
 	import rooms.Level;
 	import game.Debug;
@@ -16,6 +17,7 @@ package game
 	import game.Background;
 	import game.Animation;
 	import game.Shutter;
+	import game.Outro;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Anim;
@@ -75,7 +77,7 @@ package game
 		
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
-
+		public var playerGoneAWOL:Boolean = false;
 		
 		// store ratio in easy to manipulate variables
 		public var r:Number; 
@@ -200,7 +202,7 @@ package game
 		{
 			//remove robot father from game
 			robotFatherIsAlive == false;
-			remove(robotFather);
+			//BUG remove(robotFather);
 			trace("oh, shit, father just went awol...");
 		}
 		
@@ -265,6 +267,36 @@ package game
 		{
 			// move to end credit?
 			trace("this is is end");
+			
+			// see if this helps kill the sounds
+			playerGoneAWOL = true;
+			
+			//BUG can't frakking kill those sounds!!!
+			for each (var soundToKill:Sfx in player.sound.pathSound) 
+			{
+				if (soundToKill.playing) 
+				{
+					trace("playin");
+					soundToKill.stop();
+					trace(soundToKill.playing);
+				}
+			}	
+			
+			/*
+			for each (var faderToRemove:SfxFader in player.sound.pathFader) 
+			{
+				player.sound.removeTween(faderToRemove);
+				trace("removed fader tweens?");
+			}			
+			*/
+			
+			// remove player from world
+			removeList(player.sound, player)
+
+					
+			// in comes end menu
+			add(new Outro());
+			
 		}
 		
 		public function transmitFatherToChild():void
@@ -458,7 +490,7 @@ package game
 			updateDebugText();
 			
 			//update SoundManager - required so the tweens actually get updated
-			player.sound.update();
+			//player.sound.update();
 			
 			// if son is alive follow father
 			if (robotChildIsAlive) 
@@ -551,7 +583,7 @@ package game
 				{
 					for each (var noiseIn:Sfx in player.sound.pathSound ) 
 					{
-						if (!noiseIn.playing) 
+						if (!noiseIn.playing && playerGoneAWOL==false) 
 						{
 							noiseIn.resume();	
 						}
@@ -596,7 +628,7 @@ package game
 		// end updateShutters()
 		
 		/**
-		 * GrandChild Death
+		 * Test to see if GrandChild is close to death
 		 */
 		public function checkGrandChildNearDeath():void
 		{
@@ -611,9 +643,15 @@ package game
 			{
 				//death is nigh
 				//FP.screen.scale = 0.9;
+				
 			}
 		}
 		
+		/**
+		 * GrandChild starts to disappear
+		 * 
+		 * @param	time	countdown to disapearance starts at this time (in sec)
+		 */
 		public function startDeathSequence(time:Number):void
 		{
 			//fade player sprite out
@@ -621,8 +659,6 @@ package game
 			player.addTween(player.fadeOut);
 			player.fadeOut.start();
 			
-			// go to end credits
-			// removeAll();
 		}
 		
 		/**
@@ -637,8 +673,18 @@ package game
 			//TODO smooth with time.elpased and/or tween
 			for each (var value:Animation in animationList)
 			{
-				value.spriteName.rate = rate;
+				
+				// stop animations when player leaves world
+				if (playerGoneAWOL) 
+				{
+					value.spriteName.rate = 0;
+				} else 
+				{
+					value.spriteName.rate = rate;	
+				}
 			}
+			
+
 		}
 		
 		/**

@@ -16,9 +16,11 @@ Bugs:
 > bug with path tileset (couple of random tiles showing at beginning of levels)
 >> FIXED: level was wrapping due to width not being an exact multiplier of grid
 
-> ajout du fade-in au debut du jeu (class Curtain)
-> mis en place de la fonctionalite pour lire une video d'intro (class Intro)
 
+
+> ajout du fade-in au debut du jeu (class Curtain)
+> mis en place de la fonctionalite pour lire une video d'intro (class Intro) avant de commencer le jeu
+> ajout du menu de fin (placeholder) et redémarrage du jeu avec ENTER
 
 Next: release 1.5
 -----------------

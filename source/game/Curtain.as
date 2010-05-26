@@ -10,6 +10,7 @@ package game
 	import net.flashpunk.Tween;
 	import net.flashpunk.tweens.misc.NumTween;
 	import net.flashpunk.utils.Draw;
+	import net.flashpunk.utils.Ease;
 	
 	/**
 	 * Class is used to draw a blind on the main game window 
@@ -56,7 +57,7 @@ package game
 			
 			// tween the alpha
 			_fadeInTween = new NumTween()
-			_fadeInTween.tween(1, 0, 5);
+			_fadeInTween.tween(1, 0, 5, Ease.circIn);
 			addTween(_fadeInTween);
 			_fadeInTween.start();
 		}

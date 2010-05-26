@@ -1,10 +1,11 @@
 package game 
 {
+	import net.flashpunk.Entity;
 	import net.flashpunk.Sfx;
 	import net.flashpunk.tweens.sound.*;
 	import net.flashpunk.Tweener;
 	
-	public class SoundManager extends Tweener
+	public class SoundManager extends Entity
 	{
 		/**
 		 * Embedded sound library

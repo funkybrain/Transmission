@@ -20,12 +20,12 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>15</timeToChild>
-		<timeFatherToChild>20</timeFatherToChild><!-- robot AI father takes over-->
+		<timeToChild>5</timeToChild>
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
-		<timeFatherToDeath>60</timeFatherToDeath><!-- robot AI father goes poof!-->
-		<timeChildToGrandChild>60</timeChildToGrandChild>
-		<timeGrandChildToEnd>60</timeGrandChildToEnd>
+		<timeFatherToChild>5</timeFatherToChild><!-- robot AI father takes over-->
+		<timeFatherToDeath>10</timeFatherToDeath><!-- robot AI father goes poof!-->
+		<timeChildToGrandChild>5</timeChildToGrandChild>
+		<timeGrandChildToEnd>5</timeGrandChildToEnd>
 	</timers>
 	
 	
