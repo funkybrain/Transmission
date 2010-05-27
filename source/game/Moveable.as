@@ -58,23 +58,29 @@
 			
 			//trace("collision type: " + e.type);
 			
-			switch (e.type)
+			if (e == null) 
 			{
-			case "red":
-				pathType = 0;
-				break;
-			case "green":
-				pathType = 1;
-				break;
-			case "blue":
-				pathType = 2;
-				break;
-			default:
-				pathType = 3; // no path
-				
+				trace("no collision detected in Moveable.getCurentPath");
+				return 3; // test for 3 to try and get debug information
 			}
-			//trace("pathType: " + pathType);
-			return pathType;
+			else
+			{
+				switch (e.type)
+				{
+				case "red":
+					pathType = 0;
+					break;
+				case "green":
+					pathType = 1;
+					break;
+				case "blue":
+					pathType = 2;
+					break;
+				}
+			
+				return pathType;
+			}
+			
 		}
 		
 		

@@ -23,10 +23,10 @@
 	<timers>
 		<timeToChild>5</timeToChild>
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
-		<timeFatherToChild>5</timeFatherToChild><!-- robot AI father takes over-->
-		<timeFatherToDeath>10</timeFatherToDeath><!-- robot AI father goes poof!-->
-		<timeChildToGrandChild>5</timeChildToGrandChild>
-		<timeGrandChildToEnd>5</timeGrandChildToEnd>
+		<timeFatherToChild>15</timeFatherToChild><!-- robot AI father takes over-->
+		<timeFatherToDeath>20</timeFatherToDeath><!-- robot AI father goes poof!-->
+		<timeChildToGrandChild>10</timeChildToGrandChild>
+		<timeGrandChildToEnd>10</timeGrandChildToEnd>
 	</timers>
 	
 	

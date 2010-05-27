@@ -25,7 +25,8 @@ Next: release 1.6
 > ajout du fade-in au debut du jeu (class Curtain)
 > mis en place de la fonctionalite pour lire une video d'intro (class Intro) avant de commencer le jeu
 > ajout du menu de fin (placeholder) et redémarrage du jeu avec ENTER
-
+> ajout fade to black en fin de jeu, avanat affichage du menu
+> ajout du rouleau qui est poussé par le joueur
 
 To do list:
 ----------

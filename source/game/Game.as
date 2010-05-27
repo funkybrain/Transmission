@@ -1,6 +1,7 @@
 package game 
 {
 	import net.flashpunk.graphics.Canvas;
+	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.Sfx;
 	import net.flashpunk.tweens.sound.SfxFader;
 	import net.flashpunk.World;
@@ -104,7 +105,13 @@ package game
 		
 		// Fade in screen
 		private var _fadeInCurtain:Curtain;
-
+		
+		/**
+		 * Rouleau
+		 */
+		public var rouleau:Rouleau;
+		
+		 
 		/**
 		 * Constructor.
 		 */
@@ -126,6 +133,9 @@ package game
 			// add player to world
 			player = level_1.addPlayerToWorld(this);
 			
+			// add rouleau to world
+			rouleau = new Rouleau();
+			add(rouleau);
 			
 			// add debug hud to world
 			debug = new Debug();
@@ -164,14 +174,14 @@ package game
 			addTween(shutterSpring);
 			
 			// fade game in
-			fadeIn(FP.width, FP.height);
+			fadeIn();
 			
 		} // end constructor
 		
 		
-		public function fadeIn(w:int, h:int):void
+		public function fadeIn():void
 		{
-			_fadeInCurtain = new Curtain(w, h);
+			_fadeInCurtain = new Curtain(FP.width, FP.height, "in");
 			add(_fadeInCurtain);
 			trace("fade In");
 		}
@@ -258,11 +268,13 @@ package game
 		{
 			
 			player.graphic = player.grandChild;
-			player.timeGrandChildToEnd.start() // start final countdown to end
+			 // start final countdown to end
+			player.timeGrandChildToEnd.start()
 			// will check in update to start death sequence before end
 			
 			//transmit properties from child to grandchild
 			//transmitChildToGrandChild();
+			
 			transmitFatherToChild(); // use one method for both transmissions
 			player.state = "grandChild";
 
@@ -284,27 +296,17 @@ package game
 			{
 				if (soundToKill.playing) 
 				{
-					trace("playin");
+
 					soundToKill.stop();
-					trace(soundToKill.playing);
 				}
 			}	
 			
-			/*
-			for each (var faderToRemove:SfxFader in player.sound.pathFader) 
-			{
-				player.sound.removeTween(faderToRemove);
-				trace("removed fader tweens?");
-			}			
-			*/
 			
 			// remove player from world
-			removeList(player.sound, player)
+			removeList(player.sound, player, rouleau)
 
-					
-			// in comes end menu
+			// send Outro
 			add(new Outro());
-			
 		}
 		
 		/**
@@ -315,6 +317,9 @@ package game
 			// generate the graph based on father start position
 		}
 		
+		/**
+		 * Calculs de transmission
+		 */
 		public function transmitFatherToChild():void
 		{
 		
@@ -485,6 +490,14 @@ package game
 			// update entities
 			super.update();
 			
+			if (rouleau != null) 
+			{
+				// place rouleau
+				rouleau.x = Math.max(rouleau.previousX, player.x + (player.graphic as Spritemap).width);
+				// animate rouleau based on player speed
+				rouleau.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 4, 0, 1) * FP.frameRate * FP.elapsed;
+			}
+			
 			// update path ratios
 			r = player.pathDistToTotalRatio[0]; 
 			v = player.pathDistToTotalRatio[1]; 
@@ -528,6 +541,7 @@ package game
 			
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
+			
 		}
 		// end Game UPDATE LOOP
 		
@@ -683,7 +697,7 @@ package game
 		public function setAnimationSpeed():void
 		{
 			// first map player velocity to framerate
-			var rate:Number = FP.scale(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 2, 0, 1.5);	
+			var rate:Number = FP.scaleClamp(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 4, 0, 1);	
 			//trace(player.velocity.x);
 			
 			//TODO smooth with time.elpased and/or tween
@@ -696,7 +710,7 @@ package game
 					value.spriteName.rate = 0;
 				} else 
 				{
-					value.spriteName.rate = rate;	
+					value.spriteName.rate = rate * FP.frameRate * FP.elapsed;	
 				}
 			}
 			

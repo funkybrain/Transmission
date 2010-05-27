@@ -26,7 +26,6 @@ package game
 		 * Animation properties.
 		 */
 		private var _frames:Array;
-		private var _fadeIn:VarTween;
 		public	var spriteName:Spritemap;
 		
 		/**
@@ -73,17 +72,10 @@ package game
 			
 			graphic.scrollX = .5;
 			graphic.scrollY = .5;
-			
-			//spriteName.alpha = 0.1;
-			
-			spriteName.add("play", _frames, 10, true); // will loop
+				
+			spriteName.add("play", _frames, 24, true); // will loop
 			spriteName.play("play");
 			
-			//fade sprite in
-			//fadeIn = new VarTween();
-			//addTween(fadeIn);
-			//fadeIn.tween(spriteName, "alpha", 1, 4, Ease.backIn);
-			//fadeIn.start();
 		}
 		
 	}

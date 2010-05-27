@@ -1,0 +1,5 @@
+ANIM ROULEAU
+
+frame : 20X480px
+total document : 200X480
+10 frames... 

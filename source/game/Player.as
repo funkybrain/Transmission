@@ -221,12 +221,42 @@
 			
 		}
 		
+		private function printDebugInfo(from:uint):void
+		{
+			var debutext:String;
+			switch (from)
+				{
+				case 1:
+					debutext = "crashed when player first added to world";
+					break;
+				case 2:
+					debutext = "crashed in player update, at beginning of loop";
+					break;
+				case 3:
+					debutext = "crashed in player update, after the move";
+					break;
+				}
+			trace(debutext);
+			
+			trace("state: " + state);
+			trace("x: " + x);
+			trace("y: " + y);
+				
+		}
+		
 		/**
 		 * play music at game start
 		 */
 		override public function added():void
 		{
 			_pathPreviousIndex = getCurrentPath(); // find path player is on to play the correct file
+			// debug if =3
+			if (_pathPreviousIndex == 3) 
+			{
+				
+				printDebugInfo(1);
+				
+			}
 			
 			// start all sounds but only turn up volume on current path
 			for each (var music:Sfx in sound.pathSound) 
@@ -249,6 +279,13 @@
 		{
 			// find out what path the player is on
 			pathIndex = getCurrentPath();
+			//debug if =3
+			if (pathIndex == 3) 
+			{
+				
+				printDebugInfo(2);
+				
+			}
 			
 			//store current path index
 			if (_pathSwitched==false) 
@@ -270,7 +307,13 @@
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
-			
+			//debug if =3
+			if (_pathSwitchTable[1] == 3) 
+			{
+				
+				printDebugInfo(3);
+				
+			}
 			
 			//store player location if path has changed
 			if (_pathSwitchTable[0]!=_pathSwitchTable[1] && _pathSwitchClonedPosition==false) 

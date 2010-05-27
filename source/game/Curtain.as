@@ -27,39 +27,64 @@ package game
 		 * Class properties
 		 */
 		 
-		private var _fadeInMask:Image;
-		private var _fadeInTween:NumTween; 
-		private var _fadeInAlpha:Number;
+		private var _fadeMask:Image;
+		private var _fadeTween:NumTween; 
+		private var _fadeAlpha:Number;
 		private var _w:int;
 		private var _h:int;
 		private var _rect:Rectangle;
+		private var _type:String;
+
+				
+		public var complete:Boolean = false;
+
 		
-		public function Curtain(w:int, h:int) 
+		public function Curtain(w:int, h:int, type:String) 
 		{
 			this._w = w;
 			this._h = h;
+			this._type = type;
 			
-			// set at screen origin
+			// set at origin
 			this.x = 0;
 			this.y = 0;
 
 			_rect = new Rectangle(0, 0, _w, _h);
-			_fadeInMask = Image.createRect(_w, _h, 0x000000);
+			_fadeMask = Image.createRect(_w, _h, 0x000000);
 			
 			// use 32-bit RGB color value
 			// (could use 32-bit ARGB color value, might clash with alpha)
 			//_fadeInMask.fill(_rect, 0x000000, 0.8);
 			
-			graphic = _fadeInMask;
+			graphic = _fadeMask;
 			
 			// must be on top of everything
-			layer = 0;
+			layer = 1;
 			
-			// tween the alpha
-			_fadeInTween = new NumTween()
-			_fadeInTween.tween(1, 0, 5, Ease.circIn);
-			addTween(_fadeInTween);
-			_fadeInTween.start();
+			
+			//intialize curtain
+			_init();
+			
+			
+		}
+		
+		private function _init():void
+		{
+			_fadeTween = new NumTween(_onComplete)
+						
+			if (_type == "in") 
+			{
+				// fade in effect
+				_fadeTween.tween(1, 0, 5, Ease.circIn);
+			}
+			else // type = "out"
+			{
+				// fade out effect
+				_fadeTween.tween(0, 1, 5, Ease.circIn);
+			}
+			
+			addTween(_fadeTween);
+			_fadeTween.start();
 		}
 		
 		override public function update():void 
@@ -68,14 +93,14 @@ package game
 			
 			//trace(_fadeInTween.value);
 			
-			_fadeInMask.alpha = _fadeInTween.value;
+			_fadeMask.alpha = _fadeTween.value;
 			
-			if (_fadeInTween.value == 0) 
-			{
-				//removeTween(_fadeInTween);
-			}
-	
-	
+
+		}
+		
+		private function _onComplete():void
+		{
+			complete = true;
 		}
 		
 		
