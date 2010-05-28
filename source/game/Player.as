@@ -285,6 +285,7 @@
 		{
 			// find out what path the player is on
 			pathIndex = getCurrentPath();
+			
 			//debug if =3
 			if (pathIndex == 3) 
 			{
@@ -322,7 +323,6 @@
 			// move player based on maximum speeds returned by the calculateSpeed method
 			move(pathIndex);
 			
-			//trace("velocity: " + velocity.length);
 			
 			// update movement status of player
 			if (!playerWasMoving && velocity.length) 
@@ -334,9 +334,6 @@
 			{
 				playerMoving = false
 			}
-			
-			//trace("moving: " + playerMoving);
-			//trace("Wasmoving: " + playerWasMoving);
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
@@ -389,7 +386,7 @@
 			getPathRatios();
 			
 			// play sprite animation
-			animation();
+			animatePlayerSprite();
 			
 			//store current position as next previous position
 			previousPos = position.clone();
@@ -476,6 +473,7 @@
 		{
 			// convert x,y into row, col
 			var tileExists:Boolean = false;
+			var i:int = 0;
 			
 			col = Math.floor(_x / _step);
 			row = Math.floor(_y / _step);
@@ -487,9 +485,21 @@
 				{
 					tileExists = true;
 					break;
-				}				
+				}
+				
+				// remove tiles that are 200 pixels behind camra position
+				if (value.x < (FP.camera.x - 200)) 
+				{
+					pathTileList.splice(pathTileList.indexOf(value, i), 1, value);
+					FP.world.remove(value);	
+					//trace("tile removed");
+					//trace("vector length: " + pathTileList.length);
+				}
+				
+				i++;
+				
 			}
-			//trace(tileExists);
+			
 			if (tileExists==false) 
 			{
 				// add new animated tile to Vector and Level
@@ -528,35 +538,44 @@
 		}
 		
 		/**
-		 * Moves the player based on input
+		 * Moves the player based on keyboard inputs
+		 * and velocities calculated in calculateSpeed()
 		 */
 		private function move(pathType:uint):void
 		{
-			// evaluate input
+			// set local variables
+			var e:Entity;
+			var speed:Number;
+			
+			// reset velocity vector to zero
 			velocity.x = 0;
-			velocity.y = 0;			
-			var sign:int, e:Entity;
-			var pathMaxSpeed:Number;
+			velocity.y = 0;
+			
 			
 			//BUG the erratic bug may come from the fact that at high speeds I don't pixel-check move
 			
 			// check if god mode is on to set unique value for fast playthrough
 			if (LoadXmlData.GODMODE==true) 
-			{ // use god speed
-				pathMaxSpeed = 4;	
-			} else // use normal velocity calculations
+			{ 
+				// use god speed
+				speed = 4;	
+			} 
+			else 
 			{
-				pathMaxSpeed = pathInstantVel[pathType];
+				// use normal velocity calculations
+				speed = pathInstantVel[pathType];
 			}
 			
 			
 			if (Input.check("R"))
 			{
-				if ((e = collideTypes(pathCollideType, x + pathMaxSpeed, y)))
+				e = collideTypes(pathCollideType, x + speed, y);
+				if (e)
 				{
-					velocity.x = pathMaxSpeed * (FP.frameRate * FP.elapsed);
+					velocity.x = speed * (FP.frameRate * FP.elapsed);
 				} else 
 				{
+					//trace("collided with entity: " + e);
 					velocity.x = 0;
 				}
 				
@@ -564,56 +583,56 @@
 						
 			if (Input.check("L"))
 			{
-				if ((e = collideTypes(pathCollideType, x - pathMaxSpeed, y)))
+				e = collideTypes(pathCollideType, x - speed, y);
+				if (e)
 				{
 					//velocity.x = -pathMaxVel[pathType];
-					velocity.x = -VB* (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
+					velocity.x = -VB * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
+					
 				} else 
 				{
+					//trace("collided with entity: " + e);
 					velocity.x = 0;
 				}	
-				
-				
 			}
 			
 			if (Input.check("U"))
 			{
-				if ((e = collideTypes(pathCollideType, x, y - pathMaxSpeed)))
+				e = collideTypes(pathCollideType, x, y - speed);
+				if (e)
 				{
-					velocity.y = -pathMaxSpeed * (FP.frameRate * FP.elapsed);
+					velocity.y = -speed * (FP.frameRate * FP.elapsed);
 				} else 
 				{
+					//trace("collided with entity: " + e);
 					velocity.y = 0;
 				}
-				
 				
 			}
 			
 			if (Input.check("D"))
 			{
-				if ((e = collideTypes(pathCollideType, x, y + pathMaxSpeed)))
+				e = collideTypes(pathCollideType, x, y + speed);
+				if (e)
 				{
-					velocity.y = +pathMaxSpeed * (FP.frameRate * FP.elapsed);
+					velocity.y = speed * (FP.frameRate * FP.elapsed);
 				} else 
 				{
+					//trace("collided with entity: " + e);
 					velocity.y = 0;
 				}	
 				
-
 			}
 			
 			// add position to velocity vector
-			
-			position.x = (position.add(velocity)).x;
-			position.y = (position.add(velocity)).y;
+			position.x = x + velocity.x;
+			position.y = y + velocity.y;
 			
 			// set new player x,y
 			x = position.x;
 			y = position.y;
-			
-			
 		}
-		// end acceleration()
+		// end move()
 		
 		
 		
@@ -688,10 +707,7 @@
 						pathInstantVel[i] = _maxPathSpeed[i];
 					}
 				}
-			
-			
 			}
-
 		}
 		
 		
@@ -699,7 +715,7 @@
 		/**
 		 * Handles animation based on current player state.
 		 */
-		private function animation():void
+		private function animatePlayerSprite():void
 		{
 			// switch to the correct Spritemap to play the animation
 			var who:Spritemap;

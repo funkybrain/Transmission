@@ -121,13 +121,17 @@ package game
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
 		public var playerGoneAWOL:Boolean = false;
+		public var grandChildDying:Boolean = false;
 
-		 
-		
-		
+		/**
+		 * Epitaphe
+		 */ 
+		public var finalWords:Epitaphe;
+		private var timeSince:Number = 0;
+
 		
 		/**
-		 * Constructor.
+		 * CONSTRUCTOR
 		 */
 		public function Game() 
 		{
@@ -322,7 +326,7 @@ package game
 			
 			
 			// remove player from world
-			removeList(player.sound, player, rouleau)
+			removeList(player.sound, player, rouleau, finalWords)
 
 			// send Outro
 			_fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
@@ -514,12 +518,25 @@ package game
 			super.update();
 			
 			// update rouleau position
-			if (rouleau != null) 
+			if (rouleau != null && !grandChildDying) 
 			{
 				// place rouleau
 				rouleau.x = Math.max(rouleau.previousX, player.x + (player.graphic as Spritemap).width);
 				// animate rouleau based on player speed
-				rouleau.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 4, 0, 1) * FP.frameRate * FP.elapsed;
+				rouleau.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
+			} else
+			{
+				rouleau.x = rouleau.previousX;
+				rouleau.spriteRouleau.frame = 0;
+			}
+			
+			// unravel final words
+			if (null != finalWords) 
+			{
+				timeSince = timeSince + 0.05;
+				
+				finalWords.unravelFinalWord(timeSince);
+				//trace("timesince: " + timeSince);
 			}
 			
 			// update path ratios
@@ -581,6 +598,12 @@ package game
 			  _fadeAllMusic();	
 			}
 			
+			// update final words
+			if (grandChildDying) 
+			{
+				updateFinalWords();
+			}
+			
 		}
 		// end Game UPDATE LOOP
 		
@@ -601,6 +624,15 @@ package game
 		// end Game RENDER LOOP
 		
 		/**
+		 * Update final words
+		 */
+		public function updateFinalWords():void
+		{
+			// change size of text to display
+		}
+		
+		
+		/**
 		 * Fade all music in/out based on player movement
 		 */
 		
@@ -612,14 +644,14 @@ package game
 				MASTER_FADER.start();
 				_masterFaderComplete = false;
 				
-				trace("fade master volume up");
+				//trace("fade master volume up");
 				
 			} else if (!player.playerMoving && player.playerWasMoving)
 			{
 				MASTER_FADER.fadeTo(0, 2, Ease.quintOut);
 				MASTER_FADER.start();
 				_masterFaderComplete = false;
-				trace("fade master volume down");
+				//trace("fade master volume down");
 			}
 			
 			//trace("fader state: " + _masterFaderComplete);
@@ -758,6 +790,14 @@ package game
 			player.addTween(player.fadeSprite);
 			player.fadeSprite.start();
 			
+			// set flag for mechanics that need to know the death sequence has started
+			grandChildDying = true;
+			
+			// add Epitaphe object
+			finalWords = new Epitaphe();
+			finalWords.x = player.x + 20;
+			//finalWords.y = FP.height / 3;
+			add(finalWords);
 		}
 		
 		/**

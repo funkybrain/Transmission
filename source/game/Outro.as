@@ -52,6 +52,7 @@ package game
 			// assign entity's graphic to the Text object
 			graphic = endMenu;
 			layer = 0;
+			
 		}
 		
 		override public function render():void 

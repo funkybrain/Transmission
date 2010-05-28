@@ -61,6 +61,8 @@
 			if (e == null) 
 			{
 				trace("no collision detected in Moveable.getCurentPath");
+				trace("player position x:" + x + " y: " + y);
+				
 				return 3; // test for 3 to try and get debug information
 			}
 			else
