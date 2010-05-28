@@ -4,6 +4,7 @@ package game
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.Sfx;
 	import net.flashpunk.tweens.sound.SfxFader;
+	import net.flashpunk.tweens.sound.Fader;
 	import net.flashpunk.World;
 	import rooms.Level;
 	import game.Debug;
@@ -92,6 +93,10 @@ package game
 		 * Special effects and Tweens
 		 */
 		
+		// Sound Tweens
+		public var MASTER_FADER:Fader = new Fader(_onMasterFaderComplete, 0); // persistant fader for master volume 
+		
+		
 		// Shutters 
 		public var rightShutter:Shutter = new Shutter(800,0);
 		public var shutterSpring:NumTween = new NumTween();
@@ -112,10 +117,11 @@ package game
 		 * Booleans
 		 */
 		private var _outroCalled:Boolean = false;
+		private var _masterFaderComplete:Boolean = true;
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
 		public var playerGoneAWOL:Boolean = false;
-		public var playerMoving:Boolean = false;
+
 		 
 		
 		
@@ -183,6 +189,10 @@ package game
 			
 			// fade game in
 			fadeIn();
+			
+			// add master fader and set intial volume to mute
+			addTween(MASTER_FADER);
+			FP.volume = 0;
 			
 		} // end constructor
 		
@@ -503,6 +513,7 @@ package game
 			// update entities
 			super.update();
 			
+			// update rouleau position
 			if (rouleau != null) 
 			{
 				// place rouleau
@@ -563,6 +574,13 @@ package game
 				_outroCalled = true;
 			}
 			
+						
+			// fade all music based on player movement
+			if (!playerGoneAWOL) 
+			{
+			  _fadeAllMusic();	
+			}
+			
 		}
 		// end Game UPDATE LOOP
 		
@@ -583,6 +601,41 @@ package game
 		// end Game RENDER LOOP
 		
 		/**
+		 * Fade all music in/out based on player movement
+		 */
+		
+		private function _fadeAllMusic():void
+		{
+			if (player.playerMoving && !player.playerWasMoving) 
+			{
+				MASTER_FADER.fadeTo(1, 2, Ease.quintIn);
+				MASTER_FADER.start();
+				_masterFaderComplete = false;
+				
+				trace("fade master volume up");
+				
+			} else if (!player.playerMoving && player.playerWasMoving)
+			{
+				MASTER_FADER.fadeTo(0, 2, Ease.quintOut);
+				MASTER_FADER.start();
+				_masterFaderComplete = false;
+				trace("fade master volume down");
+			}
+			
+			//trace("fader state: " + _masterFaderComplete);
+			//trace ("tween percent: " + MASTER_FADER.percent);
+			//trace("Volume: " + FP.volume);
+			
+		}
+		
+		private function _onMasterFaderComplete():void // not used. delete?
+		{
+			//trace("master fader complete");
+			
+			_masterFaderComplete = true
+		}
+		
+		/**
 		 * Check state of player to see if timers and sound should be frozen/unfrozen
 		 */
 		public function checkTimers():void
@@ -590,14 +643,14 @@ package game
 			// need to check alarm states
 			// those only affect those that have already started
 			
-			if (playerMoving==false && player.velocity.equals(vectorZero)==false) 
+			if (player.playerWasMoving==false && !player.velocity.equals(vectorZero)) 
 			{
-				playerMoving = true;
+				player.playerMoving = true;				
 			}
 			
-			if (playerMoving==true && player.velocity.equals(vectorZero)==true) 
+			if (player.playerWasMoving==true && player.velocity.equals(vectorZero)) 
 			{
-				playerMoving = false;
+				player.playerMoving = false;				
 			}
 			
 			for each (var timer:Alarm in player.timers) 
@@ -605,13 +658,13 @@ package game
 				// freeze sound and timers
 				if (timer.active == true)
 				{
-					if (playerMoving == false) 
+					if (player.playerMoving == false) 
 					{
 						timer.active = false;
 					}
 				}
 				
-				if (playerMoving == false) 
+				/*if (player.playerMoving == false) 
 				{
 					for each (var noiseOut:Sfx in player.sound.pathSound) 
 					{
@@ -620,18 +673,18 @@ package game
 							noiseOut.stop();	
 						}	
 					}
-				}
+				}*/
 				
 				//unfreeze sound and timers
 				if (timer.active == false)
 				{
-					if (playerMoving == true) 
+					if (player.playerMoving == true) 
 					{
 						timer.active = true;	
 					}
 				}
 				
-				if (playerMoving == true) 
+				/*if (player.playerMoving == true) 
 				{
 					for each (var noiseIn:Sfx in player.sound.pathSound ) 
 					{
@@ -641,7 +694,7 @@ package game
 						}
 							
 					}
-				}
+				}*/
 			}
 		}
 		// end checkTimers()
@@ -701,9 +754,9 @@ package game
 		public function startDeathSequence(time:Number):void
 		{
 			//fade player sprite out
-			player.fadeOut.tween(player.grandChild, "alpha", 0, time, Ease.backIn);
-			player.addTween(player.fadeOut);
-			player.fadeOut.start();
+			player.fadeSprite.tween(player.grandChild, "alpha", 0, time, Ease.backIn);
+			player.addTween(player.fadeSprite);
+			player.fadeSprite.start();
 			
 		}
 		

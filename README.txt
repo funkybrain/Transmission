@@ -15,6 +15,7 @@ Bugs:
 >> seems like moved player outside a path, and therefore returns a null entity on collision
 >> happens for child and grandchild (maybe father, need confirmation)
 >> detecrted at x:1043.65, y: 183.01
+>> detecrted at x:551.06, y: 195.87
 
 Next: release 1.6
 --------------------
@@ -23,8 +24,10 @@ Next: release 1.6
 > ajout du fade-in au debut du jeu (class Curtain)
 > mis en place de la fonctionalite pour lire une video d'intro (class Intro) avant de commencer le jeu
 > ajout du menu de fin (placeholder) et redémarrage du jeu avec ENTER
-> ajout fade to black en fin de jeu, avanat affichage du menu
+> ajout fade to black en fin de jeu, avant affichage du menu
 > ajout du rouleau qui est poussé par le joueur
+> scale-up du sprite du fils (1 à 1.5) pendant son cycle de vie
+> Fade-out/in du son lorsque le joueur se déplace
 
 To do list:
 ----------

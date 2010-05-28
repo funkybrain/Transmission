@@ -10,6 +10,7 @@
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.tweens.misc.*;
 	import net.flashpunk.tweens.motion.LinearMotion;
+	import net.flashpunk.tweens.sound.Fader;
 	import net.flashpunk.tweens.sound.SfxFader;
 	import net.flashpunk.utils.Ease;
 	import net.flashpunk.utils.Input;
@@ -36,9 +37,7 @@
 		/**
 		 * Tweeners.
 		 */
-		//public const SCALE:LinearMotion = new LinearMotion;
-		//public const ROTATE:NumTween = new NumTween;
-		public const fadeOut:VarTween = new VarTween;
+		public var fadeSprite:VarTween = new VarTween(); // called from game to make grandchild disappear
 		
 		/**
 		 * Alarms.
@@ -136,10 +135,12 @@
 		private var fromSound:SfxFader;
 		private var toSound:SfxFader;
 						
-		
 		/**
-		 * Particle emitter.
+		 * Booleans
 		 */
+		public var playerMoving:Boolean = false;
+		public var playerWasMoving:Boolean = false;
+
 		
 		/**
 		 * CONSTRUCTOR
@@ -162,6 +163,8 @@
 			father.add("walk", frames, 5, true);
 			child.add("walk", frames, 5, true);
 			grandChild.add("walk", frames, 5, true);
+			child.smooth = true;
+			grandChild.smooth = true;
 			
 			// NOTE: if you're going down the route of fixed framrate, use 
 			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
@@ -217,10 +220,13 @@
 			
 			// to avoid crash in case child appears before player has moved
 			moveHistory.push(new Point());
-			
-			
+				
 		}
+		// END CONSTRUCTOR
 		
+		/**
+		 * Debug info for persistent getCurrentPath bug
+		 */
 		private function printDebugInfo(from:uint):void
 		{
 			var debutext:String;
@@ -245,7 +251,7 @@
 		}
 		
 		/**
-		 * play music at game start
+		 * Play music at game start, when object is instantiated
 		 */
 		override public function added():void
 		{
@@ -261,7 +267,7 @@
 			// start all sounds but only turn up volume on current path
 			for each (var music:Sfx in sound.pathSound) 
 			{
-					//music.play() //player movement controls play 
+					music.play() 
 					music.volume = 0;
 			}
 			sound.pathSound[_pathPreviousIndex].volume = 1;
@@ -302,8 +308,35 @@
 			shiftY = y - offsetOriginY;
 			addNewTile(shiftX, shiftY, Path.TILE_GRID);
 			
+			// update movement status of player
+			if (!playerWasMoving && playerMoving) 
+			{
+				playerWasMoving = true;
+			}
+			
+			if (playerWasMoving && !playerMoving) 
+			{
+				playerWasMoving = false
+			}
+			
 			// move player based on maximum speeds returned by the calculateSpeed method
 			move(pathIndex);
+			
+			//trace("velocity: " + velocity.length);
+			
+			// update movement status of player
+			if (!playerWasMoving && velocity.length) 
+			{
+				playerMoving = true;
+			}
+			
+			if (playerWasMoving && !velocity.length) 
+			{
+				playerMoving = false
+			}
+			
+			//trace("moving: " + playerMoving);
+			//trace("Wasmoving: " + playerWasMoving);
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
@@ -376,8 +409,34 @@
 			
 			}
 			
+			// scale player graphic if required
+			if (state == "child" || state == "grandChild") 
+			{
+				_scalePlayerSprite();		
+			}
 
-
+		}
+		// end update()
+		
+		
+		
+		
+		
+		/**
+		 * Scale player graphic throughout its life
+		 */
+		private function _scalePlayerSprite():void
+		{
+			if (state == "child") 
+			{
+				// map the time of child's life to the scale of it's sprite
+				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, 0, timeToGrandChild.duration, 1.5, 1);
+				child.scale = mapped;
+				//trace("child scale: " + mapped);
+			} else
+			{
+				// en attente de l'avatar final
+			}
 		}
 		
 		
