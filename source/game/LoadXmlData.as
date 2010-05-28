@@ -73,12 +73,12 @@ package game
 			trace("done assigning data in LoadXmlData");
 
 			//trace("starting intro movie");
-			// remove comment to play intro movie
-			//var playIntro:Intro = new Intro();
+			//remove comment to play intro movie
+			var playIntro:Intro = new Intro();
 
 			//trace("creating world");			
 			// comment out to pplay intro movie
-			FP.world = new Game;
+			//FP.world = new Game;
 			
 		}
 		

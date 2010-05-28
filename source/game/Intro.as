@@ -5,13 +5,15 @@ package game
 	import flash.events.TimerEvent;
 	import net.flashpunk.FP;
 	import flash.utils.Timer;
+	import net.flashpunk.utils.Input;
+	import net.flashpunk.utils.Key;
 	
 	public class Intro
 	{
 		
 		
 		
-		[Embed(source='../../assets/introMovie.swf', symbol='introClip')]
+		[Embed(source='../../assets/introTransmission.swf', symbol='wrapper')]
 		private var _movie:Class;
 		
 		public var introMovieClip:MovieClip;
@@ -21,6 +23,9 @@ package game
 		
 		public function Intro() 
 		{
+			
+			Input.define("Enter", Key.ENTER);
+			
 			init();
 		}
 		
@@ -29,8 +34,8 @@ package game
 			
 			introMovieClip = new _movie();
 			
-			introMovieClip.x = 150;
-			introMovieClip.y = 150;
+			introMovieClip.x = 0;
+			introMovieClip.y = 0;
 			
 			introMovieClip.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
@@ -54,11 +59,10 @@ package game
 			introMovieClip.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			introMovieClip.removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 			
-			// remove this
-			myTimer.removeEventListener(TimerEvent.TIMER, timerListener);
 			
 			trace("removed all event listeners");
-			FP.world = new Game;
+
+
 		}
 		
 		private function onEnterFrame(event:Event):void
@@ -66,27 +70,21 @@ package game
 			
 			if (introMovieClip.currentFrame == introMovieClip.totalFrames && !myTimer.running) 
 			{
-				
-				// this is temporary - also remove the condition in the if
-				myTimer.addEventListener(TimerEvent.TIMER, timerListener);
-				myTimer.start();
-				trace("start timer");
-				
-				
-				// once the fade to balck is inside the clip, just use these two lines
+				// stop playing movie
 				introMovieClip.stop();
-				//FP.stage.removeChild(introMovieClip);
+				
+				// check if user wants to start game
+				
+				if (Input.check("Enter")) 
+				{
+					FP.stage.removeChild(introMovieClip);
+					trace("launch world");
+					// call world
+					FP.world = new Game;
+				}
 				
 			}
 		}
-		
-		//remove this
-		private function timerListener (e:TimerEvent):void
-		{
-				trace("Timer is Triggered");
-				FP.stage.removeChild(introMovieClip);
-		}
-		
 		
 	}
 

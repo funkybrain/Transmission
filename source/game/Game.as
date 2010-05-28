@@ -40,7 +40,8 @@ package game
 		/**
 		 * Fonts.
 		 */
-		[Embed(source = '../../assets/fonts/arial.ttf', fontFamily = 'Arial')] private static const FNT_ARIAL:Class;
+		[Embed(source = '../../assets/fonts/EMLATIN6.ttf', fontFamily = 'debugFont')]
+		private static const FNT_ARIAL:Class;
 		
 		/**
 		 * Camera following information.
@@ -74,13 +75,8 @@ package game
 		public var robotFather:Robot;
 		
 		public var robotFatherPath:FindPath;
-		
-		public var playerMoving:Boolean = false;
+	
 		public var vectorZero:Point = new Point();
-		
-		public var robotChildIsAlive:Boolean = false;
-		public var robotFatherIsAlive:Boolean = false;
-		public var playerGoneAWOL:Boolean = false;
 		
 		// store ratio in easy to manipulate variables
 		public var r:Number; 
@@ -105,13 +101,25 @@ package game
 		
 		// Fade in screen
 		private var _fadeInCurtain:Curtain;
+		private var _fadeOutCurtain:Curtain;
 		
 		/**
 		 * Rouleau
 		 */
 		public var rouleau:Rouleau;
 		
+		/**
+		 * Booleans
+		 */
+		private var _outroCalled:Boolean = false;
+		public var robotChildIsAlive:Boolean = false;
+		public var robotFatherIsAlive:Boolean = false;
+		public var playerGoneAWOL:Boolean = false;
+		public var playerMoving:Boolean = false;
 		 
+		
+		
+		
 		/**
 		 * Constructor.
 		 */
@@ -144,8 +152,8 @@ package game
 			debugHUD.y = 10;
 			add(debugHUD);
 			
-			debugText = new Text("hello", 10, 10, 400, 100);
-			debugText.font = "Arial";
+			debugText = new Text("", 0, 0, 400, 100);
+			debugText.font = "debugFont";
 			
 			//set all transmission timer alarms (one-shot alarms)
 			player.timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
@@ -160,7 +168,7 @@ package game
 			player.timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
 			player.addTween(player.timeToGrandChild, false); // add but don't start yet!
 			
-			player.timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeToEnd, 2);
+			player.timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeGrandChildToEnd, 2);
 			player.addTween(player.timeGrandChildToEnd, false); // add but don't start yet!
 			
 			player.timers.push(player.timeToChild, player.timeFatherToChild, player.timeFatherToDeath,
@@ -238,12 +246,13 @@ package game
 			
 			//TODO need to make robotater follow ai pathfinding
 			
+			//TODO may need to create new player here to avoid this hellish bug
 			//transport father to robot child position
 			player.x = robotChild.x;
 			player.y = robotChild.y;
 			
 			//remove robot child from game
-			robotChildIsAlive == false;
+			robotChildIsAlive = false;
 			remove(robotChild);
 			
 			trace(player.state);
@@ -283,11 +292,11 @@ package game
 		/**
 		 * Death of grandchild and game end
 		 */
-		public function onTimeToEnd():void
+		public function onTimeGrandChildToEnd():void
 		{
-			// move to end credit?
-			trace("this is is end");
-			
+						
+			trace("grandchild is dead");
+
 			// see if this helps kill the sounds
 			playerGoneAWOL = true;
 			
@@ -306,7 +315,11 @@ package game
 			removeList(player.sound, player, rouleau)
 
 			// send Outro
-			add(new Outro());
+			_fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
+			_fadeOutCurtain.x = FP.camera.x;
+			_fadeOutCurtain.y = FP.camera.y;
+			add(_fadeOutCurtain);
+			trace("fade out");
 		}
 		
 		/**
@@ -542,6 +555,14 @@ package game
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
 			
+			// if final fade out is finished, send-in Outro
+			if (null != _fadeOutCurtain && true == _fadeOutCurtain.complete && false == _outroCalled) 
+			{
+				trace("call outro");
+				add(new Outro);
+				_outroCalled = true;
+			}
+			
 		}
 		// end Game UPDATE LOOP
 		
@@ -551,7 +572,8 @@ package game
 		override public function render():void 
 		{
 			super.render();
-			Draw.rect(FP.camera.x + 10, FP.camera.y + 10, 300, 80,0x24323F, 0.95);// overlay for debug text
+			Draw.rect(FP.camera.x, FP.camera.y, 350, 95, 0x24323F, 0.99);// overlay for debug text
+			
 			debug.drawHitBox(player);
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
@@ -668,13 +690,7 @@ package game
 				startDeathSequence(10); // 10 seconds to death
 				player.deathImminent = true;
 			}
-			
-			if (player.timeGrandChildToEnd.remaining==0) 
-			{
-				//death is nigh
-				//FP.screen.scale = 0.9;
-				
-			}
+
 		}
 		
 		/**
@@ -749,14 +765,15 @@ package game
 									+"Vinstantanée: " + Number(player.pathInstantVel[player.pathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n";
 									
 			debugText.text = father_var;
-			debugText.size = 11;
-			debugHUD.x = FP.camera.x + 10;
-			debugHUD.y = FP.camera.y + 10;
+			debugText.size = 12;
+			debugHUD.x = FP.camera.x + 5;
+			debugHUD.y = FP.camera.y + 5;
 
 			//trace(debugText.text);
 			if (LoadXmlData.DEBUG==true) 
 			{
 				debugHUD.graphic = debugText;
+				debugHUD.layer = 0;
 			}
 		}
 		

@@ -91,8 +91,6 @@ package game
 		{
 			super.update();
 			
-			//trace(_fadeInTween.value);
-			
 			_fadeMask.alpha = _fadeTween.value;
 			
 

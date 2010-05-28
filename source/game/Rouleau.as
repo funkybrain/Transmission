@@ -19,7 +19,7 @@ package game
 		{
 			this.graphic = spriteRouleau;
 			
-			this.layer = 0;
+			this.layer = 1;
 			
 			
 			playAnimation();
