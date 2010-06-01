@@ -16,6 +16,8 @@
 		<folder name="anim">
 			<object name="anim_man" image="slot_man.png" width="30" height="30" />
 			<object name="anim_rouage" image="slot_rouage.png" width="30" height="30" />
+			<object name="anim_crash" image="slot_crash.png" width="30" height="30" />
+			<object name="anim_prison" image="slot_prison.png" width="30" height="30" />
 		</folder>
 		<folder name="background">
 			<object name="image_fond" image="backgroundSprite.png" width="3000" height="480" />

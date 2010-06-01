@@ -25,6 +25,7 @@ package game
 		 */
 		public var pathSound:Vector.<Sfx> = new Vector.<Sfx>(); // List<Sfx> to store path sounds/music
 		public var pathFader:Vector.<SfxFader> = new Vector.<SfxFader>(); // List<SfxFader> to store path sounds faders
+		
 			
 		public function SoundManager()
 		{
@@ -32,9 +33,9 @@ package game
 			pathSound[1] = new Sfx(MUSIC_GREEN, null);
 			pathSound[2] = new Sfx(MUSIC_BLUE, null);
 			
-			pathFader[0] = new SfxFader(pathSound[0], onFaderComplete, 0);
-			pathFader[1] = new SfxFader(pathSound[1], onFaderComplete, 0);
-			pathFader[2] = new SfxFader(pathSound[2], onFaderComplete, 0);
+			pathFader[0] = new SfxFader(pathSound[0], _onFaderNoughtComplete, 0);
+			pathFader[1] = new SfxFader(pathSound[1], _onFaderOneComplete, 0);
+			pathFader[2] = new SfxFader(pathSound[2], _onFaderTwoComplete, 0);
 
 			processRules();
 		}
@@ -49,9 +50,34 @@ package game
 			//fader.start();		
 		}
 		
-		private function onFaderComplete():void
+		private function _onFaderNoughtComplete():void
 		{
-			//placeholder
+			// if this was called by a fade out, stop the music until the next resume
+			if (pathFader[0].sfx.volume==0) 
+			{
+				pathFader[0].sfx.stop();
+				trace("faderNought Complete");
+			}
+		}
+		
+		private function _onFaderOneComplete():void
+		{
+			// if this was called by a fade out, stop the music until the next resume
+			if (pathFader[1].sfx.volume==0) 
+			{
+				pathFader[1].sfx.stop();
+				trace("faderOne Complete");
+			}
+		}
+		
+		private function _onFaderTwoComplete():void
+		{
+			// if this was called by a fade out, stop the music until the next resume
+			if (pathFader[2].sfx.volume==0) 
+			{
+				pathFader[2].sfx.stop();
+				trace("faderTwo Complete");
+			}
 		}
 
 		

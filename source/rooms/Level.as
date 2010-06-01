@@ -87,15 +87,29 @@
 			for each (var q:XML in level.animations.anim_man)
 			{
 				// add new animation to Vector and Level
-				var index_one:int = _animationList.push(new Animation(q.@x, q.@y, "man"));
+				var index_one:int = _animationList.push(new Animation(q.@x, q.@y, "man", 1));
 				world.add(_animationList[index_one-1]);
 			}
 
 			for each (var r:XML in level.animations.anim_rouage)
 			{
 				// add new animation to Vector and Level
-				var index_two:int = _animationList.push(new Animation(r.@x, r.@y, "rouage"));
+				var index_two:int = _animationList.push(new Animation(r.@x, r.@y, "rouage", 1));
 				world.add(_animationList[index_two-1]);
+			}
+			
+			for each (var o:XML in level.animations.anim_prison)
+			{
+				// add new animation to Vector and Level
+				var index_three:int = _animationList.push(new Animation(o.@x, o.@y, "prison", 0));
+				world.add(_animationList[index_three-1]);
+			}
+			
+			for each (var s:XML in level.animations.anim_crash)
+			{
+				// add new animation to Vector and Level
+				var index_four:int = _animationList.push(new Animation(s.@x, s.@y, "crash", 0));
+				world.add(_animationList[index_four-1]);
 			}
 			
 			return _animationList;

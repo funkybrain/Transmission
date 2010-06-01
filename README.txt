@@ -32,6 +32,7 @@ Next: release 1.6
 > scale-up du sprite du fils (1 à 1.5) pendant son cycle de vie
 > Fade-out/in du son lorsque le joueur se déplace (coupure n'est plus abrupte)
 > Arret du rouleau lorsque la sequence de mort du petit fils commence (fade-out du sprite du petit fils - 10 sec)
+> Ajout des animations de fond crash et prison
 
 > cleaned up pathTileList<PathTile> to save memory
 > created Epitaphe class to handle final text

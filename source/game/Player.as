@@ -74,14 +74,14 @@
 		 * Movement properties
 		 */
 		public var previousPos:Point; // previous player position
-		public var pathIndex:uint; // index to target the required path when calling an array
+		public var currentPathIndex:uint; // index to target the required path when calling an array
 		public var distance:Number = 0; // frame by frame distance
 		public var vbArray:Array; // initial speed array
 				
 		public var moveHistory:Vector.<Point> = new Vector.<Point>(); // List<Point> to store player move history
 		private var _moveIndex:uint; // current index of List<Point>
 		public var pathHistory:Array = new Array(); // store the path index along with move history
-		private var _pathIndex:uint; // current index of pathHistory
+		private var _pathHistoryIndex:uint; // current index of pathHistory
 		
 		public var animatedTile:PathTile; // used to place animated tiles
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
@@ -141,6 +141,10 @@
 		public var playerMoving:Boolean = false;
 		public var playerWasMoving:Boolean = false;
 
+		/**
+		 * For debug
+		 */
+		private var _counter:Number = 0;
 		
 		/**
 		 * CONSTRUCTOR
@@ -264,30 +268,43 @@
 				
 			}
 			
-			// start all sounds but only turn up volume on current path
-			for each (var music:Sfx in sound.pathSound) 
-			{
-					music.play() 
-					music.volume = 0;
-			}
-			sound.pathSound[_pathPreviousIndex].volume = 1;
-
-			
+			// start playing path sound + music
+			_startSounds();
+				
 			// intialize switch variables
 			_pathSwitchTable[0] = _pathSwitchTable[1] = _pathPreviousIndex;
 			_pathSwitchLocation = position.clone();
 		}
 		
 		/**
+		 * Initialize all sounds
+		 */
+		private function _startSounds():void
+		{
+			// start all sounds but only turn up volume on current path
+			for each (var music:Sfx in sound.pathSound) 
+			{
+					music.play(0); // set sound in motion with vol of zero
+					music.stop(); // stop the music so that you can resume as soon as the player is moving
+					//trace("music state: " + music.playing);
+			}
+			//trace("vol: " + sound.pathSound[_pathPreviousIndex].volume);
+
+		}
+		 
+		/**
 		 * PLAYER UPDATE LOOP
 		 */
 		override public function update():void 
 		{
+			// update debug game time counter
+			_counter += FP.elapsed;
+			
 			// find out what path the player is on
-			pathIndex = getCurrentPath();
+			currentPathIndex = getCurrentPath();
 			
 			//debug if =3
-			if (pathIndex == 3) 
+			if (currentPathIndex == 3) 
 			{
 				
 				printDebugInfo(2);
@@ -297,7 +314,7 @@
 			//store current path index
 			if (_pathSwitched==false) 
 			{
-				_pathSwitchTable[0] = pathIndex;
+				_pathSwitchTable[0] = currentPathIndex;
 			}
 			
 			// update speed on paths based on new pathDistance
@@ -321,7 +338,7 @@
 			}
 			
 			// move player based on maximum speeds returned by the calculateSpeed method
-			move(pathIndex);
+			move(currentPathIndex);
 			
 			
 			// update movement status of player
@@ -334,6 +351,9 @@
 			{
 				playerMoving = false
 			}
+			
+			// fade sounds to ensure the correct path music is playing if the player is moving
+			_playPathMusic(currentPathIndex);
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
@@ -367,7 +387,7 @@
 				{
 					//trace("permanent path change");
 					// play music based on current path and latest path change
-					playPathMusic();
+					_changePathMusic();
 				}
 				_pathSwitched = false;
 				_pathSwitchClonedPosition = false;
@@ -377,7 +397,7 @@
 			
 			// calculate distance traveled since last frame and add to that path total
 			distance = Point.distance(position, previousPos);
-			pathDistance[pathIndex] += distance;
+			pathDistance[currentPathIndex] += distance;
 			
 			// calculate distance traveled on all paths
 			getTotalDistanceTravelled();
@@ -395,7 +415,7 @@
 			if (velocity.x!=0 || velocity.y!=0) 
 			{
 				_moveIndex = moveHistory.push(previousPos);
-				_pathIndex = pathHistory.push(pathIndex);
+				_pathHistoryIndex = pathHistory.push(currentPathIndex);
 				
 				//pop oldest move history from List to keep only the last 60 moves
 				if (_moveIndex==60) 
@@ -411,12 +431,77 @@
 			{
 				_scalePlayerSprite();		
 			}
+			
+			//update sound manager
+			sound.update();
 
 		}
 		// end update()
 		
+		/**
+		 * Play path music if player is moving
+		 */
+		private function _playPathMusic(path:int):void
+		{
+			if (playerMoving && !playerWasMoving) 
+			{
+				// if there already is an active fade out, the music is still playing
+				// hence only resume the music if the fader is no longer active
+				if (!sound.pathFader[path].active) 
+				{
+					sound.pathSound[path].resume();	
+				}
+				
+				sound.pathFader[path].fadeTo(1, 1, Ease.quintIn);
+				//sound.pathFader[path].start(); //starts automatically (cf fp source code)
+				
+				trace("fade path (" + path +") volume up");
+				
+			} else if (!playerMoving && playerWasMoving)
+			{
+				sound.pathFader[path].fadeTo(0, 2);
+				
+				trace("fade path (" + path +") volume down");
+			}
+			
+			
+			if (_counter>0.4) 
+			{
+				_counter -= _counter;
+				trace("volume: " + sound.pathSound[path].volume.toFixed(1));
+				trace("position: " + sound.pathSound[path].position.toFixed(1));
+				trace("fader scale: " + sound.pathFader[path].scale.toFixed(1));
+			}
+		}
 		
-		
+		/**
+		 * Change music track based on path changes
+		 */
+		private function _changePathMusic():void
+		{
+			//compare the two stores path indexes (seperated by 30 pixels distance)
+			//if they are different, then player has really changed path
+			//as opposed to crossed an intersection
+			/*if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
+			{
+
+				var idFrom:int = _pathSwitchTable[0];
+				var idTo:int = _pathSwitchTable[1];
+				fromSound = sound.pathFader[idFrom];
+				toSound = sound.pathFader[idTo];
+				
+				fromSound.fadeTo(0, 4, Ease.expoOut);
+				toSound.fadeTo(1, 4, Ease.sineIn);
+				fromSound.start();
+				toSound.start();
+				
+				trace("start xfade");
+				trace("playing sound: " + idFrom);
+				trace("moving to sound: " + idTo);
+				
+			}*/
+
+		}
 		
 		
 		/**
@@ -437,34 +522,7 @@
 		}
 		
 		
-		/**
-		 * Play music track based on path
-		 */
-		public function playPathMusic():void
-		{
-			//compare the two stores path indexes (seperated by 30 pixels distance)
-			//if they are different, then player has really changed path
-			//as opposed to crossed an intersection
-			if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
-			{
-
-				var idFrom:int = _pathSwitchTable[0];
-				var idTo:int = _pathSwitchTable[1];
-				fromSound = sound.pathFader[idFrom];
-				toSound = sound.pathFader[idTo];
-				
-				fromSound.fadeTo(0, 4, Ease.expoOut);
-				toSound.fadeTo(1, 4, Ease.sineIn);
-				fromSound.start();
-				toSound.start();
-				
-/*				trace("start xfade");
-				trace("playing sound: " + idFrom);
-				trace("moving to sound: " + idTo);
-*/				
-			}
-
-		}
+		
 		 
 		/**
 		 * animated tile placement method
@@ -503,7 +561,7 @@
 			if (tileExists==false) 
 			{
 				// add new animated tile to Vector and Level
-				var index:int = pathTileList.push(new PathTile(col, row, _step, pathIndex));
+				var index:int = pathTileList.push(new PathTile(col, row, _step, currentPathIndex));
 				//trace("path index: " + pathIndex);
 				FP.world.add(pathTileList[index-1]);
 			}
@@ -563,7 +621,7 @@
 			else 
 			{
 				// use normal velocity calculations
-				speed = pathInstantVel[pathType];
+				speed = pathInstantVel[pathType] * (FP.frameRate * FP.elapsed);
 			}
 			
 			
@@ -572,7 +630,7 @@
 				e = collideTypes(pathCollideType, x + speed, y);
 				if (e)
 				{
-					velocity.x = speed * (FP.frameRate * FP.elapsed);
+					velocity.x = speed;
 				} else 
 				{
 					//trace("collided with entity: " + e);
@@ -601,7 +659,7 @@
 				e = collideTypes(pathCollideType, x, y - speed);
 				if (e)
 				{
-					velocity.y = -speed * (FP.frameRate * FP.elapsed);
+					velocity.y = -speed;
 				} else 
 				{
 					//trace("collided with entity: " + e);
@@ -615,7 +673,7 @@
 				e = collideTypes(pathCollideType, x, y + speed);
 				if (e)
 				{
-					velocity.y = speed * (FP.frameRate * FP.elapsed);
+					velocity.y = speed;
 				} else 
 				{
 					//trace("collided with entity: " + e);
@@ -623,6 +681,8 @@
 				}	
 				
 			}
+			
+			// try and round the number, bug may be linked to rounding errors?	
 			
 			// add position to velocity vector
 			position.x = x + velocity.x;

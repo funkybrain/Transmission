@@ -89,6 +89,7 @@ package game
 		// List<Animation> to store background animations
 		public var animationList:Vector.<Animation> = new Vector.<Animation>();
 		
+		
 		/**
 		 * Special effects and Tweens
 		 */
@@ -192,16 +193,16 @@ package game
 			addTween(shutterSpring);
 			
 			// fade game in
-			fadeIn();
+			fadeCurtainIn();
 			
 			// add master fader and set intial volume to mute
-			addTween(MASTER_FADER);
-			FP.volume = 0;
+			//addTween(MASTER_FADER);
+			//FP.volume = 1;
 			
 		} // end constructor
 		
 		
-		public function fadeIn():void
+		public function fadeCurtainIn():void
 		{
 			_fadeInCurtain = new Curtain(FP.width, FP.height, "in");
 			add(_fadeInCurtain);
@@ -593,11 +594,11 @@ package game
 			
 						
 			// fade all music based on player movement
-			if (!playerGoneAWOL) 
+/*			if (!playerGoneAWOL) 
 			{
 			  _fadeAllMusic();	
 			}
-			
+*/			
 			// update final words
 			if (grandChildDying) 
 			{
@@ -638,7 +639,7 @@ package game
 		
 		private function _fadeAllMusic():void
 		{
-			if (player.playerMoving && !player.playerWasMoving) 
+			/*if (player.playerMoving && !player.playerWasMoving) 
 			{
 				MASTER_FADER.fadeTo(1, 2, Ease.quintIn);
 				MASTER_FADER.start();
@@ -652,7 +653,7 @@ package game
 				MASTER_FADER.start();
 				_masterFaderComplete = false;
 				//trace("fade master volume down");
-			}
+			}*/
 			
 			//trace("fader state: " + _masterFaderComplete);
 			//trace ("tween percent: " + MASTER_FADER.percent);
@@ -810,16 +811,26 @@ package game
 			//trace(player.velocity.x);
 			
 			//TODO smooth with time.elpased and/or tween
-			for each (var value:Animation in animationList)
+			for each (var animation:Animation in animationList)
 			{
 				
 				// stop animations when player leaves world
 				if (playerGoneAWOL) 
 				{
-					value.spriteName.rate = 0;
+					animation.spriteName.rate = 0;
 				} else 
 				{
-					value.spriteName.rate = rate * FP.frameRate * FP.elapsed;	
+					if (animation.animType==1) 
+					{
+						animation.playLooping();
+						animation.spriteName.rate = rate * FP.frameRate * FP.elapsed;	
+						
+					} else if(Math.abs(player.x - animation.x) < animation.triggerDistance)
+					{
+						animation.playOnce();
+					}
+					
+					
 				}
 			}
 			
@@ -855,7 +866,7 @@ package game
 									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " Vb: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
 									+"Timer: " + Math.floor(timer) + " State: " + player.state.toUpperCase() +"\n"//+ " Row: " + player.row + " Col: " + player.col 
 									+"modele de vitesse: " + player.typeVitesse + "\n"
-									+"Vinstantanée: " + Number(player.pathInstantVel[player.pathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n";
+									+"Vinstantanée: " + Number(player.pathInstantVel[player.currentPathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n";
 									
 			debugText.text = father_var;
 			debugText.size = 12;
