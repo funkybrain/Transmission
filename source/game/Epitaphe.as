@@ -22,7 +22,8 @@ package game
 			this.x = FP.camera.x;
 			layer = 0;
 			supportSyllogisme.font = "block";
-			supportSyllogisme.size = 24;
+			supportSyllogisme.size = 36;
+			supportSyllogisme.color = 0x6BA432;
 			graphic = supportSyllogisme;
 			
 			trace("finalwords added");

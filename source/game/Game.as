@@ -95,7 +95,6 @@ package game
 		 */
 		
 		// Sound Tweens
-		public var MASTER_FADER:Fader = new Fader(_onMasterFaderComplete, 0); // persistant fader for master volume 
 		
 		
 		// Shutters 
@@ -253,8 +252,8 @@ package game
 			robotFatherIsAlive = true;
 			add(robotFather);
 			
-			// creat path that robot father must follow
-			robotFatherPath = new FindPath();
+			// create path that robot father must follow
+			//robotFatherPath = new FindPath();
 			
 			// create AI node graph
 			generateAIGraph(robotFather.x, robotFather.y);
@@ -495,19 +494,19 @@ package game
 		
 		
 		
-		public function transmitChildToGrandChild():void // may not need this
+/*		public function transmitChildToGrandChild():void // may not need this
 		{
 			// transmition formulas here
 			
-		/*	remettre toues les distances à zero
+			remettre toues les distances à zero
 			for (var s:int = 0; s < player.pathDistance.length; s++) 
 			{
 				//store father distances
 				player.childStoredDistances[s] = player.pathDistance[s];
 				//reset distances to zero
 				player.pathDistance[s] = 0;
-			}*/
-		}
+			}
+		}*/
 		// end transmitChildToGrandChild()
 		
 		/**
@@ -599,11 +598,7 @@ package game
 			  _fadeAllMusic();	
 			}
 */			
-			// update final words
-			if (grandChildDying) 
-			{
-				updateFinalWords();
-			}
+
 			
 		}
 		// end Game UPDATE LOOP
@@ -614,7 +609,11 @@ package game
 		override public function render():void 
 		{
 			super.render();
-			Draw.rect(FP.camera.x, FP.camera.y, 350, 95, 0x24323F, 0.99);// overlay for debug text
+			
+			if (LoadXmlData.DEBUG) 
+			{
+				Draw.rect(FP.camera.x, FP.camera.y, 350, 95, 0x24323F, 0.99);// overlay for debug text
+			}
 			
 			debug.drawHitBox(player);
 			debugHUD.render();
@@ -624,49 +623,7 @@ package game
 		}
 		// end Game RENDER LOOP
 		
-		/**
-		 * Update final words
-		 */
-		public function updateFinalWords():void
-		{
-			// change size of text to display
-		}
 		
-		
-		/**
-		 * Fade all music in/out based on player movement
-		 */
-		
-		private function _fadeAllMusic():void
-		{
-			/*if (player.playerMoving && !player.playerWasMoving) 
-			{
-				MASTER_FADER.fadeTo(1, 2, Ease.quintIn);
-				MASTER_FADER.start();
-				_masterFaderComplete = false;
-				
-				//trace("fade master volume up");
-				
-			} else if (!player.playerMoving && player.playerWasMoving)
-			{
-				MASTER_FADER.fadeTo(0, 2, Ease.quintOut);
-				MASTER_FADER.start();
-				_masterFaderComplete = false;
-				//trace("fade master volume down");
-			}*/
-			
-			//trace("fader state: " + _masterFaderComplete);
-			//trace ("tween percent: " + MASTER_FADER.percent);
-			//trace("Volume: " + FP.volume);
-			
-		}
-		
-		private function _onMasterFaderComplete():void // not used. delete?
-		{
-			//trace("master fader complete");
-			
-			_masterFaderComplete = true
-		}
 		
 		/**
 		 * Check state of player to see if timers and sound should be frozen/unfrozen
@@ -688,7 +645,7 @@ package game
 			
 			for each (var timer:Alarm in player.timers) 
 			{
-				// freeze sound and timers
+				// freeze timers
 				if (timer.active == true)
 				{
 					if (player.playerMoving == false) 
@@ -697,18 +654,9 @@ package game
 					}
 				}
 				
-				/*if (player.playerMoving == false) 
-				{
-					for each (var noiseOut:Sfx in player.sound.pathSound) 
-					{
-						if (noiseOut.playing) 
-						{
-							noiseOut.stop();	
-						}	
-					}
-				}*/
 				
-				//unfreeze sound and timers
+				
+				//unfreeze timers
 				if (timer.active == false)
 				{
 					if (player.playerMoving == true) 
@@ -717,17 +665,6 @@ package game
 					}
 				}
 				
-				/*if (player.playerMoving == true) 
-				{
-					for each (var noiseIn:Sfx in player.sound.pathSound ) 
-					{
-						if (!noiseIn.playing && playerGoneAWOL==false) 
-						{
-							noiseIn.resume();	
-						}
-							
-					}
-				}*/
 			}
 		}
 		// end checkTimers()
@@ -787,16 +724,26 @@ package game
 		public function startDeathSequence(time:Number):void
 		{
 			//fade player sprite out
-			player.fadeSprite.tween(player.grandChild, "alpha", 0, time, Ease.backIn);
+			player.fadeSprite.tween(player.grandChild, "alpha", 0, time, Ease.expoOut);
 			player.addTween(player.fadeSprite);
 			player.fadeSprite.start();
 			
 			// set flag for mechanics that need to know the death sequence has started
 			grandChildDying = true;
 			
+			// start rolling out the message
+			rollOutFinalWords();
+		}
+		
+		/**
+		 * Generate final words
+		 */
+		
+		public function rollOutFinalWords():void
+		{
 			// add Epitaphe object
 			finalWords = new Epitaphe();
-			finalWords.x = player.x + 20;
+			finalWords.x = player.x + 50;
 			//finalWords.y = FP.height / 3;
 			add(finalWords);
 		}

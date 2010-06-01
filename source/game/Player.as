@@ -270,7 +270,10 @@
 			
 			// start playing path sound + music
 			_startSounds();
-				
+			
+			// stop music on the player's starting path.. will resume once player starts moving
+			//sound.pathSound[_pathPreviousIndex].stop();
+			
 			// intialize switch variables
 			_pathSwitchTable[0] = _pathSwitchTable[1] = _pathPreviousIndex;
 			_pathSwitchLocation = position.clone();
@@ -286,7 +289,7 @@
 			{
 					music.play(0); // set sound in motion with vol of zero
 					music.stop(); // stop the music so that you can resume as soon as the player is moving
-					//trace("music state: " + music.playing);
+					
 			}
 			//trace("vol: " + sound.pathSound[_pathPreviousIndex].volume);
 
@@ -443,35 +446,52 @@
 		 */
 		private function _playPathMusic(path:int):void
 		{
+			// FADE MUSIC IN
 			if (playerMoving && !playerWasMoving) 
 			{
-				// if there already is an active fade out, the music is still playing
-				// hence only resume the music if the fader is no longer active
-				if (!sound.pathFader[path].active) 
+				// player is moving, hence all music must play
+				for each (var music:Sfx in sound.pathSound) 
 				{
-					sound.pathSound[path].resume();	
+					// hence only resume the music if it was stopped
+					if (!music.playing) 
+					{
+						music.resume();	
+					}
+					//trace("music state: " + music.playing);
 				}
 				
+				// BUT only turn on the volume of the current path
 				sound.pathFader[path].fadeTo(1, 1, Ease.quintIn);
+
+				
 				//sound.pathFader[path].start(); //starts automatically (cf fp source code)
 				
 				trace("fade path (" + path +") volume up");
 				
-			} else if (!playerMoving && playerWasMoving)
+			}
+			// FADE MUSIC OUT
+			else if (!playerMoving && playerWasMoving)
 			{
+				// player stopped moving: fade out and stop all music (stop handled by onComplete in SoundManager)
 				sound.pathFader[path].fadeTo(0, 2);
 				
 				trace("fade path (" + path +") volume down");
 			}
-			
+	
 			
 			if (_counter>0.4) 
 			{
 				_counter -= _counter;
-				trace("volume: " + sound.pathSound[path].volume.toFixed(1));
-				trace("position: " + sound.pathSound[path].position.toFixed(1));
-				trace("fader scale: " + sound.pathFader[path].scale.toFixed(1));
+				for (var z:int = 0; z < 3; z++) 
+				{
+					trace("vol(" + z +"): " + sound.pathSound[z].volume.toFixed(1)
+						+ "| scrub(" + z +"): " + sound.pathSound[z].position.toFixed(1)
+						+ "| scale(" + z +"): "+ sound.pathFader[z].scale.toFixed(1));
+				}
+				//trace(" \n");
 			}
+			
+			
 		}
 		
 		/**
@@ -482,7 +502,7 @@
 			//compare the two stores path indexes (seperated by 30 pixels distance)
 			//if they are different, then player has really changed path
 			//as opposed to crossed an intersection
-			/*if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
+			if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
 			{
 
 				var idFrom:int = _pathSwitchTable[0];
@@ -490,16 +510,26 @@
 				fromSound = sound.pathFader[idFrom];
 				toSound = sound.pathFader[idTo];
 				
-				fromSound.fadeTo(0, 4, Ease.expoOut);
-				toSound.fadeTo(1, 4, Ease.sineIn);
-				fromSound.start();
-				toSound.start();
-				
 				trace("start xfade");
-				trace("playing sound: " + idFrom);
-				trace("moving to sound: " + idTo);
 				
-			}*/
+				// fade out last path music
+				trace("playing sound: " + idFrom);
+
+				fromSound.fadeTo(0, 2, Ease.sineOut);
+				
+				
+				// fade in new path music
+				trace("moving to sound: " + idTo);
+
+				if (!sound.pathSound[idTo].playing) 
+				{
+					toSound.sfx.resume();
+					trace("resuming...");
+				}
+				toSound.fadeTo(1, 2, Ease.sineIn);
+				
+				
+			}
 
 		}
 		

@@ -1,7 +1,7 @@
 <data>
 	
 	<!-- debug for overlay-->
-	<debug>true</debug>
+	<debug>false</debug>
 	<godmode>false</godmode>
 	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
 	
