@@ -38,7 +38,7 @@
 		public var grandChild:Spritemap = new Spritemap(GRAND_CHILD, 30, 30);
 		
 		[Embed(source = '../../assets/spriteSheetAutoAccouchement.png')] private const AUTO_ACCOUCHE:Class;
-		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 35, 30, onAccoucheComplete);
+		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 30, 30, onAccoucheComplete);
 		
 		/**
 		 * Tweeners.
@@ -150,6 +150,7 @@
 		 */
 		public var playerMoving:Boolean = false;
 		public var playerWasMoving:Boolean = false;
+		public var accouche:Boolean = false;
 
 		/**
 		 * For debug
@@ -359,7 +360,10 @@
 			}
 			
 			// move player based on maximum speeds returned by the calculateSpeed method
-			move(currentPathIndex);
+			if (!accouche) 
+			{
+				move(currentPathIndex);
+			}
 			
 			
 			// update movement status of player
@@ -484,7 +488,7 @@
 				
 				//sound.pathFader[path].start(); //starts automatically (cf fp source code)
 				
-				trace("fade path (" + path +") volume up");
+				//trace("fade path (" + path +") volume up");
 				
 			}
 			// FADE MUSIC OUT
@@ -493,7 +497,7 @@
 				// player stopped moving: fade out and stop all music (stop handled by onComplete in SoundManager)
 				sound.pathFader[path].fadeTo(0, 2);
 				
-				trace("fade path (" + path +") volume down");
+				//trace("fade path (" + path +") volume down");
 			}
 	
 			
@@ -502,9 +506,9 @@
 				_counter -= _counter;
 				for (var z:int = 0; z < 3; z++) 
 				{
-					trace("vol(" + z +"): " + sound.pathSound[z].volume.toFixed(1)
+					/*trace("vol(" + z +"): " + sound.pathSound[z].volume.toFixed(1)
 						+ "| scrub(" + z +"): " + sound.pathSound[z].position.toFixed(1)
-						+ "| scale(" + z +"): "+ sound.pathFader[z].scale.toFixed(1));
+						+ "| scale(" + z +"): "+ sound.pathFader[z].scale.toFixed(1));*/
 				}
 				//trace(" \n");
 			}
@@ -693,7 +697,7 @@
 				if (e)
 				{
 					//velocity.x = -pathMaxVel[pathType];
-					velocity.x = -VB * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
+					velocity.x = -0.1 * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
 					
 				} else 
 				{
@@ -881,6 +885,7 @@
 			// set player sprite to grandchild
 			graphic = grandChild;
 			state = "grandChild";
+			accouche = false;
 		}
 	}
 }

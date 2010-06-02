@@ -1,0 +1,9 @@
+
+Animation Crash resize pense bête Simon
+
+1 frame : 450X200
+
+total document : 6300X200
+14 frames... 1 seule lecture pas de répétition. 
+
+(1061px image + 9,5px de chaque côté= 1080px pour 1 frame)

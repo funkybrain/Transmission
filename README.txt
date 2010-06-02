@@ -22,10 +22,15 @@ Bugs:
 Next: release 1.7
 -----------------
 > integre le nouvel avatar fils avec scale inverse
-> integre auto-accouchement du fils -> petit fils
+> integre auto-accouchement du fils -> petit fils (avec blocage joueur)
 > scaled player animations with fp.elapsed
+> ajout des nouveaux coeffs de s-curve pour fils et petit fils, utilisés pour transmission modèle 2
+> ajout d'un compteur de temps
+> vitesse de recul = 0.1
 
-
+>URGENT
+DOUBLER LE LD
+TRIGGER SUR LD POUR DEBUT ROULEAU
 
 
 To do list:
@@ -43,7 +48,7 @@ To do list:
 > Afficher masque noir sur l'écran
 - masque vertical lié au ratio de distance le plus petit (bcp de changements = ouverture)
 
-> Vérifier possibilité de dézoomer l'écran (ok)
+> Need to place a trigger in LD to start unravelling final words
 
 > Test loading another level and offsetting all coordinates by width of first level
 

@@ -43,6 +43,8 @@ package game
 		 */
 		[Embed(source = '../../assets/fonts/EMLATIN6.ttf', fontFamily = 'debugFont')]
 		private static const FNT_ARIAL:Class;
+
+		
 		
 		/**
 		 * Camera following information.
@@ -53,7 +55,7 @@ package game
 		public var levelHeight:uint;
 				
 		/**
-		 * class properties used as object references.
+		 * Debug variables.
 		 */		
 
 		public var debug:Debug;
@@ -78,6 +80,8 @@ package game
 		public var robotFatherPath:FindPath;
 	
 		public var vectorZero:Point = new Point();
+		
+		private var _lifeTimer:GameOverlay;
 		
 		// store ratio in easy to manipulate variables
 		public var r:Number; 
@@ -193,10 +197,10 @@ package game
 			
 			// fade game in
 			fadeCurtainIn();
-			
-			// add master fader and set intial volume to mute
-			//addTween(MASTER_FADER);
-			//FP.volume = 1;
+
+			// add game overlay
+			_lifeTimer = new GameOverlay();
+			add(_lifeTimer);
 			
 		} // end constructor
 		
@@ -292,6 +296,7 @@ package game
 			// trigger auto-accouchement
 			player.graphic = player.autoAccouchement;
 			player.autoAccouchement.play("push");
+			player.accouche = true;
 			
 			// swap player sprite to grandchild
 			// player.graphic = player.grandChild;
@@ -530,7 +535,11 @@ package game
 				// place rouleau
 				rouleau.x = Math.max(rouleau.previousX, player.x + (player.graphic as Spritemap).width);
 				// animate rouleau based on player speed
-				rouleau.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
+				if (!player.accouche) 
+				{
+					rouleau.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
+				} else rouleau.spriteRouleau.rate = 0;
+				
 			} else
 			{
 				rouleau.x = rouleau.previousX;
@@ -591,9 +600,13 @@ package game
 			// if final fade out is finished, send-in Outro
 			if (null != _fadeOutCurtain && true == _fadeOutCurtain.complete && false == _outroCalled) 
 			{
-				trace("call outro");
-				add(new Outro);
+				trace("call credits");
+				var playCredits:Credits = new Credits();
 				_outroCalled = true;
+				
+				/*trace("call outro");
+				add(new Outro);
+				_outroCalled = true;*/
 			}
 			
 						
@@ -837,6 +850,9 @@ package game
 				debugHUD.graphic = debugText;
 				debugHUD.layer = 0;
 			}
+			
+			//temp position for overlay timer
+			_lifeTimer.updateTimer(Math.floor(timer));
 		}
 		
 		/**

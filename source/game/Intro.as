@@ -16,23 +16,20 @@ package game
 		[Embed(source='../../assets/introTransmission.swf', symbol='wrapper')]
 		private var _movie:Class;
 		
-		public var introMovieClip:MovieClip;
-		
-		// remove this
-		public var myTimer:Timer = new Timer(1000, 0);
+		internal var introMovieClip:MovieClip;
 		
 		public function Intro() 
 		{
 			
 			Input.define("Enter", Key.ENTER);
 			
-			init();
+			init(_movie);
 		}
 		
-		public function init():void
+		public function init(_clip:Class):void
 		{
 			
-			introMovieClip = new _movie();
+			introMovieClip = new _clip();
 			
 			introMovieClip.x = 0;
 			introMovieClip.y = 0;
@@ -68,7 +65,7 @@ package game
 		private function onEnterFrame(event:Event):void
 		{
 			
-			if (introMovieClip.currentFrame == introMovieClip.totalFrames && !myTimer.running) 
+			if (introMovieClip.currentFrame == introMovieClip.totalFrames) 
 			{
 				// stop playing movie
 				introMovieClip.stop();
