@@ -127,7 +127,7 @@ package game
 		 * Epitaphe
 		 */ 
 		public var finalWords:Epitaphe;
-		private var timeSince:Number = 0;
+		
 
 		
 		/**
@@ -289,17 +289,24 @@ package game
 		 */
 		public function onTimeToGrandChild():void
 		{
+			// trigger auto-accouchement
+			player.graphic = player.autoAccouchement;
+			player.autoAccouchement.play("push");
 			
-			player.graphic = player.grandChild;
-			 // start final countdown to end
-			player.timeGrandChildToEnd.start()
+			// swap player sprite to grandchild
+			// player.graphic = player.grandChild;
+			// this is now handled by onAccoucheComplete event handler in Player class
+			
+			// start final countdown to end
 			// will check in update to start death sequence before end
+			player.timeGrandChildToEnd.start();
 			
-			//transmit properties from child to grandchild
-			//transmitChildToGrandChild();
 			
+			// transmit properties
 			transmitFatherToChild(); // use one method for both transmissions
-			player.state = "grandChild";
+			
+			// change player state
+			// player.state = "grandChild";
 
 		}
 		
@@ -533,10 +540,8 @@ package game
 			// unravel final words
 			if (null != finalWords) 
 			{
-				timeSince = timeSince + 0.05;
-				
-				finalWords.unravelFinalWord(timeSince);
-				//trace("timesince: " + timeSince);
+				// update the text length of final words
+				_updateFinalWords();
 			}
 			
 			// update path ratios
@@ -732,20 +737,26 @@ package game
 			grandChildDying = true;
 			
 			// start rolling out the message
-			rollOutFinalWords();
+			_startFinalWords();
 		}
 		
 		/**
 		 * Generate final words
 		 */
 		
-		public function rollOutFinalWords():void
+		private function _startFinalWords():void
 		{
 			// add Epitaphe object
 			finalWords = new Epitaphe();
-			finalWords.x = player.x + 50;
+			finalWords.x = rouleau.x + 50;
 			//finalWords.y = FP.height / 3;
 			add(finalWords);
+		}
+		
+		private function _updateFinalWords():void
+		{
+			//finalWords.unravelFinalWord(timeSince);
+			//trace("timesince: " + timeSince);	
 		}
 		
 		/**

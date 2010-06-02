@@ -28,11 +28,17 @@
 		[Embed(source = '../../assets/spritesheetAvatar.png')] private const PLAYER:Class;
 		public var father:Spritemap = new Spritemap(PLAYER, 30, 30);
 		
-		[Embed(source = '../../assets/spritesheetAvatarFils.png')] private const CHILD:Class;
+/*		[Embed(source = '../../assets/spritesheetAvatarFils.png')] private const CHILD:Class;
+		public var child:Spritemap = new Spritemap(CHILD, 30, 30);*/
+		
+		[Embed(source = '../../assets/spritesheetChild.png')] private const CHILD:Class;
 		public var child:Spritemap = new Spritemap(CHILD, 30, 30);
 		
 		[Embed(source = '../../assets/spriteSheetGrandChild.png')] private const GRAND_CHILD:Class;
 		public var grandChild:Spritemap = new Spritemap(GRAND_CHILD, 30, 30);
+		
+		[Embed(source = '../../assets/spriteSheetAutoAccouchement.png')] private const AUTO_ACCOUCHE:Class;
+		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 35, 30, onAccoucheComplete);
 		
 		/**
 		 * Tweeners.
@@ -58,6 +64,9 @@
 		//public const CT_VB:Number = 0.2; // Ctvb : coeff de transmission de la vitesse de base father -> child
 		
 		public var COEFF_D:Number; // used in S-curve calculation		
+		public var COEFF_D_CHILD:Number
+		public var COEFF_D_GRANDCHILD:Number
+		
 		public var VB:Number; // base speed of father
 		public var CT_VB:Number; // Ctvb : coeff de transmission de la vitesse de base father -> child
 		public var D_MAX:Number; // max distance used in mapping for s-curve data
@@ -116,6 +125,7 @@
 		 * Animation properties.
 		 */
 		public var frames:Array;
+		public var framesAccouchement:Array;
 		
 		/**
 		 * define hitbox origin.
@@ -164,9 +174,14 @@
 			// set the Entity's graphic property to a Spritemap object
 			graphic = father;
 			frames = new Array( 0, 1, 2, 3 );
-			father.add("walk", frames, 5, true);
-			child.add("walk", frames, 5, true);
-			grandChild.add("walk", frames, 5, true);
+			framesAccouchement = new Array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+			father.add("walk", frames, 12, true);
+			child.add("walk", frames, 12, true);
+			grandChild.add("walk", frames, 12, true);
+			autoAccouchement.add("push", framesAccouchement, 5, false);
+			autoAccouchement.originX = -3;
+			child.originX = 15;
+			child.originY = 15;
 			child.smooth = true;
 			grandChild.smooth = true;
 			
@@ -206,6 +221,9 @@
 			
 			// initialize variables from gamedata.xml file
 			COEFF_D = LoadXmlData.COEFF_D; // used in S-curve calculation		
+			COEFF_D_CHILD = LoadXmlData.COEFF_D_CHILD;
+			COEFF_D_GRANDCHILD = LoadXmlData.COEFF_D_GRANDCHILD;
+			
 			VB = LoadXmlData.VB; // base speed of father
 			CT_VB = LoadXmlData.CT_VB; // Ctvb : coeff de transmission de la vitesse de base father -> child
 			D_MAX = LoadXmlData.D_MAX;
@@ -542,7 +560,7 @@
 			if (state == "child") 
 			{
 				// map the time of child's life to the scale of it's sprite
-				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, 0, timeToGrandChild.duration, 1.5, 1);
+				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, 0, 0.5, 1);
 				child.scale = mapped;
 				//trace("child scale: " + mapped);
 			} else
@@ -733,6 +751,7 @@
 		{			
 			var coeff_type3:Number = 0.25;
 			var DyDz:Number;
+			var coeff_d_scurve:Number;
 			
 			// work out the combined distance of the two paths where previous avatar was slowest
 			if (state=="child" || state=="grandChild") 
@@ -743,13 +762,28 @@
 			// store the fastest velocity out of the three paths	
 			pathFastest = Math.max(pathMaxVel[0], pathMaxVel[1], pathMaxVel[2]);
 
+			// ensure the right D is being used
+			if (transmitModel==2) 
+			{
+				if (state=="child") 
+				{
+					coeff_d_scurve = COEFF_D_CHILD;
+				} else if (state=="grandChild") 
+				{
+					coeff_d_scurve = COEFF_D_GRANDCHILD;
+				}
+			} else {
+				coeff_d_scurve = COEFF_D;
+			}
+			
 			// start loop
 			for (var i:int = 0; i < 3; i++) 
 			{
 				// use s-curve calculations to figure out max velocity							
 				// first map distance on path to s-curve significant numbers
+				
 				var mapped:Number = FP.scale(pathDistance[i], 0, D_MAX, S_MIN, S_MAX);
-				pathMaxVel[i] = pathBaseSpeed[i] + COEFF_D * (1 / (1 + Math.exp( -mapped)));
+				pathMaxVel[i] = pathBaseSpeed[i] + coeff_d_scurve * (1 / (1 + Math.exp( -mapped)));
 				
 				// find out the greater of pathMaxVel and PathChildSpeed
 				_maxPathSpeed[i] = Math.max(pathMaxVel[i], pathChildSpeed[i]);
@@ -829,10 +863,24 @@
 			if (velocity.x != 0 || velocity.y != 0)
 			{
 				who.play("walk");
+
+				// map player velocity to framerate
+				var scaleAnimSpeed:Number = FP.scaleClamp(Math.max(Math.abs(velocity.x), Math.abs(velocity.y)), 0, 2, 0, 1);	
+				who.rate = scaleAnimSpeed * FP.frameRate * FP.elapsed;
+				
 			} else {
 				who.setFrame(0);
 			}
-			
-		}	
+		}
+		
+		/**
+		 * event handler once auto-accouchement animation has stopped playing
+		 */
+		public function onAccoucheComplete():void
+		{
+			// set player sprite to grandchild
+			graphic = grandChild;
+			state = "grandChild";
+		}
 	}
 }

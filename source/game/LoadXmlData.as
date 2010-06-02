@@ -26,7 +26,11 @@ package game
 		public static var timer_FatherToChild:Number;
 		public static var timer_FatherToDeath:Number;
 		public static var timer_ChildToGrandChild:Number;
-		public static var COEFF_D:Number;	
+		
+		public static var COEFF_D:Number;
+		public static var COEFF_D_CHILD:Number;
+		public static var COEFF_D_GRANDCHILD:Number;
+		
 		public static var D_MAX:Number;	
 		public static var S_MIN:Number;	
 		public static var S_MAX:Number;				
@@ -53,6 +57,9 @@ package game
 			
 			// scurve
 			COEFF_D = Number(gameData.scurve.COEFF_D.text());
+			COEFF_D_CHILD = Number(gameData.scurve.COEFF_D_CHILD.text());
+			COEFF_D_GRANDCHILD = Number(gameData.scurve.COEFF_D_GRANDCHILD.text());
+			
 			D_MAX = Number(gameData.scurve.D_MAX.text()); 
 			S_MIN = Number(gameData.scurve.S_MIN.text());
 			S_MAX = Number(gameData.scurve.S_MAX.text());

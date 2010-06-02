@@ -1,7 +1,7 @@
 <data>
 	
 	<!-- debug for overlay-->
-	<debug>false</debug>
+	<debug>true</debug>
 	<godmode>false</godmode>
 	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
 	
@@ -14,6 +14,9 @@
 	<!-- variables utilisées pour le calcul de S-Curve-->
 	<scurve>
 		<COEFF_D>2</COEFF_D>
+		<COEFF_D_CHILD>2</COEFF_D_CHILD>
+		<COEFF_D_GRANDCHILD>2</COEFF_D_GRANDCHILD>
+		
 		<D_MAX>1200</D_MAX>
 		<S_MIN>-3</S_MIN>
 		<S_MAX>-1</S_MAX>
@@ -21,12 +24,12 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>30</timeToChild>
+		<timeToChild>10</timeToChild>
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
-		<timeFatherToChild>40</timeFatherToChild><!-- robot AI father takes over-->
-		<timeFatherToDeath>50</timeFatherToDeath><!-- robot AI father goes poof!-->
-		<timeChildToGrandChild>60</timeChildToGrandChild>
-		<timeGrandChildToEnd>60</timeGrandChildToEnd>
+		<timeFatherToChild>5</timeFatherToChild><!-- robot AI father takes over-->
+		<timeFatherToDeath>15</timeFatherToDeath><!-- robot AI father goes poof!-->
+		<timeChildToGrandChild>20</timeChildToGrandChild>
+		<timeGrandChildToEnd>20</timeGrandChildToEnd>
 	</timers>
 	
 	
