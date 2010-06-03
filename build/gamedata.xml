@@ -7,30 +7,36 @@
 	
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
-		<VB>0.3</VB>	<!-- Vb pere-->
-		<CT_VB>0.3</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
+		<VB>0.1</VB>	<!-- Vb pere-->
+		<CT_VB>0.1</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
 	</vitesse>
 
 	<!-- variables utilisées pour le calcul de S-Curve-->
 	<scurve>
-		<COEFF_D>2</COEFF_D>
-		<COEFF_D_CHILD>2</COEFF_D_CHILD>
-		<COEFF_D_GRANDCHILD>2</COEFF_D_GRANDCHILD>
+		<COEFF_D>1.5</COEFF_D>
+		<COEFF_D_CHILD>2.5</COEFF_D_CHILD>
+		<COEFF_D_GRANDCHILD>3</COEFF_D_GRANDCHILD>
 		
-		<D_MAX>1200</D_MAX>
-		<S_MIN>-3</S_MIN>
-		<S_MAX>-1</S_MAX>
+		<D_MAX>2000</D_MAX>
+		<S_MIN>-2</S_MIN>
+		<S_MAX>2</S_MAX>
 	</scurve>
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>20</timeToChild>
+		<timeToChild>48</timeToChild>
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
-		<timeFatherToChild>25</timeFatherToChild><!-- robot AI father takes over-->
-		<timeFatherToDeath>35</timeFatherToDeath><!-- robot AI father goes poof!-->
-		<timeChildToGrandChild>60</timeChildToGrandChild>
-		<timeGrandChildToEnd>60</timeGrandChildToEnd>
+		<timeFatherToChild>10</timeFatherToChild><!-- robot AI father takes over-->
+		<timeFatherToDeath>20</timeFatherToDeath><!-- robot AI father goes poof!-->
+		<timeChildToGrandChild>58</timeChildToGrandChild>
+		<timeGrandChildToEnd>58</timeGrandChildToEnd>
 	</timers>
 	
+	<!-- Texte de fin-->
+	<citation>
+		L'homme est impur car dans son subconscient il ne pense qu'a carresser son ego
+		d'un geste nonchalant, dans l'espoir de se gratter la vertue
+		prise entre deux enclumes de tarte au jasmin.
+	</citation>	
 	
 </data>

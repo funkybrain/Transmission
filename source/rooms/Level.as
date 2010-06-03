@@ -181,6 +181,14 @@
 			
 			return _player;
 		}
+		
+		public function getTriggerPosition():int
+		{
+			if (level.waypoints.hasOwnProperty("trigger")) 
+			{
+				return int(level.waypoints[0].trigger.@x);
+			} else return 0;
+		}
 	}
 				
 }

@@ -97,7 +97,7 @@
 		public var row:int, col:int; 
 		
 		public var typeVitesse:String; // debug property
-		private var _type3:Boolean = false; // flag to ensure once child is going at type 3 vel, it stays there
+		public var type3:Boolean = false; // flag to ensure once child is going at type 3 vel, it stays there
 		// store the greater of pathMaxVel and PathChildSpeed
 		private var _maxPathSpeed:Array = new Array();
 
@@ -799,27 +799,27 @@
 					typeVitesse = "normale (pere)";
 				}
 				
-				if (state=="child" || state=="grandChild") 
+				if (state=="child" || state=="grandChild" && transmitModel!=2) 
 				{
 					
 					// check if type 3 comes into effect
-					if (DyDz > (0.25 * Dxtotale))
+					if (DyDz > (0.25 * Dxtotale) && !type3)
 					{
-						/*									
+															
 						trace("Dz: " + pathDistance[transmitIndexZ].toFixed(2));
 						trace("Dy: " + pathDistance[transmitIndexY].toFixed(2));
 						trace("Dx: " + Dxtotale.toFixed(2));
 						trace("DyDz: " + DyDz.toFixed(2));
-						trace("0.25*Dx: " + (coeff_type3 * Dxtotale).toFixed(2));*/
-						if (!_type3) 
-						{
-							trace("DyDz sup à  0.25 x Dxtotale - vitesse 3");	
-						}
-						_type3 = true;
+						trace("0.25*Dx: " + (coeff_type3 * Dxtotale).toFixed(2));
+						 
+						
+						trace("DyDz sup à  0.25 x Dxtotale - vitesse 3");	
+						
+						type3 = true;
 						
 					}
 			
-					if (_type3) // must keep this speed till death 
+					if (type3) // must keep this speed till death 
 					{
 						pathInstantVel[i] = pathFastest;
 						typeVitesse = "type 3 - constant (Vmax)";
@@ -829,12 +829,19 @@
 						typeVitesse = "type 1 - constant (child modele 1)";
 						pathInstantVel[i] = _maxPathSpeed[i];
 						
-					} else
+					} 
+					else
 					{
 						typeVitesse = "type 2 - comme pere (child modele 1)";
 						pathInstantVel[i] = _maxPathSpeed[i];
 					}
 				}
+				
+				if (state=="child" || state=="grandChild" && transmitModel==2) 
+				{
+					pathInstantVel[i] = pathMaxVel[i];
+					typeVitesse = "modèle 2 - un seul type de vitesse (vb+d*scurve)";
+				} 
 			}
 		}
 		

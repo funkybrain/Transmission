@@ -118,6 +118,7 @@ package game
 		 * Rouleau
 		 */
 		public var rouleau:Rouleau;
+		public var rouleauTriggerX:int;
 		
 		/**
 		 * Booleans
@@ -125,6 +126,7 @@ package game
 		private var _outroCalled:Boolean = false;
 		private var _masterFaderComplete:Boolean = true;
 		private var _levelTwoAdded:Boolean = false;
+		private var _rouleauTriggered:Boolean = false;
 		
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
@@ -136,7 +138,6 @@ package game
 		 * Epitaphe
 		 */ 
 		public var finalWords:Epitaphe;
-		
 
 		
 		/**
@@ -207,8 +208,9 @@ package game
 			_lifeTimer = new GameOverlay();
 			add(_lifeTimer);
 			
-			// debug shit
-			trace("level_1.width-FP.width = " + (level_1.width-FP.width-100));
+			//debug stuff
+			rouleauTriggerX = level_1.getTriggerPosition();
+			trace("trigger X : " + rouleauTriggerX); 
 			
 		} // end constructor
 		
@@ -471,10 +473,10 @@ package game
 			if (player.state == "father" || player.state == "childAlive") 
 			{
 				// calculate all the stuff needed to set-up _type3 velocities
-				sortpaths = player.fatherStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				sortpaths = player.fatherStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
 				player.Dxtotale = player.fatherStoredDistances[sortpaths[0]]; //store the highest value DxTotal
 				
-				sortspeeds = player.fatherStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				sortspeeds = player.fatherStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
 				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
 				
 				player.transmitIndexY = sortspeeds[1];
@@ -490,11 +492,11 @@ package game
 			} else {
 				
 				// calculate all the stuff needed to set-up _type3 velocities
-				sortpaths = player.childStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				sortpaths = player.childStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
 				player.Dxtotale = player.childStoredDistances[sortpaths[0]]; //store the highest value DxTotal
 			
 				
-				sortspeeds= player.childStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING); // sort in descending order
+				sortspeeds= player.childStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
 				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
 				
 				player.transmitIndexY = sortspeeds[1];
@@ -504,9 +506,12 @@ package game
 				trace("chemin le plus emprunté: " + sortpaths[0]);
 				trace("Dxtotale: " + Number(player.Dxtotale).toFixed(1));
 				trace("chemins les plus lents: " + player.transmitIndexY + " " + player.transmitIndexZ);
-				trace("distance sur ces chemins: " + Number(player.fatherStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(player.fatherStoredDistances[sortpaths[2]]).toFixed(1));
+				trace("distance sur ces chemins: " + Number(player.childStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(player.childStoredDistances[sortpaths[2]]).toFixed(1));
 
 			}
+			
+			// reset _type3 for next transmission
+			player.type3 = false;
 			
 			
 		} 
@@ -538,7 +543,7 @@ package game
 			super.update();
 			
 			// update rouleau position
-			if (rouleau != null && !grandChildDying) 
+			if (rouleau != null && !_rouleauTriggered) 
 			{
 				// place rouleau
 				rouleau.x = Math.max(rouleau.previousX, player.x + (player.graphic as Spritemap).width);
@@ -611,10 +616,7 @@ package game
 				trace("call credits");
 				var playCredits:Credits = new Credits();
 				_outroCalled = true;
-				
-				/*trace("call outro");
-				add(new Outro);
-				_outroCalled = true;*/
+
 			}
 			
 			// test to see if next level needs to be imported
@@ -627,8 +629,13 @@ package game
 			
 			// clean-up animation list to save on memory
 			_removeAnimations();
-
 			
+			// check to see if player has triggered rouleau
+			if (player.x > rouleauTriggerX && !_rouleauTriggered) 
+			{
+					_rouleauTriggered = true;
+					_startFinalWords();
+			}
 		}
 		// end Game UPDATE LOOP
 		
@@ -770,15 +777,13 @@ package game
 		public function startDeathSequence(time:Number):void
 		{
 			//fade player sprite out
-			player.fadeSprite.tween(player.grandChild, "alpha", 0, time, Ease.expoOut);
+			player.fadeSprite.tween(player.grandChild, "alpha", 0.1, time, Ease.expoOut);
 			player.addTween(player.fadeSprite);
 			player.fadeSprite.start();
 			
 			// set flag for mechanics that need to know the death sequence has started
 			grandChildDying = true;
-			
-			// start rolling out the message
-			_startFinalWords();
+
 		}
 		
 		/**
@@ -796,8 +801,10 @@ package game
 		
 		private function _updateFinalWords():void
 		{
-			//finalWords.unravelFinalWord(timeSince);
-			//trace("timesince: " + timeSince);	
+			// display one character every 30 pixels the player moves
+			var wordslength:int = (player.x - rouleauTriggerX) / 30;
+			finalWords.unravelFinalWord(wordslength);
+			
 		}
 		
 		/**

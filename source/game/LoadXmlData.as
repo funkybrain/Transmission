@@ -40,6 +40,8 @@ package game
 		public static var GODMODE:Boolean;
 		public static var LD:Boolean;
 		
+		public static var CITATION:String;
+		
 		public function LoadXmlData() 
 		{
 			loader.addEventListener(Event.COMPLETE, onComplete);
@@ -75,8 +77,10 @@ package game
 			DEBUG = stringToBoolean(gameData.debug.text());
 			GODMODE = stringToBoolean(gameData.godmode.text());
 			LD = stringToBoolean(gameData.LD.text());
-
-
+		
+			// citation
+			CITATION = gameData.citation.text(); 
+			
 			trace("done assigning data in LoadXmlData");
 
 			//trace("starting intro movie");

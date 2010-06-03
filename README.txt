@@ -19,21 +19,14 @@ Bugs:
 >> detected at x:551.06, y: 195.87
 >> detected at x:521.70, y: 196.93
 
-Next: release 1.7
+Next: release 1.8
 -----------------
-> integre le nouvel avatar fils avec scale inverse
-> integre auto-accouchement du fils -> petit fils (avec blocage joueur)
-> scaled player animations with fp.elapsed
-> ajout des nouveaux coeffs de s-curve pour fils et petit fils, utilisés pour transmission modèle 2
-> ajout d'un compteur de temps en overlay
-> change la vitesse de recul joueur = 0.1
-> doublage du LD avec Level_Romain_2
-
+> ajout declencheur de rouleau a placer dans ogmo
+> rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
+> ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
 
 To do list:
 ----------
->URGENT
-DOUBLER LE LD
 TRIGGER SUR LD POUR DEBUT ROULEAU
 
 
@@ -105,3 +98,13 @@ Next: release 1.6
 
 > cleaned up pathTileList<PathTile> to save memory
 > created Epitaphe class to handle final text
+
+Next: release 1.7
+-----------------
+> integre le nouvel avatar fils avec scale inverse
+> integre auto-accouchement du fils -> petit fils (avec blocage joueur)
+> scaled player animations with fp.elapsed
+> ajout des nouveaux coeffs de s-curve pour fils et petit fils, utilisés pour transmission modèle 2
+> ajout d'un compteur de temps en overlay
+> change la vitesse de recul joueur = 0.1
+> doublage du LD avec Level_Romain_2

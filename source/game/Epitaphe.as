@@ -10,11 +10,11 @@ package game
 		[Embed(source='../../assets/fonts/BMblock.TTF', fontFamily = 'block')]
 		private static const FONT:Class;
 		
-		private const _SYLLOGISME:String = "L'homme face à son désoeuvrement choisi le suicide plûtot de la Nintendo DS";
+		private var _SYLLOGISME:String;
 		private var _showOnlyThatMuch:String;
 		private var _lengthToDisplay:uint;
 		
-		public var supportSyllogisme:Text = new Text("die pig", 0, 0, 800, 480);
+		public var supportSyllogisme:Text = new Text("", 0, 0, 4000, 100);
 		
 		public function Epitaphe() 
 		{
@@ -26,7 +26,8 @@ package game
 			supportSyllogisme.color = 0x6BA432;
 			graphic = supportSyllogisme;
 			
-			trace("finalwords added");
+			_SYLLOGISME = LoadXmlData.CITATION;
+			
 		}
 		
 		override public function update():void 
@@ -41,6 +42,7 @@ package game
 		public function unravelFinalWord(length:uint):void
 		{
 			_lengthToDisplay = length;
+			// need to draw on overlay under te text
 		}
 		
 	}
