@@ -20,8 +20,11 @@
 		/**
 		 * Constructor. Load the floors from the level XML.
 		 */
-		public function PathGreen(level:XML) 
+		public function PathGreen(level:XML, offset:int) 
 		{
+			
+			_offset = offset;
+			//trace("offset: " + _offset);
 			
 			super(level, TILES);
 			
@@ -32,6 +35,11 @@
 			
 			for each (var tile:XML in level.path_green[0].tile)
 			{
+				tile_x = int(tile.@x) + _offset;
+				
+				//tiles.setTile(tile_x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
+				
+				//trace("green tile_x: " + tile_x);
 				tiles.setTile(tile.@x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
 			}
 			
@@ -39,6 +47,10 @@
 			
 			for each (var solid:XML in level.mask_green[0].rect)
 			{
+				grid_x = int(solid.@x) + _offset;
+				//grid.setRect(grid_x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
+				
+				//trace("green solid_x: " + grid_x);
 				grid.setRect(solid.@x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
 			}
 		}
@@ -51,6 +63,7 @@
 			{
 				for each (var solid:XML in _mylevel.mask_green[0].rect)
 				{
+	//				Draw.rect(grid_x , solid.@y , solid.@w , solid.@h, 0x00FF00, 0.9);
 					Draw.rect(solid.@x , solid.@y , solid.@w , solid.@h, 0x00FF00, 0.9);
 				}
 			}

@@ -70,8 +70,8 @@ package game
 				 
 				
 					fader.sfx.stop();
-					trace("fader ("+ j +") Complete");
-					trace("scrub ("+ j +") " + pathSound[j].position.toFixed(1));
+					/*trace("fader ("+ j +") Complete");
+					trace("scrub ("+ j +") " + pathSound[j].position.toFixed(1));*/
 				
 					j++;
 				}

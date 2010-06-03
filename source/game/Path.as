@@ -16,12 +16,22 @@ package game
 		 * Floors information.
 		 */
 		public var tiles:Tilemap;
+		
 		public var grid:Grid;
+		
 		protected var _mylevel:XML;
+		
 		public static const TILE_GRID:uint=30;
+		
 		public const SOLID_GRID:uint=10;
-		protected var _debug:Boolean = false;
-		//private var _tiles:BitmapData;
+		
+		protected var _offset:int;
+		
+		protected var _debug:Boolean = false; // to print grid mask on screen
+		
+		protected var tile_x:int;
+		protected var grid_x:int;
+
 		
 		public function Path(level:XML, tileMap:Class) 
 		{
@@ -38,6 +48,17 @@ package game
 			// create and populate the collision grid mask from the level XML
 			mask = grid = new Grid(level.width, level.height, SOLID_GRID, SOLID_GRID);
 			
+			// add the tilemap at the right coordinates
+			//this.graphic.x = _offset;
+			this.x = _offset;
+			//this.tiles.x = _offset;
+			
+		}
+		
+		override public function added():void 
+		{
+			super.added();
+			trace("added to world " + this.x);
 		}
 		
 	}

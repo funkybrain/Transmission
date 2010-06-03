@@ -1,6 +1,9 @@
 <level>
   <width>3000</width>
   <height>480</height>
+  <background>
+    <image_fond x="0" y="0"/>
+  </background>
   <mask_red>
     <rect x="0" y="220" w="560" h="10"/>
     <rect x="370" y="210" w="10" h="10"/>
@@ -555,9 +558,6 @@
     <tile tx="120" ty="30" x="2490" y="210"/>
     <tile tx="60" ty="30" x="2490" y="180"/>
   </path_blue>
-  <player>
-    <player x="0" y="210"/>
-  </player>
   <animations>
     <anim_rouage x="2580" y="110"/>
     <anim_rouage x="900" y="180"/>

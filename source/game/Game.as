@@ -37,6 +37,8 @@ package game
 		 * Levels
 		 */
 		public var level_1:Level;
+		public var level_2:Level;
+		
 		
 		/**
 		 * Fonts.
@@ -51,8 +53,8 @@ package game
 		 */
 		public const FOLLOW_TRAIL:Number = 50;
 		public const FOLLOW_RATE:Number = .9;
-		public var levelWidth:uint;
-		public var levelHeight:uint;
+		public var worldWidth:uint;
+		public var worldHeight:uint;
 				
 		/**
 		 * Debug variables.
@@ -122,10 +124,13 @@ package game
 		 */
 		private var _outroCalled:Boolean = false;
 		private var _masterFaderComplete:Boolean = true;
+		private var _levelTwoAdded:Boolean = false;
+		
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
 		public var playerGoneAWOL:Boolean = false;
 		public var grandChildDying:Boolean = false;
+		
 
 		/**
 		 * Epitaphe
@@ -140,11 +145,11 @@ package game
 		public function Game() 
 		{
 			// create first level
-			level_1 = new Level();
+			level_1 = new Level(1, 0);
 			
 			// set intial camera clamp value to level width/height
-			levelWidth = level_1.width;
-			levelHeight = level_1.height;
+			worldWidth = level_1.width;
+			worldHeight = level_1.height;
 			
 			// add level objects to world
 			level_1.addObjectsToWorld(this)
@@ -201,6 +206,9 @@ package game
 			// add game overlay
 			_lifeTimer = new GameOverlay();
 			add(_lifeTimer);
+			
+			// debug shit
+			trace("level_1.width-FP.width = " + (level_1.width-FP.width-100));
 			
 		} // end constructor
 		
@@ -609,13 +617,16 @@ package game
 				_outroCalled = true;*/
 			}
 			
-						
-			// fade all music based on player movement
-/*			if (!playerGoneAWOL) 
+			// test to see if next level needs to be imported
+			if (FP.camera.x > (level_1.width - FP.width - 100) && !_levelTwoAdded) 
 			{
-			  _fadeAllMusic();	
+				_importNextLevel();
+				_levelTwoAdded = true;
+				trace("import level2");
 			}
-*/			
+			
+			// clean-up animation list to save on memory
+			_removeAnimations();
 
 			
 		}
@@ -641,7 +652,24 @@ package game
 		}
 		// end Game RENDER LOOP
 		
-		
+		/**
+		 * Import new level
+		 */
+		private function _importNextLevel():void
+		{
+			// create first level
+			level_2 = new Level(2, worldWidth);
+			
+			// set intial camera clamp value to level width/height
+			worldWidth += level_2.width;
+			trace("worldWidth: " + worldWidth);
+			
+			// add level objects to world
+			level_2.addObjectsToWorld(this)
+			
+			// add level animations to world and retrieve List<Animation>
+			animationList = animationList.concat(level_2.addBackgroundAnimationsToWorld(this));
+		}
 		
 		/**
 		 * Check state of player to see if timers and sound should be frozen/unfrozen
@@ -809,6 +837,14 @@ package game
 		}
 		
 		/**
+		 * Clean-up animations that have moved off the edge of the camera
+		 */
+		private function _removeAnimations():void
+		{
+			//todo
+		}
+		
+		/**
 		 * update all the debug overlay info.
 		 */
 		public function updateDebugText():void
@@ -837,7 +873,8 @@ package game
 									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " Vb: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
 									+"Timer: " + Math.floor(timer) + " State: " + player.state.toUpperCase() +"\n"//+ " Row: " + player.row + " Col: " + player.col 
 									+"modele de vitesse: " + player.typeVitesse + "\n"
-									+"Vinstantanée: " + Number(player.pathInstantVel[player.currentPathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n";
+									+"Vinstantanée: " + Number(player.pathInstantVel[player.currentPathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n"
+									+ "CamX: " + FP.camera.x + " playerX: " + int(player.x);
 									
 			debugText.text = father_var;
 			debugText.size = 12;
@@ -871,8 +908,8 @@ package game
 			
 			// keep camera in room bounds
 			
-			FP.camera.x = FP.clamp(FP.camera.x, 0, levelWidth - FP.width);
-			FP.camera.y = FP.clamp(FP.camera.y, 0, levelHeight - FP.height);
+			FP.camera.x = FP.clamp(FP.camera.x, 0, worldWidth - FP.width);
+			FP.camera.y = FP.clamp(FP.camera.y, 0, worldHeight - FP.height);
 		}
 		
 		/**

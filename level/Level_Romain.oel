@@ -1,5 +1,5 @@
 <level>
-  <width>8000</width>
+  <width>7981</width>
   <height>480</height>
   <background>
     <image_fond x="0" y="0"/>
@@ -1427,7 +1427,6 @@
     <tile tx="0" ty="60" x="7890" y="210"/>
     <tile tx="0" ty="60" x="7920" y="210"/>
     <tile tx="0" ty="60" x="7950" y="210"/>
-    <tile tx="0" ty="60" x="7980" y="210"/>
     <tile tx="60" ty="60" x="6060" y="60"/>
     <tile tx="60" ty="60" x="6450" y="120"/>
     <tile tx="30" ty="60" x="6210" y="150"/>

@@ -25,16 +25,18 @@ Next: release 1.7
 > integre auto-accouchement du fils -> petit fils (avec blocage joueur)
 > scaled player animations with fp.elapsed
 > ajout des nouveaux coeffs de s-curve pour fils et petit fils, utilisés pour transmission modèle 2
-> ajout d'un compteur de temps
-> vitesse de recul = 0.1
+> ajout d'un compteur de temps en overlay
+> change la vitesse de recul joueur = 0.1
+> doublage du LD avec Level_Romain_2
 
+
+To do list:
+----------
 >URGENT
 DOUBLER LE LD
 TRIGGER SUR LD POUR DEBUT ROULEAU
 
 
-To do list:
-----------
 > can we avoid the slowdown when player only crosses path without changing?
 > implement moovesmooth
 > preloader!

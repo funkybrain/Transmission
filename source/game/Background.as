@@ -23,11 +23,13 @@
 		public function Background(x:int, y:int ) 
 		{
 			// set the background graphic and parallax rates.
-			graphic = new Backdrop(BACKGROUND);
+			//graphic = new Backdrop(BACKGROUND, false, false);
+			graphic = new Image(BACKGROUND);
 			this.x = x;
 			this.y = y;
-			graphic.scrollX = .5;
-			graphic.scrollY = .5;
+			
+			//graphic.scrollX = .5;
+			//graphic.scrollY = .5;
 			
 			// put it on layer 100, so it appears behind other entities.
 			layer = 100;

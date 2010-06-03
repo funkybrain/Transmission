@@ -532,16 +532,16 @@
 				fromSound = sound.pathFader[idFrom];
 				toSound = sound.pathFader[idTo];
 				
-				trace("start xfade");
+				//trace("start xfade");
 				
 				// fade out last path music
-				trace("playing sound: " + idFrom);
+				//trace("playing sound: " + idFrom);
 
 				fromSound.fadeTo(0, 2, Ease.sineOut);
 				
 				
 				// fade in new path music
-				trace("moving to sound: " + idTo);
+				//trace("moving to sound: " + idTo);
 
 				if (!sound.pathSound[idTo].playing) 
 				{
@@ -668,7 +668,7 @@
 			if (LoadXmlData.GODMODE==true) 
 			{ 
 				// use god speed
-				speed = 4;	
+				speed = 3 * (FP.frameRate * FP.elapsed);	
 			} 
 			else 
 			{
@@ -697,7 +697,7 @@
 				if (e)
 				{
 					//velocity.x = -pathMaxVel[pathType];
-					velocity.x = -0.1 * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
+					velocity.x = -2 * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
 					
 				} else 
 				{

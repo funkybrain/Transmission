@@ -87,8 +87,8 @@ package game
 			
 			graphic = spriteName;
 			
-			graphic.scrollX = .5;
-			graphic.scrollY = .5;
+			//graphic.scrollX = .5;
+			//graphic.scrollY = .5;
 				
 			spriteName.add("loop", _frames, 24, true); // will loop
 			spriteName.add("no_loop", _frames, 24, false); // won't loop

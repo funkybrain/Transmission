@@ -2,8 +2,8 @@
 	
 	<!-- debug for overlay-->
 	<debug>true</debug>
-	<godmode>false</godmode>
-	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
+	<godmode>true</godmode>
+	<LD>false</LD><!-- mettre à true pour tester le vrai LD-->
 	
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
@@ -24,12 +24,12 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>10</timeToChild>
+		<timeToChild>20</timeToChild>
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
-		<timeFatherToChild>5</timeFatherToChild><!-- robot AI father takes over-->
-		<timeFatherToDeath>15</timeFatherToDeath><!-- robot AI father goes poof!-->
-		<timeChildToGrandChild>20</timeChildToGrandChild>
-		<timeGrandChildToEnd>20</timeGrandChildToEnd>
+		<timeFatherToChild>25</timeFatherToChild><!-- robot AI father takes over-->
+		<timeFatherToDeath>35</timeFatherToDeath><!-- robot AI father goes poof!-->
+		<timeChildToGrandChild>60</timeChildToGrandChild>
+		<timeGrandChildToEnd>60</timeGrandChildToEnd>
 	</timers>
 	
 	
