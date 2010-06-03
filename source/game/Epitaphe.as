@@ -3,6 +3,7 @@ package game
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Text
 	import net.flashpunk.FP;
+	import net.flashpunk.utils.Draw;
 	
 	public class Epitaphe extends Entity
 	{
@@ -33,16 +34,15 @@ package game
 		override public function update():void 
 		{
 			_showOnlyThatMuch = _SYLLOGISME.slice(0, _lengthToDisplay);
-			
 			supportSyllogisme.text = _showOnlyThatMuch;
 			
 			super.update();
 		}
 		
+		
 		public function unravelFinalWord(length:uint):void
 		{
 			_lengthToDisplay = length;
-			// need to draw on overlay under te text
 		}
 		
 	}

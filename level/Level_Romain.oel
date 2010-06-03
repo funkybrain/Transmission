@@ -1470,7 +1470,4 @@
     <anim_man x="90" y="0"/>
     <anim_crash x="1950" y="240"/>
   </animations>
-  <waypoints>
-    <trigger x="900" y="0"/>
-  </waypoints>
 </level>

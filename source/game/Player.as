@@ -174,16 +174,23 @@
 			
 			// set the Entity's graphic property to a Spritemap object
 			graphic = father;
+			
 			frames = new Array( 0, 1, 2, 3 );
 			framesAccouchement = new Array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+			
 			father.add("walk", frames, 12, true);
 			child.add("walk", frames, 12, true);
 			grandChild.add("walk", frames, 12, true);
 			autoAccouchement.add("push", framesAccouchement, 5, false);
-			autoAccouchement.originX = -3;
+			
+			//autoAccouchement.originX = -3;
+			
 			child.originX = 15;
 			child.originY = 15;
 			child.smooth = true;
+			
+			grandChild.originX = 15;
+			grandChild.originY = 15;
 			grandChild.smooth = true;
 			
 			// NOTE: if you're going down the route of fixed framrate, use 
@@ -567,9 +574,11 @@
 				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, 0, 0.5, 1);
 				child.scale = mapped;
 				//trace("child scale: " + mapped);
-			} else
+			} else if(state == "grandChild")
 			{
-				// en attente de l'avatar final
+				// map the time of grandchild's life to the scale of it's sprite
+				var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining, timeGrandChildToEnd.duration, 0, 0.5, 1);
+				grandChild.scale = mapped2;
 			}
 		}
 		

@@ -23,7 +23,7 @@
 			<object name="image_fond" image="backgroundSprite.png" width="3000" height="480" />
 		</folder/>
 		<object name="waypoint" image="waypoint.png" width="30" height="30" />
-		<object name="trigger" image="trigger.png" width="30" height="30" limit="1" />
+		<object name="trigger" image="trigger.png" width="30" height="480" limit="1" />
 	</objects> 
 	
 	<tilesets>

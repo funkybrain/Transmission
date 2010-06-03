@@ -117,8 +117,10 @@ package game
 		/**
 		 * Rouleau
 		 */
-		public var rouleau:Rouleau;
+		public var rouleauStart:Rouleau;
+		public var rouleauEnd:Rouleau;
 		public var rouleauTriggerX:int;
+		public var papyrus:Papyrus;
 		
 		/**
 		 * Booleans
@@ -162,8 +164,8 @@ package game
 			player = level_1.addPlayerToWorld(this);
 			
 			// add rouleau to world
-			rouleau = new Rouleau();
-			add(rouleau);
+			rouleauStart = new Rouleau();
+			add(rouleauStart);
 			
 			// add debug hud to world
 			debug = new Debug();
@@ -207,11 +209,7 @@ package game
 			// add game overlay
 			_lifeTimer = new GameOverlay();
 			add(_lifeTimer);
-			
-			//debug stuff
-			rouleauTriggerX = level_1.getTriggerPosition();
-			trace("trigger X : " + rouleauTriggerX); 
-			
+						
 		} // end constructor
 		
 		
@@ -348,7 +346,7 @@ package game
 			
 			
 			// remove player from world
-			removeList(player.sound, player, rouleau, finalWords)
+			removeList(player.sound, player);
 
 			// send Outro
 			_fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
@@ -543,21 +541,9 @@ package game
 			super.update();
 			
 			// update rouleau position
-			if (rouleau != null && !_rouleauTriggered) 
-			{
-				// place rouleau
-				rouleau.x = Math.max(rouleau.previousX, player.x + (player.graphic as Spritemap).width);
-				// animate rouleau based on player speed
-				if (!player.accouche) 
-				{
-					rouleau.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
-				} else rouleau.spriteRouleau.rate = 0;
-				
-			} else
-			{
-				rouleau.x = rouleau.previousX;
-				rouleau.spriteRouleau.frame = 0;
-			}
+			_updateRouleauPositions();
+			
+			
 			
 			// unravel final words
 			if (null != finalWords) 
@@ -608,16 +594,11 @@ package game
 			
 			
 			//set backgound animation framerates based on player speed
-			setAnimationSpeed();
+			_setAnimationSpeed();
 			
 			// if final fade out is finished, send-in Outro
-			if (null != _fadeOutCurtain && true == _fadeOutCurtain.complete && false == _outroCalled) 
-			{
-				trace("call credits");
-				var playCredits:Credits = new Credits();
-				_outroCalled = true;
-
-			}
+			_leaveGame();
+			
 			
 			// test to see if next level needs to be imported
 			if (FP.camera.x > (level_1.width - FP.width - 100) && !_levelTwoAdded) 
@@ -631,7 +612,7 @@ package game
 			_removeAnimations();
 			
 			// check to see if player has triggered rouleau
-			if (player.x > rouleauTriggerX && !_rouleauTriggered) 
+			if (null != level_2 && player.x > rouleauTriggerX && !_rouleauTriggered) 
 			{
 					_rouleauTriggered = true;
 					_startFinalWords();
@@ -666,6 +647,11 @@ package game
 		{
 			// create first level
 			level_2 = new Level(2, worldWidth);
+			
+			// get trigger for rouleau
+			rouleauTriggerX = level_2.getTriggerPosition();
+			trace("trigger X : " + rouleauTriggerX); 
+
 			
 			// set intial camera clamp value to level width/height
 			worldWidth += level_2.width;
@@ -794,23 +780,89 @@ package game
 		{
 			// add Epitaphe object
 			finalWords = new Epitaphe();
-			finalWords.x = rouleau.x + 50;
-			//finalWords.y = FP.height / 3;
+			finalWords.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
 			add(finalWords);
+
+			// add the second rouleau that unravels
+			rouleauEnd = new Rouleau();
+			rouleauEnd.spriteRouleau.color = 0xA7B6EC;
+			rouleauEnd.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
+			add(rouleauEnd);
+			
+			// add underlying paper
+			papyrus = new Papyrus((rouleauStart.x + rouleauStart.spriteRouleau.width), 0,
+			(rouleauEnd.x - rouleauStart.x - rouleauEnd.spriteRouleau.width), FP.screen.height);
+			papyrus.visible = false;
+			add(papyrus);
+			
 		}
 		
+		
+		/**
+		 * unravel the words as player moves
+		 */
 		private function _updateFinalWords():void
 		{
 			// display one character every 30 pixels the player moves
 			var wordslength:int = (player.x - rouleauTriggerX) / 30;
 			finalWords.unravelFinalWord(wordslength);
+		}
+		
+		
+		/**
+		 * Update rouleau positions and animations
+		 */
+		private function _updateRouleauPositions():void
+		{
+			if (rouleauStart != null && !_rouleauTriggered) 
+			{
+				// place rouleau
+				rouleauStart.x = Math.max(rouleauStart.previousX, player.x + (player.graphic as Spritemap).width);
+				// animate rouleau based on player speed
+				if (!player.accouche) 
+				{
+					rouleauStart.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
+					
+				} else rouleauStart.spriteRouleau.rate = 0;
+				
+			} else
+			{
+				rouleauStart.x = rouleauStart.previousX;
+				rouleauStart.spriteRouleau.frame = 0;
+			}
 			
+			if (rouleauEnd != null) 
+			{
+				rouleauEnd.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
+				rouleauEnd.x = Math.max(player.x + player.grandChild.width,
+					rouleauStart.x + rouleauStart.spriteRouleau.width);
+				
+				// update text underlay
+				papyrus.visible = true;
+				papyrus.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
+				papyrus.width = rouleauEnd.x - rouleauStart.x - rouleauEnd.spriteRouleau.width;
+			}
+	
+		}
+		
+		/**
+		 * Game END
+		 */
+		private function _leaveGame():void
+		{
+			if (null != _fadeOutCurtain && true == _fadeOutCurtain.complete && false == _outroCalled) 
+			{
+				trace("call credits");
+				var playCredits:Credits = new Credits();
+				_outroCalled = true;
+
+			}
 		}
 		
 		/**
 		 * adjust the framerates of the background animations based on player speed
 		 */
-		public function setAnimationSpeed():void
+		private function _setAnimationSpeed():void
 		{
 			// first map player velocity to framerate
 			var rate:Number = FP.scaleClamp(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 4, 0, 1);	

@@ -21,13 +21,16 @@ Bugs:
 
 Next: release 1.8
 -----------------
-> ajout declencheur de rouleau a placer dans ogmo
+> ajout declencheur de rouleau a placer dans ogmo (layer waypoint, object trigger, actuellement à 6600 sur level 2)
 > rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
 > ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
+> scale de la fille qui suit le pere
+> scale du petit fils
 
 To do list:
 ----------
-TRIGGER SUR LD POUR DEBUT ROULEAU
+PLACE SPRITE CENTER ON ENTITY ORIGIN TO SEE IF SCALING WORKS BETTER (BRANCH FIRST!)
+GET RID OF F*** BUG RELATED TO PLAYER COLLISION
 
 
 > can we avoid the slowdown when player only crosses path without changing?
@@ -51,7 +54,7 @@ TRIGGER SUR LD POUR DEBUT ROULEAU
 PREVIOUS RELEASES
 
 Release 1.3
------------------
+-----------
 > ajout du timer GrandChildToEnd pour gerer la fin du jeu (dans gamedata.xml)
 > fade out (la mort) du petit-fils implemente (10s avant la fin)
 > Ogmo: ajout des icones plus parlantes pour placer les animations
@@ -60,7 +63,7 @@ Release 1.3
 > nouvelles animations de chemins par son altesse Mouloud
 
 Release 1.4
------------------
+-----------
 > masque foncé pour restreindre la vision du joueur lors du déplacement
 > fixed bug en debut de partie si le joueur n'avance pas
 > refactored path_green, red, blue class so all derive from one Path class
@@ -72,7 +75,7 @@ Release 1.4
 > gridsize for tilemaps now read from xml file
 
 Release 1.5
------------------
+-----------
 > tous les compteurs de temps s'arretent lorsque le joueur ne bouge pas
 > tous les sons s'arrettent lorsque le joueur est immobile
 > nouvelles formules de transmissions implementees pour les trois generations!

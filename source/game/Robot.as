@@ -12,7 +12,7 @@
 		/**
 		 * Player graphic.
 		 */
-		[Embed(source = '../../assets/spritesheetAvatarFils.png')] private const ROBOT_CHILD:Class;
+		[Embed(source = '../../assets/spritesheetChild.png')] private const ROBOT_CHILD:Class;
 		public var robotChild:Spritemap = new Spritemap(ROBOT_CHILD, 30, 30);
 		
 		[Embed(source = '../../assets/spritesheetAvatar.png')] private const ROBOT_FATHER:Class;
@@ -46,6 +46,7 @@
 			{
 				graphic = robotChild;
 				robotChild.add("walk", frames, 5, true);
+				robotChild.scale = 0.5;
 			} else {
 				graphic = robotFather;
 				robotFather.add("walk", frames, 5, true);
