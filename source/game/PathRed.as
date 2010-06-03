@@ -24,7 +24,6 @@
 		{
 			
 			_offset = offset;
-			//trace("offset: " + _offset);
 			
 			super(level, TILES);
 			// set entity type
@@ -34,13 +33,7 @@
 
 			for each (var tile:XML in level.path_red[0].tile)
 			{
-				tile_x = int(tile.@x) + _offset;
-				/*trace("tile.@x: " + tile.@x);
-				trace("_offset: " + _offset);
-				trace("tile.@x + _offset: " + tile_x);
-				*/
-				trace("red tile_x: " + tile_x);
-				//tiles.setTile(tile_x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
+
 				tiles.setTile(tile.@x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
 	
 			}
@@ -51,7 +44,6 @@
 			{
 				grid_x = int(solid.@x) + _offset;
 				
-				//grid.setRect(grid_x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
 				grid.setRect(solid.@x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
 				
 			}
@@ -65,7 +57,6 @@
 			{
 				for each (var solid:XML in _mylevel.mask_red[0].rect)
 				{
-			//		Draw.rect(grid_x , solid.@y , solid.@w , solid.@h, 0xFF0000, 0.9);
 					Draw.rect(solid.@x , solid.@y , solid.@w , solid.@h, 0xFF0000, 0.9);
 				
 				}

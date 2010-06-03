@@ -26,7 +26,7 @@ package game
 		public var prison:Spritemap = new Spritemap(PRISON, 270, 210);
 		
 		[Embed(source='../../assets/spriteSheetAnim_Crash.png')] private const CRASH:Class;
-		public var crash:Spritemap = new Spritemap(CRASH, 1080, 480);
+		public var crash:Spritemap = new Spritemap(CRASH, 450, 200);
 		
 		/**
 		 * Animation properties.
@@ -78,7 +78,7 @@ package game
 				break;
 			case "crash":
 				spriteName = crash;
-				_frames = new Array( 0, 1, 2, 3, 4, 5, 6);
+				_frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
 				break;
 			default:
 				break; // no animation?

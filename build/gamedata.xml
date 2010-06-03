@@ -2,8 +2,8 @@
 	
 	<!-- debug for overlay-->
 	<debug>true</debug>
-	<godmode>true</godmode>
-	<LD>false</LD><!-- mettre à true pour tester le vrai LD-->
+	<godmode>false</godmode>
+	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
 	
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>

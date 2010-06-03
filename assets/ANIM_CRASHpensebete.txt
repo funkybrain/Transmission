@@ -1,9 +1,0 @@
-
-Animation Crash pense bête Simon
-
-1 frame : 1080X480
-
-total document : 15120X480
-14 frames... 1 seule lecture pas de répétition. 
-
-(1061px image + 9,5px de chaque côté= 1080px pour 1 frame)

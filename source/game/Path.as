@@ -48,17 +48,14 @@ package game
 			// create and populate the collision grid mask from the level XML
 			mask = grid = new Grid(level.width, level.height, SOLID_GRID, SOLID_GRID);
 			
-			// add the tilemap at the right coordinates
-			//this.graphic.x = _offset;
 			this.x = _offset;
-			//this.tiles.x = _offset;
 			
 		}
 		
 		override public function added():void 
 		{
 			super.added();
-			trace("added to world " + this.x);
+			trace("added path to world at: " + this.x);
 		}
 		
 	}

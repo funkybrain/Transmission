@@ -25,7 +25,6 @@
 		public function PathBlue(level:XML, offset:int) 
 		{
 			_offset = offset;
-			//trace("offset: " + _offset);
 						
 			super(level, TILES);
 		
@@ -36,9 +35,6 @@
 			// create and populate the tilemap from the level XML
 			for each (var tile:XML in level.path_blue[0].tile)
 			{
-				tile_x = int(tile.@x) + _offset;
-
-				//tiles.setTile(tile_x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
 				tiles.setTile(tile.@x / TILE_GRID, tile.@y / TILE_GRID, tiles.getIndex(tile.@tx / TILE_GRID, tile.@ty / TILE_GRID));
 			}
 			
@@ -46,8 +42,6 @@
 			
 			for each (var solid:XML in level.mask_blue[0].rect)
 			{
-				grid_x = int(solid.@x) + _offset;
-				//grid.setRect(grid_x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
 				grid.setRect(solid.@x / SOLID_GRID, solid.@y / SOLID_GRID, solid.@w / SOLID_GRID, solid.@h / SOLID_GRID);
 	
 			}
@@ -62,7 +56,6 @@
 				for each (var solid:XML in _mylevel.mask_blue[0].rect)
 				{
 					Draw.rect(grid_x , solid.@y , solid.@w , solid.@h, 0x0000FF, 0.9);
-	//				Draw.rect(solid.@x, solid.@y , solid.@w , solid.@h, 0x0000FF, 0.9);
 	
 				}
 			}

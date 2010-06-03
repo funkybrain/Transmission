@@ -697,7 +697,7 @@
 				if (e)
 				{
 					//velocity.x = -pathMaxVel[pathType];
-					velocity.x = -2 * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
+					velocity.x = -0.1 * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
 					
 				} else 
 				{
