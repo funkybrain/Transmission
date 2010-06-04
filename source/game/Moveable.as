@@ -41,7 +41,7 @@
 		{
 			type = "player";
 			
-			position = new Point(this.x, this.y); // set the position as the entity's x,y properties
+			position = new Point(); // set initial position to zero
 			velocity = new Point(); // set intial velocity to zero
 		}
 		

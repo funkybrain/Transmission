@@ -94,6 +94,7 @@ package game
 		
 		// List<Animation> to store background animations
 		public var animationList:Vector.<Animation> = new Vector.<Animation>();
+		public var backgroundList:Vector.<Background> = new Vector.<Background>();
 		
 		
 		/**
@@ -156,6 +157,7 @@ package game
 			
 			// add level objects to world
 			level_1.addObjectsToWorld(this)
+			backgroundList = level_1.addBackgroundsToWorld(this);
 			
 			// add level animations to world and retrieve List<Animation>
 			animationList = level_1.addBackgroundAnimationsToWorld(this);
@@ -874,7 +876,7 @@ package game
 			{
 				
 				// stop animations when player leaves world
-				if (playerGoneAWOL) 
+				if (playerGoneAWOL || player.accouche) 
 				{
 					animation.spriteName.rate = 0;
 				} else 

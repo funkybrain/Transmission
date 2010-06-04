@@ -159,13 +159,16 @@
 		 */
 		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
+			//call ancestor's construtor
+			super();
+			
 			// place the entity's origin in the center of the path
 			this.x = _x + 15;
 			this.y = _y + 15;
 			
 			// set position vector as entity's coordinates
-			position.x = x;
-			position.y = y;
+			position.x = this.x;
+			position.y = this.y;
 			
 			// set initial player position as first previousPos
 			previousPos = position.clone();
@@ -211,15 +214,6 @@
 			var boxHeight:int = 8;
 			
 			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
-			
-			/*
-			TODO center the origin of the player
-			avatar.originX = avatar.width / 2;
-			avatar.originY = avatar.height / 2;
-			avatar.x = -avatar.originX;
-			avatar.y = -avatar.originY;
-			avatar.smooth = true;
-			*/
 			
 			// define payer movement keys
 			Input.define("R", Key.RIGHT);
@@ -671,6 +665,10 @@
 			velocity.x = 0;
 			velocity.y = 0;
 			
+			//FOR DEBUG PURPOSES - STORE x,y before move
+			var prev_x:Number = x;
+			var prev_y:Number = y;
+			
 			
 			//BUG the erratic bug may come from the fact that at high speeds I don't pixel-check move
 			
@@ -753,6 +751,23 @@
 			// set new player x,y
 			x = position.x;
 			y = position.y;
+			
+			//DEBUG stuff for major bug
+			var next_e:Entity = collideTypes(pathCollideType, x, y);
+
+			if (!next_e) 
+			{
+				trace("CRASH: moved to an unacceptable position");
+				trace("checked positive before move on type: " + e.type);
+				//trace("checked after move and returned type: " + next_e.type);
+				trace("prev_x: " + prev_x + "prev_y: " + prev_y);
+				trace("vel_x: " +  velocity.x + "vel_y: " + velocity.y);
+				trace("should move to x: " + (prev_x + velocity.x) + " y: " + (prev_y + velocity.y) );
+				trace("new_x: " + x + "new_y: " + y);
+				trace("moving player back to its previous position...");
+				x = prev_x;
+				y = prev_y;
+			}
 		}
 		// end move()
 		

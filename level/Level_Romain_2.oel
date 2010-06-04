@@ -1471,6 +1471,6 @@
     <anim_crash x="1950" y="240"/>
   </animations>
   <waypoints>
-    <trigger x="6000" y="0"/>
+    <trigger x="4500" y="0"/>
   </waypoints>
 </level>

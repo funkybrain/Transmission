@@ -50,6 +50,7 @@
 		
 		// List<Animation> to store background animations
 		private var _animationList:Vector.<Animation> = new Vector.<Animation>();
+		private var _backgroundList:Vector.<Background> = new Vector.<Background>();
 		
 		// class variable
 		private var _player:Player;
@@ -114,20 +115,23 @@
 			world.add(new PathBlue(level, _offset));
 			world.add(new PathGreen(level, _offset));
 			
+		}
+		
+		public function addBackgroundsToWorld(world:World):Vector.<Background>
+		{
 			// add background image
-			
 			if (level.hasOwnProperty("background")) 
 			{
 				for each (var b:XML in level.background[0].image_fond)
 				{
-					var fix:int = int(b.@x) + _offset;
+					var _xb:int = int(b.@x) + _offset;
+					var bindex:int = _backgroundList.push(new Background(_xb, b.@y));
+					world.add (_backgroundList[bindex-1]);
 					
-					world.add (new Background(fix, b.@y));
-					
-					trace("added background at: " + fix);
-				}	
-
+					trace("added background at: " + _xb);
+				}
 			}
+			return _backgroundList;
 		}
 		
 		public function addBackgroundAnimationsToWorld(world:World):Vector.<Animation>

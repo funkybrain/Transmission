@@ -12,12 +12,19 @@ Bugs:
 >> FIXED: level was wrapping due to width not being an exact multiplier of grid
 
 > Monster random bug
->> seems like moved player outside a path, and therefore returns a null entity on collision
->> is there a spike in distance to move to (e.g. during a transmission)?
->> happens for child and grandchild (maybe father, need confirmation)
->> detected at x:1043.65, y: 183.01
->> detected at x:551.06, y: 195.87
->> detected at x:521.70, y: 196.93
+CRASH: moved to an unacceptable position
+prev_x: 6863.7840243854935prev_y: 247.78666750746754
+vel_x: 1.7203277291266847vel_y: -1.7203277291266847
+should move to x: 6865.50435211462 y: 246.06633977834085
+new_x: 6865.50435211462new_y: 246.06633977834085
+no collision detected in Moveable.getCurentPath
+player position x:6865.50435211462 y: 246.06633977834085
+crashed in player update, after the move
+state: child
+x: 6865.50435211462
+y: 246.06633977834085
+
+
 
 Next: release 1.8
 -----------------
@@ -25,21 +32,24 @@ Next: release 1.8
 > rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
 > ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
 > scale de la fille qui suit le pere
+
 > recentered all sprite origins and moved hitboxes accordingly
 > remove animations that have moved off the screen to save on memory
 > fixed bug on animation/path list removal
+> added debug traces for major bug
 
 To do list:
 ----------
-PLACE SPRITE CENTER ON ENTITY ORIGIN TO SEE IF SCALING WORKS BETTER (BRANCH FIRST!)
 GET RID OF F*** BUG RELATED TO PLAYER COLLISION
 
-
+> script robotfather AI
+> can we avoid jerky cam move when taking control of child?
+> can we control framerate playback of embedded swf movies?
 > can we avoid the slowdown when player only crosses path without changing?
 > implement moovesmooth
 > preloader!
 > center player in right 3rd of screen?
-> may have to scale hitbox to player size if child is small
+>
 > A x min avant la fin du timer:
 - fade music out
 - fade in death music
@@ -48,9 +58,13 @@ GET RID OF F*** BUG RELATED TO PLAYER COLLISION
 > Afficher masque noir sur l'écran
 - masque vertical lié au ratio de distance le plus petit (bcp de changements = ouverture)
 
-> Need to place a trigger in LD to start unravelling final words
 
-> Test loading another level and offsetting all coordinates by width of first level
+
+
+
+
+
+
 
 =====================================================================================
 PREVIOUS RELEASES
