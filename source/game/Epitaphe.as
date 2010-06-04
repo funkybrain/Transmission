@@ -13,18 +13,20 @@ package game
 		
 		private var _SYLLOGISME:String;
 		private var _showOnlyThatMuch:String;
-		private var _lengthToDisplay:uint;
+		private var _lengthToDisplay:uint = 0;
 		
 		public var supportSyllogisme:Text = new Text("", 0, 0, 4000, 100);
 		
 		public function Epitaphe() 
 		{
 			this.y = 200;
-			this.x = FP.camera.x;
+			
 			layer = 0;
+			
 			supportSyllogisme.font = "block";
 			supportSyllogisme.size = 36;
 			supportSyllogisme.color = 0x6BA432;
+			
 			graphic = supportSyllogisme;
 			
 			_SYLLOGISME = LoadXmlData.CITATION;
@@ -35,7 +37,7 @@ package game
 		{
 			_showOnlyThatMuch = _SYLLOGISME.slice(0, _lengthToDisplay);
 			supportSyllogisme.text = _showOnlyThatMuch;
-			
+			//trace(supportSyllogisme.text);
 			super.update();
 		}
 		

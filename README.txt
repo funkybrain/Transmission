@@ -25,7 +25,9 @@ Next: release 1.8
 > rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
 > ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
 > scale de la fille qui suit le pere
-> scale du petit fils
+> recentered all sprite origins and moved hitboxes accordingly
+> remove animations that have moved off the screen to save on memory
+> fixed bug on animation/path list removal
 
 To do list:
 ----------

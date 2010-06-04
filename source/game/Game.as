@@ -649,7 +649,7 @@ package game
 			level_2 = new Level(2, worldWidth);
 			
 			// get trigger for rouleau
-			rouleauTriggerX = level_2.getTriggerPosition();
+			rouleauTriggerX = level_2.getTriggerPosition() + level_1.width;
 			trace("trigger X : " + rouleauTriggerX); 
 
 			
@@ -805,6 +805,7 @@ package game
 		{
 			// display one character every 30 pixels the player moves
 			var wordslength:int = (player.x - rouleauTriggerX) / 30;
+			//trace("wordslength: " + wordslength);
 			finalWords.unravelFinalWord(wordslength);
 		}
 		
@@ -817,7 +818,7 @@ package game
 			if (rouleauStart != null && !_rouleauTriggered) 
 			{
 				// place rouleau
-				rouleauStart.x = Math.max(rouleauStart.previousX, player.x + (player.graphic as Spritemap).width);
+				rouleauStart.x = Math.max(rouleauStart.previousX, player.x + (player.graphic as Spritemap).width/2*(player.graphic as Spritemap).scale);
 				// animate rouleau based on player speed
 				if (!player.accouche) 
 				{
@@ -834,7 +835,7 @@ package game
 			if (rouleauEnd != null) 
 			{
 				rouleauEnd.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
-				rouleauEnd.x = Math.max(player.x + player.grandChild.width,
+				rouleauEnd.x = Math.max(player.x + player.grandChild.width/2,
 					rouleauStart.x + rouleauStart.spriteRouleau.width);
 				
 				// update text underlay
@@ -883,7 +884,7 @@ package game
 						animation.playLooping();
 						animation.spriteName.rate = rate * FP.frameRate * FP.elapsed;	
 						
-					} else if(Math.abs(player.x - animation.x) < animation.triggerDistance)
+					} else if((animation.x - player.x) < animation.triggerDistance)
 					{
 						animation.playOnce();
 					}
@@ -899,8 +900,20 @@ package game
 		 * Clean-up animations that have moved off the edge of the camera
 		 */
 		private function _removeAnimations():void
-		{
-			//todo
+		{	
+			for (var m:int = 0; m < animationList.length; m++)
+			{
+				var value:Animation = animationList[m];
+				
+				// remove animations that are 600 pixels behind camera position
+				if (value.x < (FP.camera.x - 600)) 
+				{
+					animationList.splice(m, 1);
+					FP.world.remove(value);	
+					m--;
+				}
+			}
+			
 		}
 		
 		/**

@@ -20,16 +20,20 @@ package game
 			// draw entity's hitbox on screen
 			if (flag==true) 
 			{
-				Draw.hitbox(e);
+				Draw.hitbox(e, true, 0x498EE4);
+				
 			}
 		}
 		
 		public function drawHitBoxOrigin(e:Entity):void {
-			//TODO draw entity's hitbox origin on screen, currently displaying entity origin
+			
 			if (flag==true) 
 			{
+				//draw entity's origin on screen
 				Draw.line(e.x - 2, e.y - 2, e.x + 2, e.y + 2);
 				Draw.line(e.x + 2, e.y - 2, e.x - 2, e.y + 2);
+				// draw rectangle around graphic's frame
+				//Draw.rect((e.x + e.graphic.x), (e.y + e.graphic.y), 30, 30, 0x139608, 0.2);
 				
 			}
 		}

@@ -33,7 +33,7 @@ package game
 		 */
 		private var _frames:Array;
 		public	var spriteName:Spritemap;
-		public var triggerDistance:int = 5; // will trigger animation at 5 px distance
+		public var triggerDistance:int = -50; // will trigger animation at -50 px distance
 		public var animType:uint; // 0=one shot, 1=looping
 		
 		/**

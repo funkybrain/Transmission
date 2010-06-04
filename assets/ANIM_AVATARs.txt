@@ -1,0 +1,2 @@
+anim avatar : 30X30 et 240X30
+8 avatars

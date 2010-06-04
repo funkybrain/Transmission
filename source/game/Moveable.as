@@ -39,6 +39,8 @@
 		 */
 		public function Moveable() 
 		{
+			type = "player";
+			
 			position = new Point(this.x, this.y); // set the position as the entity's x,y properties
 			velocity = new Point(); // set intial velocity to zero
 		}

@@ -25,11 +25,8 @@
 		/**
 		 * Player graphic.
 		 */
-		[Embed(source = '../../assets/spritesheetAvatar.png')] private const PLAYER:Class;
+		[Embed(source = '../../assets/spritesheetFather.png')] private const PLAYER:Class;
 		public var father:Spritemap = new Spritemap(PLAYER, 30, 30);
-		
-/*		[Embed(source = '../../assets/spritesheetAvatarFils.png')] private const CHILD:Class;
-		public var child:Spritemap = new Spritemap(CHILD, 30, 30);*/
 		
 		[Embed(source = '../../assets/spritesheetChild.png')] private const CHILD:Class;
 		public var child:Spritemap = new Spritemap(CHILD, 30, 30);
@@ -162,8 +159,9 @@
 		 */
 		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
-			this.x = _x;
-			this.y = _y;
+			// place the entity's origin in the center of the path
+			this.x = _x + 15;
+			this.y = _y + 15;
 			
 			// set position vector as entity's coordinates
 			position.x = x;
@@ -175,20 +173,29 @@
 			// set the Entity's graphic property to a Spritemap object
 			graphic = father;
 			
-			frames = new Array( 0, 1, 2, 3 );
-			framesAccouchement = new Array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+			frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7);
+			framesAccouchement = new Array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21);
 			
 			father.add("walk", frames, 12, true);
 			child.add("walk", frames, 12, true);
 			grandChild.add("walk", frames, 12, true);
 			autoAccouchement.add("push", framesAccouchement, 5, false);
 			
-			//autoAccouchement.originX = -3;
+			// offset the graphic to center it at the netity's origin
+			father.x = -15;
+			father.y = -15;
 			
+			child.x = -15;
+			child.y = -15;
 			child.originX = 15;
 			child.originY = 15;
 			child.smooth = true;
 			
+			autoAccouchement.x = -15;
+			autoAccouchement.y = -15;
+			
+			grandChild.x = -15;
+			grandChild.y = -15;
 			grandChild.originX = 15;
 			grandChild.originY = 15;
 			grandChild.smooth = true;
@@ -197,12 +204,12 @@
 			// avatar.add("walk", frames, 5*(1/FP.frameRate), true);
 			
 			//hitbox based on image size
-			// set hitbox origin at c. 2/5th right and 2/3rd down from entity origin
-			offsetOriginX = -1.5*(father.width/5);
-			offsetOriginY = -1.7*(father.height/3);
-			// set hitbox width and height
-			var boxWidth:int = father.width / 3;
-			var boxHeight:int = father.height / 4;					
+			//set hitbox so it encapsulate the entity's origin
+			offsetOriginX = 4;
+			offsetOriginY = 4;
+			var boxWidth:int = 8;
+			var boxHeight:int = 8;
+			
 			setHitbox(boxWidth, boxHeight, offsetOriginX, offsetOriginY);
 			
 			/*
@@ -350,10 +357,7 @@
 			calculateSpeed();
 			
 			//check if a new animated tile needs to be placed where player has walked
-			var shiftX:Number, shiftY:Number; // need to locate the center of the entity		
-			shiftX = x - offsetOriginX;
-			shiftY = y - offsetOriginY;
-			addNewTile(shiftX, shiftY, Path.TILE_GRID);
+			addNewTile(this.x, this.y, Path.TILE_GRID);
 			
 			// update movement status of player
 			if (!playerWasMoving && playerMoving) 
@@ -571,14 +575,14 @@
 			if (state == "child") 
 			{
 				// map the time of child's life to the scale of it's sprite
-				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, 0, 0.5, 1);
+				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, (timeToGrandChild.duration / 2), 0.5, 1);
 				child.scale = mapped;
 				//trace("child scale: " + mapped);
 			} else if(state == "grandChild")
 			{
 				// map the time of grandchild's life to the scale of it's sprite
-				var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining, timeGrandChildToEnd.duration, 0, 0.5, 1);
-				grandChild.scale = mapped2;
+				//var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining, timeGrandChildToEnd.duration, 0, 0.5, 1);
+				//grandChild.scale = mapped2;
 			}
 		}
 		
@@ -592,14 +596,15 @@
 		{
 			// convert x,y into row, col
 			var tileExists:Boolean = false;
-			var i:int = 0;
 			
 			col = Math.floor(_x / _step);
 			row = Math.floor(_y / _step);
 			
 			// loop through vector to see if a path of index (row,col) already exists
-			for each (var value:PathTile in pathTileList)
+			for (var m:int = 0; m < pathTileList.length; m++)
 			{
+				var value:PathTile = pathTileList[m];
+				
 				if (value.row==row && value.col == col) 
 				{
 					tileExists = true;
@@ -609,14 +614,10 @@
 				// remove tiles that are 200 pixels behind camra position
 				if (value.x < (FP.camera.x - 200)) 
 				{
-					pathTileList.splice(pathTileList.indexOf(value, i), 1, value);
+					pathTileList.splice(m, 1);
 					FP.world.remove(value);	
-					//trace("tile removed");
-					//trace("vector length: " + pathTileList.length);
+					m--;
 				}
-				
-				i++;
-				
 			}
 			
 			if (tileExists==false) 

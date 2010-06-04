@@ -1,0 +1,2 @@
+anim auto accouch: 30X30 et 660X30
+22 frames

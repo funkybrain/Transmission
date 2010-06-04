@@ -24,7 +24,7 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>30</timeToChild>
+		<timeToChild>60</timeToChild>
 		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
 		<timeFatherToChild>30</timeFatherToChild><!-- robot AI father takes over-->
 		<timeFatherToDeath>40</timeFatherToDeath><!-- robot AI father goes poof!-->
