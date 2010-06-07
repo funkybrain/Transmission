@@ -215,7 +215,7 @@ package game
 			add(_lifeTimer);
 			
 			//TODO remove kill vol befor publish
-			FP.volume = 0;
+			//FP.volume = 0;
 						
 		} // end constructor
 		
@@ -830,8 +830,8 @@ package game
 		 */
 		private function _updateFinalWords():void
 		{
-			// display one character every 30 pixels the player moves
-			var wordslength:int = (player.x - rouleauTriggerX) / 30;
+			// display one character every 25 pixels the player moves
+			var wordslength:int = (player.x - rouleauTriggerX) / 25;
 			//trace("wordslength: " + wordslength);
 			finalWords.unravelFinalWord(wordslength);
 		}

@@ -23,7 +23,7 @@ package game
 			super.render();
 			
 			// draw cache, same orange color as background image				
-			Draw.rect(x, y, width, height, 0xDE3D21, 0.95);
+			Draw.rect(x, y, width, height, 0xEBA400, 0.95);
 						
 		}
 		
