@@ -16,15 +16,38 @@
 		 * Embedded background graphic.
 		 */
 		[Embed(source = '../../assets/backgroundSprite.png')] private static const BACKGROUND:Class;
+		[Embed(source = '../../assets/spriteBackgroundOne.png')] private static const BACKGROUND_1:Class;
+		[Embed(source = '../../assets/spriteBackgroundTwo.png')] private static const BACKGROUND_2:Class;
+		[Embed(source = '../../assets/spriteBackgroundThree.png')] private static const BACKGROUND_3:Class;
+		[Embed(source = '../../assets/spriteBackgroundFour.png')] private static const BACKGROUND_4:Class;
 		
 		/**
 		 * Constructor.
 		 */
-		public function Background(x:int, y:int ) 
+		public function Background(x:int, y:int, type:uint) 
 		{
 			// set the background graphic and parallax rates.
 			//graphic = new Backdrop(BACKGROUND, false, false);
-			graphic = new Image(BACKGROUND);
+			
+			switch (type) 
+			{
+				case 0:
+					graphic = new Image(BACKGROUND);
+					break;
+				case 1:
+					graphic = new Image(BACKGROUND_1);
+					break;
+				case 2:
+					graphic = new Image(BACKGROUND_2);
+					break;
+				case 3:
+					graphic = new Image(BACKGROUND_3);
+					break;
+				case 4:
+					graphic = new Image(BACKGROUND_4);
+					break;
+			}
+			
 			this.x = x;
 			this.y = y;
 			

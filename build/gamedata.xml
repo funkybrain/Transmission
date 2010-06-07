@@ -31,12 +31,12 @@
 		<timeChildToGrandChild>15</timeChildToGrandChild>
 		<timeGrandChildToEnd>15</timeGrandChildToEnd>
 	</timers>
-	 -->
-	
+	 
+	-->
 	<timers>
-		<timeToChild>10</timeToChild>	
-		<timeFatherToChild>30</timeFatherToChild>
-		<timeFatherToDeath>40</timeFatherToDeath>
+		<timeToChild>30</timeToChild>	
+		<timeFatherToChild>40</timeFatherToChild>
+		<timeFatherToDeath>50</timeFatherToDeath>
 		<timeChildToGrandChild>60</timeChildToGrandChild>
 		<timeGrandChildToEnd>60</timeGrandChildToEnd>
 	</timers>

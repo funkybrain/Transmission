@@ -215,7 +215,7 @@ package game
 			add(_lifeTimer);
 			
 			//TODO remove kill vol befor publish
-			//FP.volume = 1;
+			FP.volume = 0;
 						
 		} // end constructor
 		
@@ -337,6 +337,7 @@ package game
 		{
 						
 			trace("grandchild is dead");
+			grandChildDying = false;
 
 			// see if this helps kill the sounds
 			playerGoneAWOL = true;
@@ -615,8 +616,9 @@ package game
 				trace("import level2");
 			}
 			
-			// clean-up animation list to save on memory
+			// clean-up animation and background list to save on memory
 			_removeAnimations();
+			_removeBackgrounds();
 			
 			// check to see if player has triggered rouleau
 			if (null != level_2 && player.x > rouleauTriggerX && !_rouleauTriggered) 
@@ -631,7 +633,7 @@ package game
 				//FP.volume = masterfader.value;
 				//set the volume to the alpha value of the grandChild as it fades out
 				FP.volume = player.grandChild.alpha;
-				trace("vol: " + FP.volume);
+				//trace("vol: " + FP.volume);
 			}
 		}
 		// end Game UPDATE LOOP
@@ -939,10 +941,30 @@ package game
 					FP.world.remove(value);	
 					m--;
 				}
-			}
-			
+			}	
 		}
 		
+		/**
+		 * Clean-up backgrounds that have moved off the edge of the camera
+		 */
+		private function _removeBackgrounds():void
+		{	
+			for (var bg:int = 0; bg < backgroundList.length; bg++)
+			{
+				var value:Background = backgroundList[bg];
+				
+				// remove animations that are 3990 pixels behind camera position
+				if (value.x < (FP.camera.x - 3990)) 
+				{
+					var bgrnd:Vector.<Background> = backgroundList.splice(bg, 1);
+					FP.world.remove(value);	
+					bg--;
+					trace("background removed at x: " + bgrnd[0].x);
+					trace("bg index: " + bg);
+				}
+			}	
+		}
+		 
 		/**
 		 * update all the debug overlay info.
 		 */

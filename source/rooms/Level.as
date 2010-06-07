@@ -122,14 +122,51 @@
 			// add background image
 			if (level.hasOwnProperty("background")) 
 			{
-				for each (var b:XML in level.background[0].image_fond)
+				for each (var ba:XML in level.background[0].image_fond)
 				{
-					var _xb:int = int(b.@x) + _offset;
-					var bindex:int = _backgroundList.push(new Background(_xb, b.@y));
-					world.add (_backgroundList[bindex-1]);
+					var _xba:int = int(ba.@x) + _offset;
+					var ba_index:int = _backgroundList.push(new Background(_xba, ba.@y, 0));
+					world.add (_backgroundList[ba_index-1]);
 					
-					trace("added background at: " + _xb);
+					trace("added background at: " + _xba);
 				}
+				
+				for each (var bb:XML in level.background[0].image_fond_1)
+				{
+					var _xbb:int = int(bb.@x) + _offset;
+					var bb_index:int = _backgroundList.push(new Background(_xbb, bb.@y, 1));
+					world.add (_backgroundList[bb_index-1]);
+					
+					trace("added background at: " + _xbb);
+				}
+				
+				for each (var bc:XML in level.background[0].image_fond_2)
+				{
+					var _xbc:int = int(bc.@x) + _offset;
+					var bc_index:int = _backgroundList.push(new Background(_xbc, bc.@y, 2));
+					world.add (_backgroundList[bc_index-1]);
+					
+					trace("added background at: " + _xbc);
+				}
+				
+				for each (var bd:XML in level.background[0].image_fond_3)
+				{
+					var _xbd:int = int(bd.@x) + _offset;
+					var bd_index:int = _backgroundList.push(new Background(_xbd, bd.@y, 3));
+					world.add (_backgroundList[bd_index-1]);
+					
+					trace("added background at: " + _xbd);
+				}
+				
+				for each (var be:XML in level.background[0].image_fond_4)
+				{
+					var _xbe:int = int(be.@x) + _offset;
+					var be_index:int = _backgroundList.push(new Background(_xbe, be.@y, 4));
+					world.add (_backgroundList[be_index-1]);
+					
+					trace("added background at: " + _xbe);
+				}
+				
 			}
 			return _backgroundList;
 		}

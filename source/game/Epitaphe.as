@@ -11,7 +11,7 @@ package game
 /*		[Embed(source='../../assets/fonts/BMblock.TTF', fontFamily = 'block')]
 		private static const FONT:Class;
 */		
-		[Embed(source='../../assets/fonts/ARIAL.TTF', fontFamily = 'arial')]
+		[Embed(source='../../assets/fonts/ARIAL.TTF', fontFamily = 'quote')]
 		private static const FONT:Class;
 		
 		
@@ -27,7 +27,7 @@ package game
 			
 			layer = 0;
 			
-			supportSyllogisme.font = "arial";
+			supportSyllogisme.font = "quote";
 			supportSyllogisme.size = 36;
 			supportSyllogisme.color = 0x6BA432;
 			

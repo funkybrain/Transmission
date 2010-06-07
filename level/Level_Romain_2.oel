@@ -2,10 +2,8 @@
   <width>7981</width>
   <height>480</height>
   <background>
-    <image_fond x="0" y="0"/>
-    <image_fond x="2000" y="0"/>
-    <image_fond x="4000" y="0"/>
-    <image_fond x="6000" y="0"/>
+    <image_fond_3 x="0" y="0"/>
+    <image_fond_4 x="3960" y="0"/>
   </background>
   <mask_red>
     <rect x="0" y="220" w="560" h="10"/>
@@ -1473,6 +1471,6 @@
     <anim_prison x="660" y="0"/>
   </animations>
   <waypoints>
-    <trigger x="4500" y="0"/>
+    <trigger x="0" y="0"/>
   </waypoints>
 </level>

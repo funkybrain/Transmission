@@ -21,6 +21,11 @@
 		</folder>
 		<folder name="background">
 			<object name="image_fond" image="backgroundSprite.png" width="3000" height="480" />
+			<object name="image_fond_1" image="spriteBackgroundOne.png" width="3990" height="480" />
+			<object name="image_fond_2" image="spriteBackgroundTwo.png" width="3990" height="480" />
+			<object name="image_fond_3" image="spriteBackgroundThree.png" width="3990" height="480" />
+			<object name="image_fond_4" image="spriteBackgroundFour.png" width="3990" height="480" />
+			
 		</folder/>
 		<object name="waypoint" image="waypoint.png" width="30" height="30" />
 		<object name="trigger" image="trigger.png" width="30" height="480" limit="1" />
