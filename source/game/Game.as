@@ -3,6 +3,7 @@ package game
 	import net.flashpunk.graphics.Canvas;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.Sfx;
+	import net.flashpunk.tweens.misc.VarTween;
 	import net.flashpunk.tweens.sound.SfxFader;
 	import net.flashpunk.tweens.sound.Fader;
 	import net.flashpunk.World;
@@ -102,7 +103,7 @@ package game
 		 */
 		
 		// Sound Tweens
-		
+		public var masterfader:NumTween;
 		
 		// Shutters 
 		public var rightShutter:Shutter = new Shutter(800,0);
@@ -135,6 +136,7 @@ package game
 		public var robotFatherIsAlive:Boolean = false;
 		public var playerGoneAWOL:Boolean = false;
 		public var grandChildDying:Boolean = false;
+		
 		
 
 		/**
@@ -211,6 +213,9 @@ package game
 			// add game overlay
 			_lifeTimer = new GameOverlay();
 			add(_lifeTimer);
+			
+			//TODO remove kill vol befor publish
+			//FP.volume = 1;
 						
 		} // end constructor
 		
@@ -336,7 +341,7 @@ package game
 			// see if this helps kill the sounds
 			playerGoneAWOL = true;
 			
-			//BUG can't frakking kill those sounds!!!
+			// kill all sounds
 			for each (var soundToKill:Sfx in player.sound.pathSound) 
 			{
 				if (soundToKill.playing) 
@@ -344,7 +349,7 @@ package game
 
 					soundToKill.stop();
 				}
-			}	
+			}
 			
 			
 			// remove player from world
@@ -408,6 +413,7 @@ package game
 				{
 					player.pathBaseSpeed[j] = player.CT_VB;
 				}
+				player.transmitModel = 1;
 				trace("Modèle 1a");
 			} 
 			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
@@ -423,6 +429,7 @@ package game
 					player.pathBaseSpeed[m] = player.CT_VB;
 				}
 				trace("Modèle 1b");
+				player.transmitModel = 1;
 			}
 			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
 			else if (ratx >= 0.34 && ratx <= 0.6 && ratz >= 0.15 && ratz <= 0.33)
@@ -545,8 +552,6 @@ package game
 			// update rouleau position
 			_updateRouleauPositions();
 			
-			
-			
 			// unravel final words
 			if (null != finalWords) 
 			{
@@ -619,6 +624,15 @@ package game
 					_rouleauTriggered = true;
 					_startFinalWords();
 			}
+			
+			// fade volume out when grandchild is dying
+			if (grandChildDying) 
+			{
+				//FP.volume = masterfader.value;
+				//set the volume to the alpha value of the grandChild as it fades out
+				FP.volume = player.grandChild.alpha;
+				trace("vol: " + FP.volume);
+			}
 		}
 		// end Game UPDATE LOOP
 		
@@ -651,7 +665,7 @@ package game
 			level_2 = new Level(2, worldWidth);
 			
 			// get trigger for rouleau
-			rouleauTriggerX = level_2.getTriggerPosition() + level_1.width;
+			rouleauTriggerX = level_2.getTriggerPosition();
 			trace("trigger X : " + rouleauTriggerX); 
 
 			
@@ -661,6 +675,9 @@ package game
 			
 			// add level objects to world
 			level_2.addObjectsToWorld(this)
+			
+			// add backgrounds to World
+			backgroundList = backgroundList.concat(level_2.addBackgroundsToWorld(this));
 			
 			// add level animations to world and retrieve List<Animation>
 			animationList = animationList.concat(level_2.addBackgroundAnimationsToWorld(this));
@@ -769,6 +786,12 @@ package game
 			player.addTween(player.fadeSprite);
 			player.fadeSprite.start();
 			
+			// fade music out
+			/*masterfader = new NumTween();
+			masterfader.tween(FP.volume, 0, time, Ease.circOut);
+			addTween(masterfader);
+			masterfader.start();*/
+			
 			// set flag for mechanics that need to know the death sequence has started
 			grandChildDying = true;
 
@@ -855,7 +878,11 @@ package game
 		{
 			if (null != _fadeOutCurtain && true == _fadeOutCurtain.complete && false == _outroCalled) 
 			{
+				
 				trace("call credits");
+				// reset vol
+				FP.volume = 1;
+				trace("leaving game, volume: " + FP.volume);
 				var playCredits:Credits = new Credits();
 				_outroCalled = true;
 
@@ -869,9 +896,7 @@ package game
 		{
 			// first map player velocity to framerate
 			var rate:Number = FP.scaleClamp(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 4, 0, 1);	
-			//trace(player.velocity.x);
 			
-			//TODO smooth with time.elpased and/or tween
 			for each (var animation:Animation in animationList)
 			{
 				
@@ -886,16 +911,16 @@ package game
 						animation.playLooping();
 						animation.spriteName.rate = rate * FP.frameRate * FP.elapsed;	
 						
-					} else if((animation.x - player.x) < animation.triggerDistance)
+					} else if((animation.x - player.x) < animation.triggerDistance && !animation.playedOnce)
 					{
+						trace("anim x: " + animation.x);
+						trace("player x: " + player.x);
+						trace("trigger distance: " + animation.triggerDistance);
 						animation.playOnce();
+						animation.playedOnce = true;
 					}
-					
-					
 				}
 			}
-			
-
 		}
 		
 		/**
@@ -946,7 +971,7 @@ package game
 									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " Vv: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
 									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " Vb: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
 									+"Timer: " + Math.floor(timer) + " State: " + player.state.toUpperCase() +"\n"//+ " Row: " + player.row + " Col: " + player.col 
-									+"modele de vitesse: " + player.typeVitesse + "\n"
+									+"modele de vitesse: " + player.typeVitesse[player.currentPathIndex] + "\n"
 									+"Vinstantanée: " + Number(player.pathInstantVel[player.currentPathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n"
 									+ "CamX: " + FP.camera.x + " playerX: " + int(player.x);
 									

@@ -1467,8 +1467,10 @@
   <animations>
     <anim_rouage x="2580" y="110"/>
     <anim_rouage x="1050" y="30"/>
-    <anim_man x="90" y="0"/>
     <anim_crash x="1950" y="240"/>
+    <anim_crash x="90" y="240"/>
+    <anim_crash x="1290" y="0"/>
+    <anim_prison x="660" y="0"/>
   </animations>
   <waypoints>
     <trigger x="4500" y="0"/>

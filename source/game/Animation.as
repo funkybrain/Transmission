@@ -35,6 +35,7 @@ package game
 		public	var spriteName:Spritemap;
 		public var triggerDistance:int = -100; // will trigger animation at -100 px distance
 		public var animType:uint; // 0=one shot, 1=looping
+		public var playedOnce:Boolean = false;
 		
 		/**
 		 * Constructor.
@@ -50,18 +51,14 @@ package game
 			
 			// set entity depth behind path but above background
 			layer = 50;
-			
 
-			
 			// set the entity's graphic property to a Spritemap object
 			// and create an animation
 			addAnimation(name);
 		}
 		
 		private function addAnimation(name:String):void
-		{
-
-						
+		{						
 			switch (name)
 			{
 			case "man":

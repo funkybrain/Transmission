@@ -6,6 +6,13 @@
     <image_fond x="2000" y="0"/>
     <image_fond x="4000" y="0"/>
     <image_fond x="6000" y="0"/>
+    <anim_prison x="900" y="240"/>
+    <anim_prison x="3120" y="0"/>
+    <anim_crash x="4080" y="0"/>
+    <anim_crash x="4860" y="0"/>
+    <anim_prison x="6060" y="0"/>
+    <anim_prison x="7200" y="0"/>
+    <anim_crash x="7680" y="240"/>
   </background>
   <mask_red>
     <rect x="0" y="220" w="560" h="10"/>

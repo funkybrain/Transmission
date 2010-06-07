@@ -93,7 +93,7 @@
 		public var pathTileList:Vector.<PathTile> = new Vector.<PathTile>(); // List<PathTile> to store animated tiles
 		public var row:int, col:int; 
 		
-		public var typeVitesse:String; // debug property
+		public var typeVitesse:Array = new Array(); // debug property
 		public var type3:Boolean = false; // flag to ensure once child is going at type 3 vel, it stays there
 		// store the greater of pathMaxVel and PathChildSpeed
 		private var _maxPathSpeed:Array = new Array();
@@ -348,7 +348,7 @@
 			}
 			
 			// update speed on paths based on new pathDistance
-			calculateSpeed();
+			calculateSpeed(currentPathIndex);
 			
 			//check if a new animated tile needs to be placed where player has walked
 			addNewTile(this.x, this.y, Path.TILE_GRID);
@@ -776,7 +776,7 @@
 		/**
 		 * Calculate pllayer velocity based on path and state (father, child, grandchild)
 		 */
-		private function calculateSpeed():void
+		private function calculateSpeed(path:uint):void
 		{			
 			var coeff_type3:Number = 0.25;
 			var DyDz:Number;
@@ -821,10 +821,10 @@
 				if (state=="father" || state=="childAlive") 
 				{
 					pathInstantVel[i] = pathMaxVel[i];
-					typeVitesse = "normale (pere)";
+					typeVitesse[i] = "normale (pere)";
 				}
 				
-				if (state=="child" || state=="grandChild" && transmitModel!=2) 
+				if ((state=="child" || state=="grandChild") && transmitModel==1) 
 				{
 					
 					// check if type 3 comes into effect
@@ -847,27 +847,34 @@
 					if (type3) // must keep this speed till death 
 					{
 						pathInstantVel[i] = pathFastest;
-						typeVitesse = "type 3 - constant (Vmax)";
+						typeVitesse[i] = "V3 - Vmax des 3 chemins";
+						//trace("V3 - Vmax des 3 chemins");
 						
 					} else if (pathMaxVel[i] < pathChildSpeed[i]) 
 					{
-						typeVitesse = "type 1 - constant (child modele 1)";
-						pathInstantVel[i] = _maxPathSpeed[i];
-						
+						pathInstantVel[i] = pathChildSpeed[i];
+						typeVitesse[i] = "V1 - constant (VB transmis)";	
+						//trace("V1 - constant (VB transmis)");
 					} 
-					else
+					else if (pathMaxVel[i] >= pathChildSpeed[i]) 
 					{
-						typeVitesse = "type 2 - comme pere (child modele 1)";
-						pathInstantVel[i] = _maxPathSpeed[i];
+						typeVitesse[i] = "V2 - comme pere (vb+scurve)";
+						pathInstantVel[i] = pathMaxVel[i];
+						//trace("V2 - comme pere (vb+scurve)");
+					} else 
+					{
+						trace ("wtf?");
 					}
 				}
 				
-				if (state=="child" || state=="grandChild" && transmitModel==2) 
+				if ((state=="child" || state=="grandChild") && transmitModel==2) 
 				{
 					pathInstantVel[i] = pathMaxVel[i];
-					typeVitesse = "modèle 2 - un seul type de vitesse (vb+d*scurve)";
+					typeVitesse[i] = "modele 2 - un seul type de vitesse (vb+d*scurve)";
 				} 
 			}
+			
+			//trace("type vitesse: " + typeVitesse[path]);
 		}
 		
 		
@@ -904,8 +911,22 @@
 				var scaleAnimSpeed:Number = FP.scaleClamp(Math.max(Math.abs(velocity.x), Math.abs(velocity.y)), 0, 2, 0, 1);	
 				who.rate = scaleAnimSpeed * FP.frameRate * FP.elapsed;
 				
+				// continue updating the grandchild fade
+				if (!fadeSprite.active) 
+				{
+					fadeSprite.active = true;
+				}
+				
 			} else {
+				
+				// freeze the animation
 				who.setFrame(0);
+				
+				// stop the grandChild fading out
+				if (fadeSprite.active) 
+				{
+					fadeSprite.active = false;
+				}
 			}
 		}
 		

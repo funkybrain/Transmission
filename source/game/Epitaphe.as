@@ -8,8 +8,12 @@ package game
 	public class Epitaphe extends Entity
 	{
 		
-		[Embed(source='../../assets/fonts/BMblock.TTF', fontFamily = 'block')]
+/*		[Embed(source='../../assets/fonts/BMblock.TTF', fontFamily = 'block')]
 		private static const FONT:Class;
+*/		
+		[Embed(source='../../assets/fonts/ARIAL.TTF', fontFamily = 'arial')]
+		private static const FONT:Class;
+		
 		
 		private var _SYLLOGISME:String;
 		private var _showOnlyThatMuch:String;
@@ -23,7 +27,7 @@ package game
 			
 			layer = 0;
 			
-			supportSyllogisme.font = "block";
+			supportSyllogisme.font = "arial";
 			supportSyllogisme.size = 36;
 			supportSyllogisme.color = 0x6BA432;
 			

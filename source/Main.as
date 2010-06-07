@@ -4,6 +4,7 @@
 	import net.flashpunk.*;
 	import rooms.*;
 	import game.LoadXmlData;
+	import splash.Splash;
 
 	
 	/**
@@ -20,12 +21,20 @@
 		public function Main() 
 		{
 			super(800, 480, 60, false);
-
-			//Load gamedesign data
 			//TODO FP.world loads from LoadXmlData. revert to local load once no more tweaking of GD data
-			
+		}
+		
+		override public function init():void 
+		{
+			var s:Splash = new Splash;
+			FP.world.add(s);
+			s.start(splashComplete);
+		}
+		
+		public function splashComplete():void
+		{
+			//Load gamedesign data
 			data = new LoadXmlData();
-			
 		}
 		
 	}

@@ -161,6 +161,7 @@
 				var _x3:int = int(o.@x) + _offset;
 				var index_three:int = _animationList.push(new Animation(_x3, o.@y, "prison", 0));
 				world.add(_animationList[index_three-1]);
+				trace("prison x: " + _animationList[index_three-1].x);
 			}
 			
 			for each (var s:XML in level.animations.anim_crash)
@@ -168,7 +169,8 @@
 				// add new animation to Vector and Level
 				var _x4:int = int(s.@x) + _offset;
 				var index_four:int = _animationList.push(new Animation(_x4, s.@y, "crash", 0));
-				world.add(_animationList[index_four-1]);
+				world.add(_animationList[index_four - 1]);
+				trace("crash x: " + _animationList[index_four-1].x);
 			}
 			
 			return _animationList;
@@ -190,7 +192,8 @@
 		{
 			if (level.waypoints.hasOwnProperty("trigger")) 
 			{
-				return int(level.waypoints[0].trigger.@x);
+				var _x5:int = int(level.waypoints[0].trigger.@x) + _offset;
+				return _x5;
 			} else return 0;
 		}
 	}

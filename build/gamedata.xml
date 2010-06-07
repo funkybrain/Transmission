@@ -23,14 +23,25 @@
 	</scurve>
 
 	<!-- variables utilisées pour les timers de transmission-->
+<!--
 	<timers>
-		<timeToChild>60</timeToChild>
-		<!-- FatherToDeath doit etre plus grand que FatherToChild-->	
-		<timeFatherToChild>30</timeFatherToChild><!-- robot AI father takes over-->
-		<timeFatherToDeath>40</timeFatherToDeath><!-- robot AI father goes poof!-->
+		<timeToChild>10</timeToChild>
+		<timeFatherToChild>10</timeFatherToChild>
+		<timeFatherToDeath>15</timeFatherToDeath>
+		<timeChildToGrandChild>15</timeChildToGrandChild>
+		<timeGrandChildToEnd>15</timeGrandChildToEnd>
+	</timers>
+	 -->
+	
+	<timers>
+		<timeToChild>10</timeToChild>	
+		<timeFatherToChild>30</timeFatherToChild>
+		<timeFatherToDeath>40</timeFatherToDeath>
 		<timeChildToGrandChild>60</timeChildToGrandChild>
 		<timeGrandChildToEnd>60</timeGrandChildToEnd>
 	</timers>
+	
+	
 	
 	<!-- Texte de fin-->
 	<citation>

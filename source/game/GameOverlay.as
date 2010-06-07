@@ -23,7 +23,7 @@ package game
 			timer.size = 60;
 
 			graphic = timer;
-			layer = 1;
+			layer = 0;
 		}
 		
 		public function updateTimer(time:Number):void
