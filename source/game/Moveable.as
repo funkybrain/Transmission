@@ -39,7 +39,7 @@
 		 */
 		public function Moveable() 
 		{
-			type = "player";
+			//type = "player";
 			
 			position = new Point(); // set initial position to zero
 			velocity = new Point(); // set intial velocity to zero

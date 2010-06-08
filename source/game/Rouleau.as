@@ -3,7 +3,11 @@ package game
 	import net.flashpunk.Entity;
 	import net.flashpunk.graphics.Anim;
 	import net.flashpunk.graphics.Spritemap;
+	import net.flashpunk.tweens.misc.NumTween;
+	import net.flashpunk.utils.Ease;
+	import net.flashpunk.FP;
 	
+	 
 	public class Rouleau extends Entity
 	{
 		[Embed(source = '../../assets/spriteSheetRouleau.png')]
@@ -15,13 +19,31 @@ package game
 		
 		public var previousX:int;
 		
+		/**
+		* Properties
+		*/
+		private var _spinning:NumTween;
+		private var _spinRate:NumTween;
+		public var isSpinning:Boolean = false;
+		public var inertieX:Number;
+		
+		/**
+		 * Constructer
+		 */
 		public function Rouleau() 
 		{
 			this.graphic = spriteRouleau;
 			
 			this.layer = 1;
 			
+			_spinning = new NumTween(_onSpinComplete);
+			_spinRate = new NumTween();
+			addTween(_spinning);
+			addTween(_spinRate);
 			
+			inertieX = 0;
+			
+			// start rolling animation
 			playAnimation();
 		}
 		
@@ -31,12 +53,40 @@ package game
 			spriteRouleau.play("roule");
 		}
 		
-		override public function render():void 
+		public function rollFree():void
 		{
+			var tweenTime:Number = 3;
+			inertieX = 0;
+			
+			_spinning.tween(0, 25, tweenTime, Ease.cubeOut);
+			_spinRate.tween(1, 0, tweenTime);
+			_spinning.start();
+			_spinRate.start();
+			
+			isSpinning = true;
+			
+			
+		}
+		
+		private function _onSpinComplete():void
+		{
+			isSpinning = false;
+			trace("free roll complete");
+		}
+		
+		override public function update():void 
+		{
+			if (_spinning.active) 
+			{
+				inertieX = _spinning.value;
+				
+				spriteRouleau.rate = _spinRate.value;
+			}
+			
 			// store the position before the update, so that you can compare with current position in Game update()
 			previousX = x;
 			
-			super.render();
+			super.update();
 		}
 		
 	}

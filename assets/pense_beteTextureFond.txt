@@ -1,0 +1,3 @@
+texture pour le fond du rouleau ou il y a des choses ecrites
+
+480X480

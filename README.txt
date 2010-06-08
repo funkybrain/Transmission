@@ -32,15 +32,16 @@ Next: release 1.8
 > rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
 > ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
 > scale de la fille qui suit le pere
+> ajout d'une inertie sur le rouleau
 
+> worked around annoying bug
 > recentered all sprite origins and moved hitboxes accordingly
-> remove animations that have moved off the screen to save on memory
+> remove animations and backgrounds that have moved off the screen to save on memory
 > fixed bug on animation/path list removal
 > added debug traces for major bug
 
 To do list:
 ----------
-GET RID OF F*** BUG RELATED TO PLAYER COLLISION
 
 > script robotfather AI
 > can we avoid jerky cam move when taking control of child?

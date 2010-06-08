@@ -1,0 +1,9 @@
+﻿
+Animation Crash pense bête Simon
+
+
+1 frame : 1080X480
+
+
+total document : 7560X960
+1 seule lecture pas de répétition.

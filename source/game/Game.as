@@ -123,6 +123,7 @@ package game
 		public var rouleauEnd:Rouleau;
 		public var rouleauTriggerX:int;
 		public var papyrus:Papyrus;
+		public var rollFrom:Number=0;
 		
 		/**
 		 * Booleans
@@ -131,6 +132,7 @@ package game
 		private var _masterFaderComplete:Boolean = true;
 		private var _levelTwoAdded:Boolean = false;
 		private var _rouleauTriggered:Boolean = false;
+		private var _inContact:Boolean = false;
 		
 		public var robotChildIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
@@ -144,6 +146,11 @@ package game
 		 */ 
 		public var finalWords:Epitaphe;
 
+		
+		/**
+		 * For debug
+		 */
+		private var _counter:Number = 0;
 		
 		/**
 		 * CONSTRUCTOR
@@ -547,6 +554,9 @@ package game
 		 */
 		override public function update():void 
 		{
+			// update debug game time counter
+			_counter += FP.elapsed;
+			
 			// update entities
 			super.update();
 			
@@ -842,18 +852,52 @@ package game
 		 */
 		private function _updateRouleauPositions():void
 		{
+			
+			var contactPoint:Number = player.x 
+					+ (player.graphic as Spritemap).width / 2 * (player.graphic as Spritemap).scale;
+					
+			if (Math.floor(contactPoint) == Math.floor(rouleauStart.x) && !rouleauStart.isSpinning && !_inContact) 
+			{
+				_inContact = true;
+				trace("made new contact " + _inContact);
+			}
+			
 			if (rouleauStart != null && !_rouleauTriggered) 
 			{
-				// place rouleau
-				rouleauStart.x = Math.max(rouleauStart.previousX, player.x + (player.graphic as Spritemap).width/2*(player.graphic as Spritemap).scale);
+				// move rouleauStart
+				if (player.playerWasMoving && !player.playerMoving && _inContact && !rouleauStart.isSpinning) 
+				{
+					rouleauStart.rollFree();
+					_inContact = false;
+					rollFrom = rouleauStart.x;
+					trace("rollfrom: " + rollFrom);
+					trace("in contact:" + _inContact);
+				}
+				
+				rouleauStart.x = Math.max(rouleauStart.previousX, contactPoint,	
+					(rollFrom + rouleauStart.inertieX));
+				
 				// animate rouleau based on player speed
-				if (!player.accouche) 
+				if (!player.accouche && _inContact && !rouleauStart.isSpinning) 
 				{
 					rouleauStart.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
-					
-				} else rouleauStart.spriteRouleau.rate = 0;
+				}
 				
-			} else
+				
+				// debug
+/*				if (_counter>0.4) 
+				{
+					_counter -= _counter;
+					trace("spinning: " + rouleauStart.isSpinning);
+					trace("in contact: " + _inContact);
+					trace("inertieX: " + rouleauStart.inertieX.toFixed(1));
+					trace("roll to: " + (rollFrom + rouleauStart.inertieX).toFixed(1));
+					trace("contact x: " + Math.floor(contactPoint));
+					trace("rouleau x: " + Math.floor(rouleauStart.x));
+				}*/
+				
+				
+			} else // triggered papyrus, must stop touleau start from moving
 			{
 				rouleauStart.x = rouleauStart.previousX;
 				rouleauStart.spriteRouleau.frame = 0;
