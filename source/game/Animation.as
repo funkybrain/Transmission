@@ -26,14 +26,18 @@ package game
 		public var prison:Spritemap = new Spritemap(PRISON, 270, 210);
 		
 		[Embed(source='../../assets/spriteSheetAnim_Crash.png')] private const CRASH:Class;
-		public var crash:Spritemap = new Spritemap(CRASH, 450, 200);
+		public var crash:Spritemap = new Spritemap(CRASH, 1080, 480);
+		
+		[Embed(source='../../assets/spriteSheetAnim_Serveuse.png')] private const SERVEUSE:Class;
+		public var serveuse:Spritemap = new Spritemap(SERVEUSE, 500, 350);
+		
 		
 		/**
 		 * Animation properties.
 		 */
 		private var _frames:Array;
 		public	var spriteName:Spritemap;
-		public var triggerDistance:int = -100; // will trigger animation at -100 px distance
+		public var triggerDistance:int; // distance (negative) from sprite edge when animation is trigered
 		public var animType:uint; // 0=one shot, 1=looping
 		public var playedOnce:Boolean = false;
 		
@@ -77,12 +81,16 @@ package game
 				spriteName = crash;
 				_frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
 				break;
+			case "serveuse":
+				spriteName = serveuse;
+				_frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 			default:
 				break; // no animation?
 				
 			}
 			
 			graphic = spriteName;
+			triggerDistance = - spriteName.width / 2;
 			
 			//graphic.scrollX = .5;
 			//graphic.scrollY = .5;

@@ -11,34 +11,16 @@ Bugs:
 > bug with path tileset (couple of random tiles showing at beginning of levels)
 >> FIXED: level was wrapping due to width not being an exact multiplier of grid
 
-> Monster random bug
-CRASH: moved to an unacceptable position
-prev_x: 6863.7840243854935prev_y: 247.78666750746754
-vel_x: 1.7203277291266847vel_y: -1.7203277291266847
-should move to x: 6865.50435211462 y: 246.06633977834085
-new_x: 6865.50435211462new_y: 246.06633977834085
-no collision detected in Moveable.getCurentPath
-player position x:6865.50435211462 y: 246.06633977834085
-crashed in player update, after the move
-state: child
-x: 6865.50435211462
-y: 246.06633977834085
 
 
 
-Next: release 1.8
+Next: release 1.9
 -----------------
-> ajout declencheur de rouleau a placer dans ogmo (layer waypoint, object trigger, actuellement à 6600 sur level 2)
-> rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
-> ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
-> scale de la fille qui suit le pere
-> ajout d'une inertie sur le rouleau
+> ajout animation serveuse pour LD sur Ogmo
+> modif ordre des layers sous Ogmo (attention de bien mettre le bon type d'asset sur la bonne layer)
+> ajout nouvelle anim crash
+> declenchement anim = milieu du sprite
 
-> worked around annoying bug
-> recentered all sprite origins and moved hitboxes accordingly
-> remove animations and backgrounds that have moved off the screen to save on memory
-> fixed bug on animation/path list removal
-> added debug traces for major bug
 
 To do list:
 ----------
@@ -128,3 +110,17 @@ Next: release 1.7
 > ajout d'un compteur de temps en overlay
 > change la vitesse de recul joueur = 0.1
 > doublage du LD avec Level_Romain_2
+
+Next: release 1.8
+-----------------
+> ajout declencheur de rouleau a placer dans ogmo (layer waypoint, object trigger, actuellement à 6600 sur level 2)
+> rouleau se declenche lorsque le joueur atteint la coordonnee du declencheur
+> ajout d'un tag <citation> dans gamedata.xml pour changer le mot de la fin
+> scale de la fille qui suit le pere
+> ajout d'une inertie sur le rouleau
+
+> worked around annoying bug
+> recentered all sprite origins and moved hitboxes accordingly
+> remove animations and backgrounds that have moved off the screen to save on memory
+> fixed bug on animation/path list removal
+> added debug traces for major bug

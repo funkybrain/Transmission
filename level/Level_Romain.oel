@@ -1573,6 +1573,10 @@
   <animations>
     <anim_rouage x="1440" y="60"/>
     <anim_crash x="3240" y="60"/>
-    <anim_man x="240" y="0"/>
+    <anim_man x="120" y="0"/>
+    <anim_serveuse x="450" y="0"/>
+    <anim_serveuse x="1000" y="0"/>
+	<anim_crash x="800" y="0"/>
+	
   </animations>
 </level>

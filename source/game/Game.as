@@ -859,7 +859,7 @@ package game
 			if (Math.floor(contactPoint) == Math.floor(rouleauStart.x) && !rouleauStart.isSpinning && !_inContact) 
 			{
 				_inContact = true;
-				trace("made new contact " + _inContact);
+				//trace("made new contact " + _inContact);
 			}
 			
 			if (rouleauStart != null && !_rouleauTriggered) 
@@ -870,8 +870,8 @@ package game
 					rouleauStart.rollFree();
 					_inContact = false;
 					rollFrom = rouleauStart.x;
-					trace("rollfrom: " + rollFrom);
-					trace("in contact:" + _inContact);
+					//trace("rollfrom: " + rollFrom);
+					//trace("in contact:" + _inContact);
 				}
 				
 				rouleauStart.x = Math.max(rouleauStart.previousX, contactPoint,	

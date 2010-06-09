@@ -210,6 +210,15 @@
 				trace("crash x: " + _animationList[index_four-1].x);
 			}
 			
+			for each (var w:XML in level.animations.anim_serveuse)
+			{
+				// add new animation to Vector and Level
+				var _x5:int = int(w.@x) + _offset;
+				var index_five:int = _animationList.push(new Animation(_x5, w.@y, "serveuse", 0));
+				world.add(_animationList[index_five - 1]);
+				trace("serveuse x: " + _animationList[index_five-1].x);
+			}
+			
 			return _animationList;
 		}
 		

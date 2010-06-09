@@ -12,13 +12,17 @@
 	</settings>
 	
 	<objects>
+		
 		<object name="player" image="player.png" width="30" height="30" limit="1"/>
 		<folder name="anim">
 			<object name="anim_man" image="slot_man.png" width="30" height="30" />
 			<object name="anim_rouage" image="slot_rouage.png" width="30" height="30" />
 			<object name="anim_crash" image="slot_crash.png" width="30" height="30" />
 			<object name="anim_prison" image="slot_prison.png" width="30" height="30" />
+			<object name="anim_serveuse" image="slot_serveuse.png" width="30" height="30" />			
+		
 		</folder>
+		
 		<folder name="background">
 			<object name="image_fond" image="backgroundSprite.png" width="3000" height="480" />
 			<object name="image_fond_1" image="spriteBackgroundOne.png" width="3990" height="480" />
@@ -27,8 +31,10 @@
 			<object name="image_fond_4" image="spriteBackgroundFour.png" width="3990" height="480" />
 			
 		</folder/>
+		
 		<object name="waypoint" image="waypoint.png" width="30" height="30" />
 		<object name="trigger" image="trigger.png" width="30" height="480" limit="1" />
+		
 	</objects> 
 	
 	<tilesets>
@@ -38,6 +44,8 @@
 	<layers>
 	<!-- colors #AARRGGBB-->
 		<objects name="background" gridSize="60" drawGridSize="60" />
+		<objects name="animations" gridSize="30" drawGridSize="30" />
+		<objects name="waypoints" gridSize="30" drawGridSize="30" />
 		<grid name="mask_red" color="#FFFF0000" gridSize="10" drawGridSize="30" exportAsObjects="true" />
 		<grid name="mask_green" color="#FF00FF00" gridSize="10" drawGridSize="30" exportAsObjects="true" />
 		<grid name="mask_blue" color="#FF0000FF" gridSize="10" drawGridSize="30" exportAsObjects="true" />
@@ -45,8 +53,6 @@
 		<tiles name="path_green" gridSize="30" drawGridSize="30" />
 		<tiles name="path_blue" gridSize="30" drawGridSize="30" />
 		<objects name="player" gridSize="30" drawGridSize="30" />
-		<objects name="animations" gridSize="30" drawGridSize="30" />
-		<objects name="waypoints" gridSize="30" drawGridSize="30" />
 		
 	</layers>
 </project>
