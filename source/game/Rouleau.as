@@ -43,6 +43,10 @@ package game
 			
 			inertieX = 0;
 			
+			type = "rouleau";
+			width = 20;
+			height = 480;
+			
 			// start rolling animation
 			playAnimation();
 		}

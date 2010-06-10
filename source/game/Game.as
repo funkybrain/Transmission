@@ -893,23 +893,31 @@ package game
 			var contactPoint:Number = player.x 
 					+ (player.graphic as Spritemap).width / 2 * (player.graphic as Spritemap).scale;
 					
-			if (Math.floor(contactPoint) == Math.floor(rouleauStart.x) && !rouleauStart.isSpinning && !_inContact) 
+			if (player.collide("rouleau", contactPoint, player.y) && !rouleauStart.isSpinning && !_inContact) 
 			{
 				_inContact = true;
-				//trace("made new contact " + _inContact);
+				trace("made new contact " + _inContact);
 			}
 			
 			if (rouleauStart != null && !_rouleauTriggered) 
 			{
 				// move rouleauStart
-				if (player.playerWasMoving && !player.playerMoving && _inContact && !rouleauStart.isSpinning) 
+				/*if (player.playerWasMoving && !player.playerMoving && _inContact && !rouleauStart.isSpinning) 
 				{
 					rouleauStart.rollFree();
 					_inContact = false;
 					rollFrom = rouleauStart.x;
 					//trace("rollfrom: " + rollFrom);
 					//trace("in contact:" + _inContact);
+				}*/
+				
+				if (player.rightArrowReleased() && _inContact && !rouleauStart.isSpinning) 
+				{
+					rouleauStart.rollFree();
+					_inContact = false;
+					rollFrom = rouleauStart.x;
 				}
+				
 				
 				rouleauStart.x = Math.max(rouleauStart.previousX, contactPoint,	
 					(rollFrom + rouleauStart.inertieX));

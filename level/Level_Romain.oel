@@ -1565,7 +1565,7 @@
   </player>
   <animations>
     <anim_junky x="150" y="0"/>
-    <anim_serveuse x="630" y="240"/>
+    <anim_serveuse x="630" y="0"/>
     <anim_prison x="1080" y="0"/>
   </animations>
 

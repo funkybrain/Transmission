@@ -940,5 +940,13 @@
 			state = "grandChild";
 			accouche = false;
 		}
+		
+		/**
+		 * Method to test if player has just released the right arrow
+		 */
+		public function rightArrowReleased():Boolean
+		{
+			return Input.released("R");
+		}
 	}
 }

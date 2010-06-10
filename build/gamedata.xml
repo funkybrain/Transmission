@@ -36,18 +36,18 @@
 	 
 	-->
 	<timers>
-		<timeToChild>60</timeToChild>	
-		<timeFatherToChild>20</timeFatherToChild>
-		<timeFatherToDeath>30</timeFatherToDeath>
-		<timeChildToGrandChild>80</timeChildToGrandChild>
-		<timeGrandChildToEnd>80</timeGrandChildToEnd>
+		<timeToChild>10</timeToChild>	
+		<timeFatherToChild>10</timeFatherToChild>
+		<timeFatherToDeath>20</timeFatherToDeath>
+		<timeChildToGrandChild>10</timeChildToGrandChild>
+		<timeGrandChildToEnd>10</timeGrandChildToEnd>
 	</timers>
 	
 	
 	
 	<!-- Texte de fin-->
 	<citation>
-		L'homme est impur car dans son subconscient il ne pense qu'a carresser son ego
+		L'homme est impur car dans son subconscient il ne pense qu'a caresser son ego
 		d'un geste nonchalant, dans l'espoir de se gratter la vertue
 		prise entre deux enclumes de tarte au jasmin.
 	</citation>	
