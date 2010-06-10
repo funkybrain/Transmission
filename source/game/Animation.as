@@ -31,6 +31,9 @@ package game
 		[Embed(source='../../assets/spriteSheetAnim_Serveuse.png')] private const SERVEUSE:Class;
 		public var serveuse:Spritemap = new Spritemap(SERVEUSE, 500, 350);
 		
+		[Embed(source='../../assets/spriteSheetAnim_Junky.png')] private const JUNKY:Class;
+		public var junky:Spritemap = new Spritemap(JUNKY, 200, 201);
+		
 		
 		/**
 		 * Animation properties.
@@ -84,6 +87,10 @@ package game
 			case "serveuse":
 				spriteName = serveuse;
 				_frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+			case "junky":
+				spriteName = junky;
+				_frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+				break;
 			default:
 				break; // no animation?
 				

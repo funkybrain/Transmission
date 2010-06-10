@@ -1,5 +1,7 @@
 <data>
 	
+	<volume>0.5</volume>	<!-- entre 0 et 1-->
+	
 	<!-- debug for overlay-->
 	<debug>false</debug>
 	<godmode>false</godmode>
@@ -7,19 +9,19 @@
 	
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
-		<VB>0.5</VB>	<!-- Vb pere-->
-		<CT_VB>0.5</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
+		<VB>0</VB>	<!-- Vb pere-->
+		<CT_VB>0.4</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
 	</vitesse>
 
 	<!-- variables utilisées pour le calcul de S-Curve-->
 	<scurve>
-		<COEFF_D>1.5</COEFF_D>
-		<COEFF_D_CHILD>2.5</COEFF_D_CHILD>
-		<COEFF_D_GRANDCHILD>3</COEFF_D_GRANDCHILD>
+		<COEFF_D>1.6</COEFF_D>
+		<COEFF_D_CHILD>2.4</COEFF_D_CHILD>
+		<COEFF_D_GRANDCHILD>2.9</COEFF_D_GRANDCHILD>
 		
-		<D_MAX>2000</D_MAX>
-		<S_MIN>-2</S_MIN>
-		<S_MAX>2</S_MAX>
+		<D_MAX>1800</D_MAX>
+		<S_MIN>-1</S_MIN>
+		<S_MAX>1.9</S_MAX>
 	</scurve>
 
 	<!-- variables utilisées pour les timers de transmission-->
@@ -34,11 +36,11 @@
 	 
 	-->
 	<timers>
-		<timeToChild>30</timeToChild>	
-		<timeFatherToChild>40</timeFatherToChild>
-		<timeFatherToDeath>50</timeFatherToDeath>
-		<timeChildToGrandChild>60</timeChildToGrandChild>
-		<timeGrandChildToEnd>60</timeGrandChildToEnd>
+		<timeToChild>60</timeToChild>	
+		<timeFatherToChild>20</timeFatherToChild>
+		<timeFatherToDeath>30</timeFatherToDeath>
+		<timeChildToGrandChild>80</timeChildToGrandChild>
+		<timeGrandChildToEnd>80</timeGrandChildToEnd>
 	</timers>
 	
 	

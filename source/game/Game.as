@@ -102,6 +102,9 @@ package game
 		 * Special effects and Tweens
 		 */
 		
+		// camera Tween
+		private var _cameraPan:NumTween;
+		 
 		// Sound Tweens
 		public var masterfader:NumTween;
 		
@@ -159,6 +162,10 @@ package game
 		{
 			// create first level
 			level_1 = new Level(1, 0);
+			
+			// get trigger for rouleau
+			rouleauTriggerX = level_1.getTriggerPosition();
+			trace("trigger X : " + rouleauTriggerX); 
 			
 			// set intial camera clamp value to level width/height
 			worldWidth = level_1.width;
@@ -222,7 +229,7 @@ package game
 			add(_lifeTimer);
 			
 			//TODO remove kill vol befor publish
-			//FP.volume = 0;
+			FP.volume = LoadXmlData.VOLUME;
 						
 		} // end constructor
 		
@@ -412,14 +419,14 @@ package game
 			if (ratx > 0.6 && ratz < 0.2)
 			{
 				// set child special speed
-				player.pathChildSpeed[classement[2]] = player.VB + 0.8 * ratx;
+				player.pathChildSpeed[classement[2]] = player.CT_VB + 0.8 * ratx;
 				player.pathChildSpeed[classement[1]] = player.VB - 0.2 * ratx;
 				player.pathChildSpeed[classement[0]] = player.VB - 0.2 * ratx;
 				
 				// reset base speed to VB
 				for (var j:int = 0; j < player.pathBaseSpeed.length; j++) 
 				{
-					player.pathBaseSpeed[j] = player.CT_VB;
+					player.pathBaseSpeed[j] = player.VB;
 				}
 				player.transmitModel = 1;
 				trace("Modèle 1a");
@@ -428,13 +435,13 @@ package game
 			else if (ratx >= 0.43 && ratx <= 0.6 && ratz <= 0.15)
 			{
 				// set child special speed
-				player.pathChildSpeed[classement[2]] = player.VB + 0.6 * ratx;
+				player.pathChildSpeed[classement[2]] = player.CT_VB + 0.6 * ratx;
 				player.pathChildSpeed[classement[1]] = player.VB;
 				player.pathChildSpeed[classement[0]] = player.VB;
 				// reset base speed to VB
 				for (var m:int = 0; m < player.pathBaseSpeed.length; m++) 
 				{
-					player.pathBaseSpeed[m] = player.CT_VB;
+					player.pathBaseSpeed[m] = player.VB;
 				}
 				trace("Modèle 1b");
 				player.transmitModel = 1;
@@ -449,7 +456,7 @@ package game
 				// reset base speed to VB
 				for (var k:int = 0; k < player.pathBaseSpeed.length; k++) 
 				{
-					player.pathBaseSpeed[k] = player.CT_VB;
+					player.pathBaseSpeed[k] = player.VB;
 				}
 				player.transmitModel = 2;
 				trace("Modèle 2");
@@ -631,11 +638,25 @@ package game
 			_removeBackgrounds();
 			
 			// check to see if player has triggered rouleau
-			if (null != level_2 && player.x > rouleauTriggerX && !_rouleauTriggered) 
+			if (player.x > rouleauTriggerX && !_rouleauTriggered) 
 			{
 					_rouleauTriggered = true;
+					// start a tween on the camera to slowly bring the player to the right third of screen
+					_cameraPan = new NumTween(onCameraPan, 2);
+					_cameraPan.tween((FP.width / 2), (FP.width / 1.5), 50, Ease.expoIn);
+					addTween(_cameraPan);
+					_cameraPan.start();
+					
+					// start Epitaphe
 					_startFinalWords();
 			}
+
+			// debug
+			if (null != _cameraPan && _cameraPan.active)
+			{
+				//trace("cam pan: " + _cameraPan.value);
+			}
+			
 			
 			// fade volume out when grandchild is dying
 			if (grandChildDying) 
@@ -647,6 +668,11 @@ package game
 			}
 		}
 		// end Game UPDATE LOOP
+		
+		private function onCameraPan():void
+		{
+			trace("camera pan complete");
+		}
 		
 		/**
 		 * RENDER LOOP FOR GAME
@@ -677,9 +703,12 @@ package game
 			level_2 = new Level(2, worldWidth);
 			
 			// get trigger for rouleau
-			rouleauTriggerX = level_2.getTriggerPosition();
-			trace("trigger X : " + rouleauTriggerX); 
+			if (rouleauTriggerX == Infinity) // true if trigger was NOT loaded in the first level
+			{
+				rouleauTriggerX = level_2.getTriggerPosition();
+				trace("trigger X : " + rouleauTriggerX); 
 
+			}
 			
 			// set intial camera clamp value to level width/height
 			worldWidth += level_2.width;
@@ -817,19 +846,18 @@ package game
 		{
 			// add Epitaphe object
 			finalWords = new Epitaphe();
-			finalWords.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
+			finalWords.visible = false;
+			finalWords.x = rouleauStart.x + rouleauStart.spriteRouleau.width + 5;
 			add(finalWords);
 
 			// add the second rouleau that unravels
 			rouleauEnd = new Rouleau();
-			rouleauEnd.spriteRouleau.color = 0xA7B6EC;
+			//rouleauEnd.spriteRouleau.color = 0xA7B6EC;
 			rouleauEnd.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
 			add(rouleauEnd);
 			
 			// add underlying paper
-			papyrus = new Papyrus((rouleauStart.x + rouleauStart.spriteRouleau.width), 0,
-			(rouleauEnd.x - rouleauStart.x - rouleauEnd.spriteRouleau.width), FP.screen.height);
-			papyrus.visible = false;
+			papyrus = new Papyrus((rouleauStart.x + rouleauStart.spriteRouleau.width),0, 0, FP.screen.height);
 			add(papyrus);
 			
 		}
@@ -842,8 +870,17 @@ package game
 		{
 			// display one character every 25 pixels the player moves
 			var wordslength:int = (player.x - rouleauTriggerX) / 25;
+			//var letterWidth:int = 10; // average width of one letter
+			
 			//trace("wordslength: " + wordslength);
+			
 			finalWords.unravelFinalWord(wordslength);
+			
+			if (wordslength > 1) 
+			{
+				finalWords.visible = true;
+			}
+			
 		}
 		
 		
@@ -903,18 +940,31 @@ package game
 				rouleauStart.spriteRouleau.frame = 0;
 			}
 			
+			// update rouleauEnd
 			if (rouleauEnd != null) 
 			{
 				rouleauEnd.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
-				rouleauEnd.x = Math.max(player.x + player.grandChild.width/2,
-					rouleauStart.x + rouleauStart.spriteRouleau.width);
+				rouleauEnd.x = Math.max((player.x + player.grandChild.width/2),
+					rouleauStart.x, rouleauEnd.previousX);
 				
-				// update text underlay
-				papyrus.visible = true;
-				papyrus.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
-				papyrus.width = rouleauEnd.x - rouleauStart.x - rouleauEnd.spriteRouleau.width;
+				// update the width of the text underlay
+				_stretchPapyrus();
 			}
 	
+		}
+		
+		/**
+		 * Update the width of the papyrus to match distance between rouleau
+		 */
+		private function _stretchPapyrus():void
+		{
+				// update text underlay by stretching the rectangle
+				var width:Number = rouleauEnd.x - rouleauStart.x;// + rouleauEnd.spriteRouleau.width / 2;
+				papyrus.rectWidth = width;
+				
+				//trace("rouleau w: " + rouleauEnd.spriteRouleau.width); returns 20
+				//trace("papyrus w: " + papyrus.rectWidth);
+				//trace("rouleauEnd.x - rouleauStart.x: " + (rouleauEnd.x - rouleauStart.x).toFixed(1));
 		}
 		
 		/**
@@ -959,9 +1009,9 @@ package game
 						
 					} else if((animation.x - player.x) < animation.triggerDistance && !animation.playedOnce)
 					{
-						trace("anim x: " + animation.x);
-						trace("player x: " + player.x);
-						trace("trigger distance: " + animation.triggerDistance);
+						//trace("anim x: " + animation.x);
+						//trace("player x: " + player.x);
+						//trace("trigger distance: " + animation.triggerDistance);
 						animation.playOnce();
 						animation.playedOnce = true;
 					}
@@ -979,7 +1029,7 @@ package game
 				var value:Animation = animationList[m];
 				
 				// remove animations that are 600 pixels behind camera position
-				if (value.x < (FP.camera.x - 600)) 
+				if (value.x < (FP.camera.x - value.spriteName.width)) 
 				{
 					animationList.splice(m, 1);
 					FP.world.remove(value);	
@@ -1080,7 +1130,16 @@ package game
 		/**
 		 * Getter functions used to get the position to place the camera when following the player.
 		 */
-		private function get targetX():Number { return player.x - FP.width / 2; }
+		private function get targetX():Number 
+		{
+			if (_rouleauTriggered) 
+			{
+				// the higher the value
+				// the more offset to the right the player will be
+				return player.x - _cameraPan.value;
+			} else	return player.x - FP.width / 2; 
+		}
+		
 		private function get targetY():Number { return player.y - FP.height / 2; }
 		
 	} // end class

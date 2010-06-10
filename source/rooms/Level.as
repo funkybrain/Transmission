@@ -98,7 +98,7 @@
 				}
 			}
 			
-			trace("loading level: " + loadLevel);
+			//trace("loading level: " + loadLevel);
 			super(loadLevel);
 
 			width = level.width;
@@ -128,7 +128,7 @@
 					var ba_index:int = _backgroundList.push(new Background(_xba, ba.@y, 0));
 					world.add (_backgroundList[ba_index-1]);
 					
-					trace("added background at: " + _xba);
+					//trace("added background at: " + _xba);
 				}
 				
 				for each (var bb:XML in level.background[0].image_fond_1)
@@ -137,7 +137,7 @@
 					var bb_index:int = _backgroundList.push(new Background(_xbb, bb.@y, 1));
 					world.add (_backgroundList[bb_index-1]);
 					
-					trace("added background at: " + _xbb);
+					//trace("added background at: " + _xbb);
 				}
 				
 				for each (var bc:XML in level.background[0].image_fond_2)
@@ -146,7 +146,7 @@
 					var bc_index:int = _backgroundList.push(new Background(_xbc, bc.@y, 2));
 					world.add (_backgroundList[bc_index-1]);
 					
-					trace("added background at: " + _xbc);
+					//trace("added background at: " + _xbc);
 				}
 				
 				for each (var bd:XML in level.background[0].image_fond_3)
@@ -155,7 +155,7 @@
 					var bd_index:int = _backgroundList.push(new Background(_xbd, bd.@y, 3));
 					world.add (_backgroundList[bd_index-1]);
 					
-					trace("added background at: " + _xbd);
+					//trace("added background at: " + _xbd);
 				}
 				
 				for each (var be:XML in level.background[0].image_fond_4)
@@ -164,7 +164,7 @@
 					var be_index:int = _backgroundList.push(new Background(_xbe, be.@y, 4));
 					world.add (_backgroundList[be_index-1]);
 					
-					trace("added background at: " + _xbe);
+					//trace("added background at: " + _xbe);
 				}
 				
 			}
@@ -180,7 +180,7 @@
 				var _x1:int = int(q.@x) + _offset;
 				var index_one:int = _animationList.push(new Animation(_x1, q.@y, "man", 1));
 				world.add(_animationList[index_one-1]);
-				trace("man x: " + _animationList[index_one-1].x);
+				//trace("man x: " + _animationList[index_one-1].x);
 			}
 
 			for each (var r:XML in level.animations.anim_rouage)
@@ -189,7 +189,7 @@
 				var _x2:int = int(r.@x) + _offset;
 				var index_two:int = _animationList.push(new Animation(_x2, r.@y, "rouage", 1));
 				world.add(_animationList[index_two - 1]);
-				trace("rouage x: " + _animationList[index_two-1].x);
+				//trace("rouage x: " + _animationList[index_two-1].x);
 			}
 			
 			for each (var o:XML in level.animations.anim_prison)
@@ -198,7 +198,7 @@
 				var _x3:int = int(o.@x) + _offset;
 				var index_three:int = _animationList.push(new Animation(_x3, o.@y, "prison", 0));
 				world.add(_animationList[index_three-1]);
-				trace("prison x: " + _animationList[index_three-1].x);
+				//trace("prison x: " + _animationList[index_three-1].x);
 			}
 			
 			for each (var s:XML in level.animations.anim_crash)
@@ -207,7 +207,7 @@
 				var _x4:int = int(s.@x) + _offset;
 				var index_four:int = _animationList.push(new Animation(_x4, s.@y, "crash", 0));
 				world.add(_animationList[index_four - 1]);
-				trace("crash x: " + _animationList[index_four-1].x);
+				//trace("crash x: " + _animationList[index_four-1].x);
 			}
 			
 			for each (var w:XML in level.animations.anim_serveuse)
@@ -216,7 +216,16 @@
 				var _x5:int = int(w.@x) + _offset;
 				var index_five:int = _animationList.push(new Animation(_x5, w.@y, "serveuse", 0));
 				world.add(_animationList[index_five - 1]);
-				trace("serveuse x: " + _animationList[index_five-1].x);
+				//trace("serveuse x: " + _animationList[index_five-1].x);
+			}
+			
+			for each (var k:XML in level.animations.anim_junky)
+			{
+				// add new animation to Vector and Level
+				var _x6:int = int(k.@x) + _offset;
+				var index_six:int = _animationList.push(new Animation(_x6, k.@y, "junky", 0));
+				world.add(_animationList[index_six - 1]);
+				//trace("serveuse x: " + _animationList[index_five-1].x);
 			}
 			
 			return _animationList;
@@ -240,7 +249,7 @@
 			{
 				var _x5:int = int(level.waypoints[0].trigger.@x) + _offset;
 				return _x5;
-			} else return 0;
+			} else return 50000;
 		}
 	}
 				

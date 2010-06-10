@@ -2,13 +2,6 @@
   <width>7980</width>
   <height>480</height>
   <background>
-    <anim_prison x="900" y="240"/>
-    <anim_prison x="3120" y="0"/>
-    <anim_crash x="4080" y="0"/>
-    <anim_crash x="4860" y="0"/>
-    <anim_prison x="6060" y="0"/>
-    <anim_prison x="7200" y="0"/>
-    <anim_crash x="7680" y="240"/>
     <image_fond_1 x="0" y="0"/>
     <image_fond_2 x="3990" y="0"/>
   </background>
@@ -1568,15 +1561,12 @@
     <tile tx="0" ty="60" x="6000" y="60"/>
   </path_blue>
   <player>
-    <player x="30" y="210"/>
+    <player x="0" y="210"/>
   </player>
   <animations>
-    <anim_rouage x="1440" y="60"/>
-    <anim_crash x="3240" y="60"/>
-    <anim_man x="120" y="0"/>
-    <anim_serveuse x="450" y="0"/>
-    <anim_serveuse x="1000" y="0"/>
-	<anim_crash x="800" y="0"/>
-	
+    <anim_junky x="150" y="0"/>
+    <anim_serveuse x="630" y="240"/>
+    <anim_prison x="1080" y="0"/>
   </animations>
+
 </level>

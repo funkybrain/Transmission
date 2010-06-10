@@ -15,7 +15,7 @@ package game
 		
 		public var spriteRouleau:Spritemap = new Spritemap(ROULEAU, 20, 480);
 		
-		private var _animation:Array = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+		private var _animation:Array = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8);
 		
 		public var previousX:int;
 		
@@ -71,7 +71,7 @@ package game
 		private function _onSpinComplete():void
 		{
 			isSpinning = false;
-			trace("free roll complete");
+			//trace("free roll complete");
 		}
 		
 		override public function update():void 
@@ -84,7 +84,10 @@ package game
 			}
 			
 			// store the position before the update, so that you can compare with current position in Game update()
-			previousX = x;
+			if (x > previousX) 
+			{
+				previousX = x;
+			}
 			
 			super.update();
 		}

@@ -55,7 +55,7 @@ package game
 		override public function added():void 
 		{
 			super.added();
-			trace("added path to world at: " + this.x);
+			//trace("added path to world at: " + this.x);
 		}
 		
 	}

@@ -16,10 +16,12 @@ Bugs:
 
 Next: release 1.9
 -----------------
-> ajout animation serveuse pour LD sur Ogmo
-> modif ordre des layers sous Ogmo (attention de bien mettre le bon type d'asset sur la bonne layer)
+> ajout animation serveuse + junky pour LD sur Ogmo
 > ajout nouvelle anim crash
 > declenchement anim = milieu du sprite
+> reglage master volume dans gamadata
+> nouvelle texture pour le texte de fond
+> nouveau centrage camera lorsque le joueur deroule le texte de fin
 
 
 To do list:

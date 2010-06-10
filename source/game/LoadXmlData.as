@@ -42,6 +42,8 @@ package game
 		
 		public static var CITATION:String;
 		
+		public static var VOLUME:Number;
+		
 		public function LoadXmlData() 
 		{
 			loader.addEventListener(Event.COMPLETE, onComplete);
@@ -80,6 +82,9 @@ package game
 		
 			// citation
 			CITATION = gameData.citation.text(); 
+			
+			//volume
+			VOLUME = Number(gameData.volume.text());
 			
 			trace("done assigning data in LoadXmlData");
 

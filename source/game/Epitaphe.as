@@ -4,6 +4,7 @@ package game
 	import net.flashpunk.graphics.Text
 	import net.flashpunk.FP;
 	import net.flashpunk.utils.Draw;
+	import game.StringUtils;
 	
 	public class Epitaphe extends Entity
 	{
@@ -29,11 +30,14 @@ package game
 			
 			supportSyllogisme.font = "quote";
 			supportSyllogisme.size = 36;
-			supportSyllogisme.color = 0x6BA432;
+			supportSyllogisme.color = 0xFFFFFF;
+			supportSyllogisme.scrollX = 0.8; 
 			
 			graphic = supportSyllogisme;
 			
 			_SYLLOGISME = LoadXmlData.CITATION;
+			_SYLLOGISME = StringUtils.removeExtraWhitespace(_SYLLOGISME);
+			trace(_SYLLOGISME);
 			
 		}
 		
