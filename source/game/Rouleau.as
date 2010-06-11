@@ -62,7 +62,7 @@ package game
 			var tweenTime:Number = 3;
 			inertieX = 0;
 			
-			_spinning.tween(0, 25, tweenTime, Ease.cubeOut);
+			_spinning.tween(0, 40, tweenTime, Ease.cubeOut);
 			_spinRate.tween(1, 0, tweenTime);
 			_spinning.start();
 			_spinRate.start();

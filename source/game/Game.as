@@ -638,12 +638,12 @@ package game
 			_removeBackgrounds();
 			
 			// check to see if player has triggered rouleau
-			if (player.x > rouleauTriggerX && !_rouleauTriggered) 
+			if (rouleauStart.x > rouleauTriggerX && !_rouleauTriggered) 
 			{
 					_rouleauTriggered = true;
 					// start a tween on the camera to slowly bring the player to the right third of screen
 					_cameraPan = new NumTween(onCameraPan, 2);
-					_cameraPan.tween((FP.width / 2), (FP.width / 1.5), 50, Ease.expoIn);
+					_cameraPan.tween((FP.width / 2), (FP.width / 1.5), 25, Ease.expoIn);
 					addTween(_cameraPan);
 					_cameraPan.start();
 					
@@ -701,9 +701,10 @@ package game
 		{
 			// create first level
 			level_2 = new Level(2, worldWidth);
+			trace("level2 imported");
 			
 			// get trigger for rouleau
-			if (rouleauTriggerX == Infinity) // true if trigger was NOT loaded in the first level
+			if (rouleauTriggerX >= 50000) // true if trigger was NOT loaded in the first level
 			{
 				rouleauTriggerX = level_2.getTriggerPosition();
 				trace("trigger X : " + rouleauTriggerX); 
@@ -848,6 +849,7 @@ package game
 			finalWords = new Epitaphe();
 			finalWords.visible = false;
 			finalWords.x = rouleauStart.x + rouleauStart.spriteRouleau.width + 5;
+			trace("final words x " + finalWords.x);
 			add(finalWords);
 
 			// add the second rouleau that unravels
@@ -870,16 +872,28 @@ package game
 		{
 			// display one character every 25 pixels the player moves
 			var wordslength:int = (player.x - rouleauTriggerX) / 25;
-			//var letterWidth:int = 10; // average width of one letter
+			var letterWidth:int = 10; // average width of one letter
 			
 			//trace("wordslength: " + wordslength);
 			
 			finalWords.unravelFinalWord(wordslength);
 			
+			// move final words forward to keep up with player
+			if (player.playerMoving) 
+			{
+				finalWords.x += 0.2; // need to scale it to player speed and only fior up/down moves
+			}
+			
 			if (wordslength > 1) 
 			{
 				finalWords.visible = true;
+
 			}
+			
+/*			if (wordslength > 10) 
+			{
+				finalWords.supportSyllogisme.scrollX = 0.9;
+			}*/
 			
 		}
 		
@@ -892,13 +906,17 @@ package game
 			
 			var contactPoint:Number = player.x 
 					+ (player.graphic as Spritemap).width / 2 * (player.graphic as Spritemap).scale;
-					
-			if (player.collide("rouleau", contactPoint, player.y) && !rouleauStart.isSpinning && !_inContact) 
-			{
-				_inContact = true;
-				trace("made new contact " + _inContact);
-			}
 			
+			//TODO this don't work!
+			_inContact = player.collide("rouleau", contactPoint, player.y) as Boolean;		
+			
+			if (_inContact && !rouleauStart.isSpinning && !_inContact) 
+			{
+				//_inContact = true;
+				trace("made new contact ");
+				//trace("spinning? " + rouleauStart.isSpinning);
+			}
+			//trace("in contact: " + _inContact);
 			if (rouleauStart != null && !_rouleauTriggered) 
 			{
 				// move rouleauStart
@@ -911,11 +929,17 @@ package game
 					//trace("in contact:" + _inContact);
 				}*/
 				
-				if (player.rightArrowReleased() && _inContact && !rouleauStart.isSpinning) 
+				
+				if (_inContact && !rouleauStart.isSpinning)
 				{
-					rouleauStart.rollFree();
-					_inContact = false;
-					rollFrom = rouleauStart.x;
+					var test:Boolean = player.rightArrowReleased();
+					//trace("arrow released: " + test);
+					if (test)
+					{
+						rouleauStart.rollFree();
+						//_inContact = false;
+						rollFrom = rouleauStart.x;
+					}
 				}
 				
 				
@@ -1062,7 +1086,7 @@ package game
 					FP.world.remove(value);	
 					bg--;
 					trace("background removed at x: " + bgrnd[0].x);
-					trace("bg index: " + bg);
+					trace("bg list length: " + backgroundList.length);
 				}
 			}	
 		}
@@ -1146,6 +1170,7 @@ package game
 				// the more offset to the right the player will be
 				return player.x - _cameraPan.value;
 			} else	return player.x - FP.width / 2; 
+			
 		}
 		
 		private function get targetY():Number { return player.y - FP.height / 2; }

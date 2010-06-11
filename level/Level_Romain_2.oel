@@ -1548,6 +1548,7 @@
     <anim_rouage x="270" y="240"/>
   </animations>
   <waypoints>
-    <trigger x="4380" y="0"/>
+    <!-- x 4380 -->
+	<trigger x="400" y="0"/>
   </waypoints>
 </level>

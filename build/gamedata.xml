@@ -3,8 +3,8 @@
 	<volume>0.5</volume>	<!-- entre 0 et 1-->
 	
 	<!-- debug for overlay-->
-	<debug>false</debug>
-	<godmode>false</godmode>
+	<debug>true</debug>
+	<godmode>true</godmode>
 	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
 	
 	<!-- variables utilisées pour les calculs de vitesse-->
@@ -36,11 +36,11 @@
 	 
 	-->
 	<timers>
-		<timeToChild>10</timeToChild>	
-		<timeFatherToChild>10</timeFatherToChild>
-		<timeFatherToDeath>20</timeFatherToDeath>
-		<timeChildToGrandChild>10</timeChildToGrandChild>
-		<timeGrandChildToEnd>10</timeGrandChildToEnd>
+		<timeToChild>30</timeToChild>	
+		<timeFatherToChild>20</timeFatherToChild>
+		<timeFatherToDeath>30</timeFatherToDeath>
+		<timeChildToGrandChild>80</timeChildToGrandChild>
+		<timeGrandChildToEnd>80</timeGrandChildToEnd>
 	</timers>
 	
 	

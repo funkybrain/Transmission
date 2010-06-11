@@ -947,6 +947,7 @@
 		public function rightArrowReleased():Boolean
 		{
 			return Input.released("R");
+			
 		}
 	}
 }

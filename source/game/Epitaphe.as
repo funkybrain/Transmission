@@ -20,7 +20,8 @@ package game
 		private var _showOnlyThatMuch:String;
 		private var _lengthToDisplay:uint = 0;
 		
-		public var supportSyllogisme:Text = new Text("", 0, 0, 4000, 100);
+		
+		public var supportSyllogisme:Text = new Text("", 0, 0, 2000, 100);
 		
 		public function Epitaphe() 
 		{
@@ -31,13 +32,15 @@ package game
 			supportSyllogisme.font = "quote";
 			supportSyllogisme.size = 36;
 			supportSyllogisme.color = 0xFFFFFF;
-			supportSyllogisme.scrollX = 0.8; 
+			
+			//BUG why is the scrollX screwing things up when text is diplayed in level 2?
+			//supportSyllogisme.scrollX = 0.8; 
 			
 			graphic = supportSyllogisme;
 			
 			_SYLLOGISME = LoadXmlData.CITATION;
 			_SYLLOGISME = StringUtils.removeExtraWhitespace(_SYLLOGISME);
-			trace(_SYLLOGISME);
+			//trace(_SYLLOGISME);
 			
 		}
 		
@@ -46,6 +49,8 @@ package game
 			_showOnlyThatMuch = _SYLLOGISME.slice(0, _lengthToDisplay);
 			supportSyllogisme.text = _showOnlyThatMuch;
 			//trace(supportSyllogisme.text);
+			//trace("epitaphe x: " + x);
+			//trace("visible " + visible);
 			super.update();
 		}
 		
