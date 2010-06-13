@@ -1,9 +1,9 @@
 <data>
 	
-	<volume>0.5</volume>	<!-- entre 0 et 1-->
+	<volume>0</volume>	<!-- entre 0 et 1-->
 	
 	<!-- debug for overlay-->
-	<debug>true</debug>
+	<debug>false</debug>
 	<godmode>true</godmode>
 	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
 	
@@ -36,9 +36,9 @@
 	 
 	-->
 	<timers>
-		<timeToChild>30</timeToChild>	
-		<timeFatherToChild>20</timeFatherToChild>
-		<timeFatherToDeath>30</timeFatherToDeath>
+		<timeToChild>15</timeToChild>	
+		<!-- timeFatherToChild>20</timeFatherToChild -->
+		<timeFatherToDeath>15</timeFatherToDeath>
 		<timeChildToGrandChild>80</timeChildToGrandChild>
 		<timeGrandChildToEnd>80</timeGrandChildToEnd>
 	</timers>

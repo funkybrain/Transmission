@@ -1570,7 +1570,7 @@
   </animations>
     <waypoints>
     <!-- x 4380 -->
-	<trigger x="1000" y="0"/>
+	<!-- trigger x="1000" y="0"/ -->
   </waypoints>
 
 </level>

@@ -1,6 +1,7 @@
 ﻿package game 
 {
 	import adobe.utils.CustomActions;
+	import flash.display.GradientType;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import net.flashpunk.graphics.Emitter;
@@ -37,16 +38,26 @@
 		[Embed(source = '../../assets/spriteSheetAutoAccouchement.png')] private const AUTO_ACCOUCHE:Class;
 		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 30, 30, onAccoucheComplete);
 		
+		[Embed(source = '../../assets/spriteSheetChildAlive.png')] private const CHILD_ALIVE:Class;
+		public var childAlive:Spritemap = new Spritemap(CHILD_ALIVE, 30, 30);
+		
+		[Embed(source = '../../assets/spriteSheetChildAppear.png')] private const CHILD_APPEAR:Class;
+		public var childAppear:Spritemap = new Spritemap(CHILD_APPEAR, 30, 30, onChildAppearComplete);
+		
+		[Embed(source = '../../assets/spriteSheetFatherDeath.png')] private const FATHER_DEATH:Class;
+		public var fatherDeath:Spritemap = new Spritemap(FATHER_DEATH, 30, 30, onFatherDeathComplete);
+		
 		/**
 		 * Tweeners.
 		 */
 		public var fadeSprite:VarTween = new VarTween(); // called from game to make grandchild disappear
+		private var zoom:VarTween;
 		
 		/**
 		 * Alarms.
 		 */
 		public var timeToChild:Alarm;
-		public var timeFatherToChild:Alarm;
+		//public var timeFatherToChild:Alarm;
 		public var timeFatherToDeath:Alarm;
 		public var timeToGrandChild:Alarm;
 		public var timeGrandChildToEnd:Alarm;
@@ -119,10 +130,21 @@
 		public var deathImminent:Boolean = false;
 		
 		/**
+		 * Robots
+		 */
+		public var robotChild:Robot;
+		public var robotFather:Robot;
+		public var robotChildIsAlive:Boolean = false;
+		public var robotFatherIsAlive:Boolean = false;
+		
+		/**
 		 * Animation properties.
 		 */
 		public var frames:Array;
 		public var framesAccouchement:Array;
+		public var framesChildAppear:Array;
+		public var framesChildAlive:Array;
+		public var framesFatherDeath:Array;
 		
 		/**
 		 * define hitbox origin.
@@ -148,6 +170,10 @@
 		public var playerMoving:Boolean = false;
 		public var playerWasMoving:Boolean = false;
 		public var accouche:Boolean = false;
+		public var isChildAppearing:Boolean = false;
+		public var isChildAlive:Boolean = false;
+		public var isFatherDying:Boolean = false;
+		public var hasControl:Boolean = true;
 
 		/**
 		 * For debug
@@ -166,6 +192,10 @@
 			this.x = _x + 15;
 			this.y = _y + 15;
 			
+			
+			// layer
+			layer = 5;
+			
 			// set position vector as entity's coordinates
 			position.x = this.x;
 			position.y = this.y;
@@ -177,12 +207,19 @@
 			graphic = father;
 			
 			frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7);
-			framesAccouchement = new Array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 20, 21);
+			framesAccouchement = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+			framesChildAppear = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+			framesChildAlive = new Array(0, 1, 2, 3, 4, 5, 6, 7);
+			framesFatherDeath = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+
 			
 			father.add("walk", frames, 12, true);
 			child.add("walk", frames, 12, true);
 			grandChild.add("walk", frames, 12, true);
-			autoAccouchement.add("push", framesAccouchement, 5, false);
+			autoAccouchement.add("push", framesAccouchement, 4, false);
+			childAppear.add("appear", framesChildAppear, 2, false);
+			childAlive.add("walk", framesChildAlive, 12, true);
+			fatherDeath.add("die", framesFatherDeath, 2, false);
 			
 			// offset the graphic to center it at the netity's origin
 			father.x = -15;
@@ -196,6 +233,13 @@
 			
 			autoAccouchement.x = -15;
 			autoAccouchement.y = -15;
+			
+			childAlive.x = -15;
+			childAlive.y = -15;
+			
+			childAppear.x = -15;
+			childAppear.y = -15;
+
 			
 			grandChild.x = -15;
 			grandChild.y = -15;
@@ -251,6 +295,10 @@
 			
 			// to avoid crash in case child appears before player has moved
 			moveHistory.push(new Point());
+			
+			// set up zooms
+			zoom = new VarTween();
+			addTween(zoom);
 				
 		}
 		// END CONSTRUCTOR
@@ -365,7 +413,7 @@
 			}
 			
 			// move player based on maximum speeds returned by the calculateSpeed method
-			if (!accouche) 
+			if (hasControl) 
 			{
 				move(currentPathIndex);
 			}
@@ -442,7 +490,7 @@
 			previousPos = position.clone();
 			
 			//store current player position in move history 
-			if (velocity.x!=0 || velocity.y!=0) 
+			/*if (velocity.x!=0 || velocity.y!=0) 
 			{
 				_moveIndex = moveHistory.push(previousPos);
 				_pathHistoryIndex = pathHistory.push(currentPathIndex);
@@ -454,12 +502,18 @@
 					pathHistory.shift();
 				}
 			
-			}
+			}*/
 			
 			// scale player graphic if required
 			if (state == "child" || state == "grandChild") 
 			{
 				_scalePlayerSprite();		
+			}
+			
+			// check to see if it's time to make child appear
+			if (robotFatherIsAlive) 
+			{
+				testChildAppear();
 			}
 			
 			//update sound manager
@@ -569,7 +623,7 @@
 			if (state == "child") 
 			{
 				// map the time of child's life to the scale of it's sprite
-				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, (timeToGrandChild.duration / 2), 0.5, 1);
+				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, (timeToGrandChild.duration / 2), 0.6, 1);
 				child.scale = mapped;
 				//trace("child scale: " + mapped);
 			} else if(state == "grandChild")
@@ -893,7 +947,7 @@
 					who = father;
 					break;
 				case "childAlive":
-					who = father;
+					who = childAlive;
 					break;	
 				case "child":
 					who = child;
@@ -939,6 +993,96 @@
 			graphic = grandChild;
 			state = "grandChild";
 			accouche = false;
+			hasControl = true;
+		}
+		
+		/**
+		 * event handler once child-appear animation has stopped playing
+		 */
+		public function onChildAppearComplete():void
+		{
+			// swap childAppear sprite with childAlive sprite and give control back to player
+			graphic = childAlive;
+			hasControl = true;
+			childAlive.play("walk");
+		}
+		
+		
+		/**
+		 * event handler once father death animation has stopped playing
+		 */
+		public function onFatherDeathComplete():void
+		{
+			isFatherDying = false;
+			trace("oh, shit, father just went awol...");
+		}
+		
+		
+		
+		/**
+		 * Method that triggers the change from father to child
+		 * 
+		 */
+		public function fatherDeathSequence():void
+		{
+			// remove control from player
+			hasControl = false;
+			
+			// set status to dying (used to check frames and make child appear at the rigth time)
+			isFatherDying = true;
+			
+			// add a robot with death animation
+			robotFather = new Robot(x, y, "fatherDeath");
+			FP.world.add(robotFather)
+			robotFather.robotDeath.play("die");
+			robotFatherIsAlive = true;
+			
+			// change player sprite to child and set to invisible
+			graphic = child;
+			child.alpha = 0;
+			graphic.visible = false;
+				
+		}
+		
+
+		
+		/**
+		 * Test to see if it's the right time to make the child appear
+		 */
+		private function testChildAppear():void
+		{
+			if (robotFather.robotDeath.frame == 12 && !hasControl) 
+			{
+				takeChildControl();
+				trace("take control of child");
+			}
+		}
+		
+		/**
+		 * once the father is dead, player takes control of child
+		 */
+		public function takeChildControl():void
+		{
+			//make player child graphic visible 
+			graphic.visible = true;
+			
+			// tween its alpha value
+			var alphaTween:VarTween = new VarTween(null, 2);
+			alphaTween.tween(this.child, "alpha", 1, 1);
+			addTween(alphaTween);
+			alphaTween.start();
+			
+			// give control back to player
+			hasControl = true;
+			
+			//start countdown to grandchild transmission
+			timeToGrandChild.start();
+						
+			//set player state to child
+			state = "child";
+			
+			// update robot status
+			robotFatherIsAlive = false;
 		}
 		
 		/**

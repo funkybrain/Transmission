@@ -71,16 +71,12 @@ package game
 		public var data:LoadXmlData;
 		 
 		private var TIMER_CHILD:Number = LoadXmlData.timer_ToChild;
-		private var TIMER_FATHERTOCHILD:Number = LoadXmlData.timer_FatherToChild;
+		//private var TIMER_FATHERTOCHILD:Number = LoadXmlData.timer_FatherToChild;
 		private var TIMER_FATHERTODEATH:Number = LoadXmlData.timer_FatherToDeath;
 		private var TIMER_CHILDTOGRANDCHILD:Number = LoadXmlData.timer_ChildToGrandChild;
 		private var TIMER_GRANDCHILDTOEND:Number = LoadXmlData.timer_GrandChildToEnd;
 		
 		public var player:Player;
-		public var robotChild:Robot;
-		public var robotFather:Robot;
-		
-		public var robotFatherPath:FindPath;
 	
 		public var vectorZero:Point = new Point();
 		
@@ -137,8 +133,7 @@ package game
 		private var _rouleauTriggered:Boolean = false;
 		private var _inContact:Boolean = false;
 		
-		public var robotChildIsAlive:Boolean = false;
-		public var robotFatherIsAlive:Boolean = false;
+
 		public var playerGoneAWOL:Boolean = false;
 		public var grandChildDying:Boolean = false;
 		
@@ -199,8 +194,9 @@ package game
 			player.timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
 			player.addTween(player.timeToChild, true); // add and start alarm
 			
-			player.timeFatherToChild = new Alarm(TIMER_FATHERTOCHILD, onTimeFatherToChild, 2);
-			player.addTween(player.timeFatherToChild, false); // add but don't start yet!
+			// don't need this anymore
+			//player.timeFatherToChild = new Alarm(TIMER_FATHERTOCHILD, onTimeFatherToChild, 2);
+			//player.addTween(player.timeFatherToChild, false); // add but don't start yet!
 			
 			player.timeFatherToDeath = new Alarm(TIMER_FATHERTODEATH, onTimeFatherToDeath, 2);
 			player.addTween(player.timeFatherToDeath, false); // add but don't start yet!
@@ -211,7 +207,7 @@ package game
 			player.timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeGrandChildToEnd, 2);
 			player.addTween(player.timeGrandChildToEnd, false); // add but don't start yet!
 			
-			player.timers.push(player.timeToChild, player.timeFatherToChild, player.timeFatherToDeath,
+			player.timers.push(player.timeToChild, player.timeFatherToDeath,
 				player.timeToGrandChild, player.timeGrandChildToEnd);
 			
 			// refresh screen color
@@ -248,74 +244,43 @@ package game
 		{
 			// child appears as a robot. Nothing transmitted yet.
 			player.state = "childAlive";
-			robotChildIsAlive = true;
+			//robotChildIsAlive = true;
 			
 			// start countdown to actual transmission to child
-			player.timeFatherToChild.start(); 			
+			//player.timeFatherToChild.start(); 			
 			
 			// start countdown to father death
 			player.timeFatherToDeath.start();
 			
 			// add robot child
-			robotChild = new Robot(player.x, player.y,"robotchild");
-			add(robotChild);
+			//robotChild = new Robot(player.x, player.y,"robotchild");
+			//add(robotChild);
+			
+			// remove control from player
+			player.hasControl = false;
+			
+			// swap father sprite for child appear sprite
+			player.graphic = player.childAppear;
+			player.childAppear.play("appear");
 			
 		}
 		
 		/**
-		 * Make father disapear
+		 * Make father disapear and child appear
 		 */
 		public function onTimeFatherToDeath():void
 		{
-			//remove robot father from game
-			robotFatherIsAlive == false;
-			//BUG remove(robotFather);
-			trace("oh, shit, father just went awol...");
-		}
-		
-		/**
-		 * Transmit father to child
-		 * player now controls child and father becomes a robot
-		 */
-		public function onTimeFatherToChild():void
-		{
-			
-			// add robot father
-			robotFather = new Robot(player.x, player.y, "robotfather");
-			robotFatherIsAlive = true;
-			add(robotFather);
-			
-			// create path that robot father must follow
-			//robotFatherPath = new FindPath();
-			
-			// create AI node graph
-			generateAIGraph(robotFather.x, robotFather.y);
-			
-			//TODO need to make robotater follow ai pathfinding
-			
-			//TODO may need to create new player here to avoid this hellish bug
-			//transport father to robot child position
-			player.x = robotChild.x;
-			player.y = robotChild.y;
-			
-			//remove robot child from game
-			robotChildIsAlive = false;
-			remove(robotChild);
-			
-			trace(player.state);
+			// trigger the father death sequence
+			player.fatherDeathSequence();
 			
 			//transmit properties from father to child
 			transmitFatherToChild();
 			
-			//set player state to child
-			player.state = "child";
+
 			
-			//change player graphic to that of child
-			player.graphic = player.child;
-			
-			//start countdown to grandchild transmission
-			player.timeToGrandChild.start();
 		}
+		
+	
 		
 		/**
 		 * Transmit child to grandchild
@@ -326,6 +291,7 @@ package game
 			player.graphic = player.autoAccouchement;
 			player.autoAccouchement.play("push");
 			player.accouche = true;
+			player.hasControl = false;
 			
 			// swap player sprite to grandchild
 			// player.graphic = player.grandChild;
@@ -378,13 +344,6 @@ package game
 			trace("fade out");
 		}
 		
-		/**
-		 * AI calculations
-		 */
-		public function generateAIGraph(startX:int, startY:int):void
-		{
-			// generate the graph based on father start position
-		}
 		
 		/**
 		 * Calculs de transmission
@@ -601,7 +560,7 @@ package game
 			//player.sound.update();
 			
 			// if son is alive follow father
-			if (robotChildIsAlive) 
+			/*if (robotChildIsAlive) 
 			{
 				robotChild.x = player.moveHistory[0].x;
 				robotChild.y = player.moveHistory[0].y;
@@ -609,10 +568,11 @@ package game
 				{
 					robotChild.robotChild.play("walk");
 				} else robotChild.robotChild.setFrame(0);
-			}
+			}*/
 			
 			// camera following
 			cameraFollow();
+			
 			
 			// freeze or unfreeze timers and sounds
 			checkTimers();
@@ -748,7 +708,7 @@ package game
 				// freeze timers
 				if (timer.active == true)
 				{
-					if (player.playerMoving == false) 
+					if (player.playerMoving == false  || !player.hasControl) 
 					{
 						timer.active = false;
 					}
@@ -759,7 +719,7 @@ package game
 				//unfreeze timers
 				if (timer.active == false)
 				{
-					if (player.playerMoving == true) 
+					if (player.playerMoving == true && player.hasControl) 
 					{
 						timer.active = true;	
 					}
@@ -907,34 +867,26 @@ package game
 			var contactPoint:Number = player.x 
 					+ (player.graphic as Spritemap).width / 2 * (player.graphic as Spritemap).scale;
 			
-			//TODO this don't work!
-			_inContact = player.collide("rouleau", contactPoint, player.y) as Boolean;		
+			if (player.collide("rouleau", contactPoint, player.y)) 
+			{
+				_inContact = true;
+			} else _inContact = false;
+				 
 			
 			if (_inContact && !rouleauStart.isSpinning && !_inContact) 
 			{
-				//_inContact = true;
-				trace("made new contact ");
-				//trace("spinning? " + rouleauStart.isSpinning);
+				trace("made new contact ");		
 			}
 			//trace("in contact: " + _inContact);
+			
 			if (rouleauStart != null && !_rouleauTriggered) 
 			{
-				// move rouleauStart
-				/*if (player.playerWasMoving && !player.playerMoving && _inContact && !rouleauStart.isSpinning) 
-				{
-					rouleauStart.rollFree();
-					_inContact = false;
-					rollFrom = rouleauStart.x;
-					//trace("rollfrom: " + rollFrom);
-					//trace("in contact:" + _inContact);
-				}*/
-				
 				
 				if (_inContact && !rouleauStart.isSpinning)
 				{
 					var test:Boolean = player.rightArrowReleased();
 					//trace("arrow released: " + test);
-					if (test)
+					if (test || !player.hasControl)
 					{
 						rouleauStart.rollFree();
 						//_inContact = false;
@@ -947,7 +899,7 @@ package game
 					(rollFrom + rouleauStart.inertieX));
 				
 				// animate rouleau based on player speed
-				if (!player.accouche && _inContact && !rouleauStart.isSpinning) 
+				if (player.hasControl && _inContact && !rouleauStart.isSpinning) 
 				{
 					rouleauStart.spriteRouleau.rate = FP.scaleClamp(player.velocity.x, 0, 2, 0, 1) * FP.frameRate * FP.elapsed;
 				}
@@ -1104,7 +1056,7 @@ package game
 					timer = player.timeToChild.remaining;
 					break;
 				case "childAlive":
-					timer = player.timeFatherToChild.remaining;
+					timer = player.timeFatherToDeath.remaining;
 					break;	
 				case "child":
 					timer = player.timeToGrandChild.remaining;

@@ -2,16 +2,10 @@
 ----
 FP.choose() is your friend
 Embedding assets: http://www.bit-101.com/blog/?p=853
-Define a private Class variable, put the cursor just above it and right-click click on your image, insert to document:
->FlashDevelop will automatically insert the correct “Embed” tag in your code.
 
 
 Bugs:
 ----
-> bug with path tileset (couple of random tiles showing at beginning of levels)
->> FIXED: level was wrapping due to width not being an exact multiplier of grid
-
-
 
 
 Next: release 1.9
@@ -19,22 +13,21 @@ Next: release 1.9
 > ajout animation serveuse + junky pour LD sur Ogmo
 > ajout nouvelle anim crash
 > declenchement anim = milieu du sprite
-> reglage master volume dans gamadata
+> reglage master volume dans gamedata
 > nouvelle texture pour le texte de fond
 > nouveau centrage camera lorsque le joueur deroule le texte de fin
-
+> nouvelles animations du pere + fils et mort du pere
+> la variable <timeFatherToChild> dans gamedata.xml ne sert plus a rien
 
 To do list:
 ----------
 
-> script robotfather AI
-> can we avoid jerky cam move when taking control of child?
 > can we control framerate playback of embedded swf movies?
 > can we avoid the slowdown when player only crosses path without changing?
 > implement moovesmooth
 > preloader!
-> center player in right 3rd of screen?
->
+
+
 > A x min avant la fin du timer:
 - fade music out
 - fade in death music
