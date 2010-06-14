@@ -1,0 +1,3 @@
+﻿anim ACCOUCHEMENT FIN: 60X30 et 1560X30 26 frames
+
+dernière frame avatar contrôlé par joueur "disparaît"

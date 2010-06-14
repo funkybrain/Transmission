@@ -199,7 +199,7 @@ package game
 			//player.addTween(player.timeFatherToChild, false); // add but don't start yet!
 			
 			player.timeFatherToDeath = new Alarm(TIMER_FATHERTODEATH, onTimeFatherToDeath, 2);
-			player.addTween(player.timeFatherToDeath, false); // add but don't start yet!
+			player.addTween(player.timeFatherToDeath, true); // add and start alarm
 			
 			player.timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
 			player.addTween(player.timeToGrandChild, false); // add but don't start yet!
@@ -250,7 +250,7 @@ package game
 			//player.timeFatherToChild.start(); 			
 			
 			// start countdown to father death
-			player.timeFatherToDeath.start();
+			//player.timeFatherToDeath.start();
 			
 			// add robot child
 			//robotChild = new Robot(player.x, player.y,"robotchild");
@@ -323,14 +323,14 @@ package game
 			playerGoneAWOL = true;
 			
 			// kill all sounds
-			for each (var soundToKill:Sfx in player.sound.pathSound) 
+			/*for each (var soundToKill:Sfx in player.sound.pathSound) 
 			{
 				if (soundToKill.playing) 
 				{
 
 					soundToKill.stop();
 				}
-			}
+			}*/
 			
 			
 			// remove player from world
@@ -582,7 +582,11 @@ package game
 			_setAnimationSpeed();
 			
 			// if final fade out is finished, send-in Outro
-			_leaveGame();
+			if (null != _fadeOutCurtain && _fadeOutCurtain.complete) 
+			{
+				_leaveGame();
+			}
+			
 			
 			
 			// test to see if next level needs to be imported
@@ -705,8 +709,8 @@ package game
 			
 			for each (var timer:Alarm in player.timers) 
 			{
-				// freeze timers
-				if (timer.active == true)
+				// freeze timers unless grandchild death is imminent
+				if (timer.active == true && !player.deathImminent)
 				{
 					if (player.playerMoving == false  || !player.hasControl) 
 					{
@@ -956,13 +960,15 @@ package game
 		 */
 		private function _leaveGame():void
 		{
-			if (null != _fadeOutCurtain && true == _fadeOutCurtain.complete && false == _outroCalled) 
+			if (false == _outroCalled) 
 			{
 				
 				trace("call credits");
+				
 				// reset vol
 				FP.volume = 1;
 				trace("leaving game, volume: " + FP.volume);
+				
 				var playCredits:Credits = new Credits();
 				_outroCalled = true;
 
@@ -1053,7 +1059,7 @@ package game
 			switch (player.state) 
 			{
 				case "father":
-					timer = player.timeToChild.remaining;
+					timer = player.timeFatherToDeath.remaining;
 					break;
 				case "childAlive":
 					timer = player.timeFatherToDeath.remaining;

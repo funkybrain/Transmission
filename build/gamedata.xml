@@ -38,9 +38,9 @@
 	<timers>
 		<timeToChild>15</timeToChild>	
 		<!-- timeFatherToChild>20</timeFatherToChild -->
-		<timeFatherToDeath>15</timeFatherToDeath>
-		<timeChildToGrandChild>80</timeChildToGrandChild>
-		<timeGrandChildToEnd>80</timeGrandChildToEnd>
+		<timeFatherToDeath>30</timeFatherToDeath>
+		<timeChildToGrandChild>15</timeChildToGrandChild>
+		<timeGrandChildToEnd>20</timeGrandChildToEnd>
 	</timers>
 	
 	

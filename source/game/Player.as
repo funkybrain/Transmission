@@ -36,7 +36,7 @@
 		public var grandChild:Spritemap = new Spritemap(GRAND_CHILD, 30, 30);
 		
 		[Embed(source = '../../assets/spriteSheetAutoAccouchement.png')] private const AUTO_ACCOUCHE:Class;
-		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 30, 30, onAccoucheComplete);
+		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 60, 30, onAccoucheComplete);
 		
 		[Embed(source = '../../assets/spriteSheetChildAlive.png')] private const CHILD_ALIVE:Class;
 		public var childAlive:Spritemap = new Spritemap(CHILD_ALIVE, 30, 30);
@@ -207,7 +207,8 @@
 			graphic = father;
 			
 			frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7);
-			framesAccouchement = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+			framesAccouchement = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+				19, 20, 21, 22, 23, 24, 25);
 			framesChildAppear = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 			framesChildAlive = new Array(0, 1, 2, 3, 4, 5, 6, 7);
 			framesFatherDeath = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
@@ -628,9 +629,9 @@
 				//trace("child scale: " + mapped);
 			} else if(state == "grandChild")
 			{
-				// map the time of grandchild's life to the scale of it's sprite
-				//var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining, timeGrandChildToEnd.duration, 0, 0.5, 1);
-				//grandChild.scale = mapped2;
+				//map the time of grandchild's life to the scale of it's sprite
+				var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining, timeGrandChildToEnd.duration, 0, 0.5, 1);
+				grandChild.scale = mapped2;
 			}
 		}
 		
@@ -758,8 +759,11 @@
 				e = collideTypes(pathCollideType, x - speed, y);
 				if (e)
 				{
-					//velocity.x = -pathMaxVel[pathType];
-					velocity.x = -0.1 * (FP.frameRate * FP.elapsed); // make going backward a pain in the ass!
+					if (LoadXmlData.GODMODE==true) 
+						{ 
+							// use god speed
+							speed = 3 * (FP.frameRate * FP.elapsed);	
+						} else speed = 0;
 					
 				} else 
 				{
