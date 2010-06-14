@@ -287,27 +287,11 @@ package game
 		 */
 		public function onTimeToGrandChild():void
 		{
-			// trigger auto-accouchement
-			player.graphic = player.autoAccouchement;
-			player.autoAccouchement.play("push");
-			player.accouche = true;
-			player.hasControl = false;
-			
-			// swap player sprite to grandchild
-			// player.graphic = player.grandChild;
-			// this is now handled by onAccoucheComplete event handler in Player class
-			
-			// start final countdown to end
-			// will check in update to start death sequence before end
-			player.timeGrandChildToEnd.start();
-			
-			
-			// transmit properties
-			transmitFatherToChild(); // use one method for both transmissions
-			
-			// change player state
-			// player.state = "grandChild";
+			// trigger the daughter death sequence
+			player.daughterDeathSequence();
 
+			// transmit properties
+			transmitFatherToChild();
 		}
 		
 		/**
@@ -323,18 +307,19 @@ package game
 			playerGoneAWOL = true;
 			
 			// kill all sounds
-			/*for each (var soundToKill:Sfx in player.sound.pathSound) 
+			for each (var soundToKill:Sfx in player.sound.pathSound) 
 			{
 				if (soundToKill.playing) 
 				{
 
 					soundToKill.stop();
 				}
-			}*/
+			}
 			
 			
 			// remove player from world
 			removeList(player.sound, player);
+			
 
 			// send Outro
 			_fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
@@ -697,14 +682,14 @@ package game
 			// need to check alarm states
 			// those only affect those that have already started
 			
-			if (player.playerWasMoving==false && !player.velocity.equals(vectorZero)) 
+			if (player.wasMoving==false && !player.velocity.equals(vectorZero)) 
 			{
-				player.playerMoving = true;				
+				player.isMoving = true;				
 			}
 			
-			if (player.playerWasMoving==true && player.velocity.equals(vectorZero)) 
+			if (player.wasMoving==true && player.velocity.equals(vectorZero)) 
 			{
-				player.playerMoving = false;				
+				player.isMoving = false;				
 			}
 			
 			for each (var timer:Alarm in player.timers) 
@@ -712,7 +697,7 @@ package game
 				// freeze timers unless grandchild death is imminent
 				if (timer.active == true && !player.deathImminent)
 				{
-					if (player.playerMoving == false  || !player.hasControl) 
+					if (player.isMoving == false  || !player.hasControl) 
 					{
 						timer.active = false;
 					}
@@ -723,7 +708,7 @@ package game
 				//unfreeze timers
 				if (timer.active == false)
 				{
-					if (player.playerMoving == true && player.hasControl) 
+					if (player.isMoving == true && player.hasControl) 
 					{
 						timer.active = true;	
 					}
@@ -843,7 +828,7 @@ package game
 			finalWords.unravelFinalWord(wordslength);
 			
 			// move final words forward to keep up with player
-			if (player.playerMoving) 
+			if (player.isMoving) 
 			{
 				finalWords.x += 0.2; // need to scale it to player speed and only fior up/down moves
 			}
@@ -962,16 +947,17 @@ package game
 		{
 			if (false == _outroCalled) 
 			{
-				
 				trace("call credits");
 				
-				// reset vol
-				FP.volume = 1;
-				trace("leaving game, volume: " + FP.volume);
 				
 				var playCredits:Credits = new Credits();
 				_outroCalled = true;
-
+				
+				// remove all entities from world
+				FP.world.removeAll();
+				
+				//reset vol to play credits
+				FP.volume = 0.8;
 			}
 		}
 		

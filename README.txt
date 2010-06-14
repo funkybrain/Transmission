@@ -6,18 +6,15 @@ Embedding assets: http://www.bit-101.com/blog/?p=853
 
 Bugs:
 ----
+> music comes back when death sequence starts, even though volume set to zero
+> music does not fade out during static animations
 
-
-Next: release 1.9
+Next: release 2.0
 -----------------
-> ajout animation serveuse + junky pour LD sur Ogmo
-> ajout nouvelle anim crash
-> declenchement anim = milieu du sprite
-> reglage master volume dans gamedata
-> nouvelle texture pour le texte de fond
-> nouveau centrage camera lorsque le joueur deroule le texte de fin
-> nouvelles animations du pere + fils et mort du pere
-> la variable <timeFatherToChild> dans gamedata.xml ne sert plus a rien
+> nouvelle animation fille -> petit-fils
+> musique credits joue
+> compteur apparition du bebe enleve
+> quand la mort du petit fils commence, le compteur de temps ne s'arrete plus
 
 To do list:
 ----------
@@ -119,3 +116,14 @@ Next: release 1.8
 > remove animations and backgrounds that have moved off the screen to save on memory
 > fixed bug on animation/path list removal
 > added debug traces for major bug
+
+Next: release 1.9
+-----------------
+> ajout animation serveuse + junky pour LD sur Ogmo
+> ajout nouvelle anim crash
+> declenchement anim = milieu du sprite
+> reglage master volume dans gamedata
+> nouvelle texture pour le texte de fond
+> nouveau centrage camera lorsque le joueur deroule le texte de fin
+> nouvelles animations du pere + fils et mort du pere
+> la variable <timeFatherToChild> dans gamedata.xml ne sert plus a rien

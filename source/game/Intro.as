@@ -49,7 +49,7 @@ package game
 
 		}
 		
-		private function onRemovedFromStage(event:Event):void
+		public function onRemovedFromStage(event:Event):void
 		{
 			
 			introMovieClip.removeEventListener(Event.ENTER_FRAME, onEnterFrame);

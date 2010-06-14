@@ -35,9 +35,6 @@
 		[Embed(source = '../../assets/spriteSheetGrandChild.png')] private const GRAND_CHILD:Class;
 		public var grandChild:Spritemap = new Spritemap(GRAND_CHILD, 30, 30);
 		
-		[Embed(source = '../../assets/spriteSheetAutoAccouchement.png')] private const AUTO_ACCOUCHE:Class;
-		public var autoAccouchement:Spritemap = new Spritemap(AUTO_ACCOUCHE, 60, 30, onAccoucheComplete);
-		
 		[Embed(source = '../../assets/spriteSheetChildAlive.png')] private const CHILD_ALIVE:Class;
 		public var childAlive:Spritemap = new Spritemap(CHILD_ALIVE, 30, 30);
 		
@@ -132,16 +129,15 @@
 		/**
 		 * Robots
 		 */
-		public var robotChild:Robot;
+		public var robotDaughter:Robot;
 		public var robotFather:Robot;
-		public var robotChildIsAlive:Boolean = false;
+		public var robotDaughterIsAlive:Boolean = false;
 		public var robotFatherIsAlive:Boolean = false;
 		
 		/**
 		 * Animation properties.
 		 */
 		public var frames:Array;
-		public var framesAccouchement:Array;
 		public var framesChildAppear:Array;
 		public var framesChildAlive:Array;
 		public var framesFatherDeath:Array;
@@ -167,12 +163,13 @@
 		/**
 		 * Booleans
 		 */
-		public var playerMoving:Boolean = false;
-		public var playerWasMoving:Boolean = false;
+		public var isMoving:Boolean = false;
+		public var wasMoving:Boolean = false;
 		public var accouche:Boolean = false;
 		public var isChildAppearing:Boolean = false;
 		public var isChildAlive:Boolean = false;
 		public var isFatherDying:Boolean = false;
+		public var isDaughterDying:Boolean = false;
 		public var hasControl:Boolean = true;
 
 		/**
@@ -207,8 +204,7 @@
 			graphic = father;
 			
 			frames = new Array( 0, 1, 2, 3, 4, 5, 6, 7);
-			framesAccouchement = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-				19, 20, 21, 22, 23, 24, 25);
+
 			framesChildAppear = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 			framesChildAlive = new Array(0, 1, 2, 3, 4, 5, 6, 7);
 			framesFatherDeath = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
@@ -217,7 +213,7 @@
 			father.add("walk", frames, 12, true);
 			child.add("walk", frames, 12, true);
 			grandChild.add("walk", frames, 12, true);
-			autoAccouchement.add("push", framesAccouchement, 4, false);
+
 			childAppear.add("appear", framesChildAppear, 2, false);
 			childAlive.add("walk", framesChildAlive, 12, true);
 			fatherDeath.add("die", framesFatherDeath, 2, false);
@@ -231,9 +227,7 @@
 			child.originX = 15;
 			child.originY = 15;
 			child.smooth = true;
-			
-			autoAccouchement.x = -15;
-			autoAccouchement.y = -15;
+
 			
 			childAlive.x = -15;
 			childAlive.y = -15;
@@ -403,14 +397,14 @@
 			addNewTile(this.x, this.y, Path.TILE_GRID);
 			
 			// update movement status of player
-			if (!playerWasMoving && playerMoving) 
+			if (!wasMoving && isMoving) 
 			{
-				playerWasMoving = true;
+				wasMoving = true;
 			}
 			
-			if (playerWasMoving && !playerMoving) 
+			if (wasMoving && !isMoving) 
 			{
-				playerWasMoving = false
+				wasMoving = false
 			}
 			
 			// move player based on maximum speeds returned by the calculateSpeed method
@@ -421,14 +415,14 @@
 			
 			
 			// update movement status of player
-			if (!playerWasMoving && velocity.length) 
+			if (!wasMoving && velocity.length) 
 			{
-				playerMoving = true;
+				isMoving = true;
 			}
 			
-			if (playerWasMoving && !velocity.length) 
+			if (wasMoving && !velocity.length) 
 			{
-				playerMoving = false
+				isMoving = false
 			}
 			
 			// fade sounds to ensure the correct path music is playing if the player is moving
@@ -515,6 +509,14 @@
 			if (robotFatherIsAlive) 
 			{
 				testChildAppear();
+				testRemoveRobotFather();
+			}
+			
+			// check to see if it's time to make grandChild appear
+			if (robotDaughterIsAlive) 
+			{
+				testGrandChildAppear();
+				testRemoveRobotDaughter();
 			}
 			
 			//update sound manager
@@ -529,7 +531,7 @@
 		private function _playPathMusic(path:int):void
 		{
 			// FADE MUSIC IN
-			if (playerMoving && !playerWasMoving) 
+			if (isMoving && !wasMoving) 
 			{
 				// player is moving, hence all music must play
 				for each (var music:Sfx in sound.pathSound) 
@@ -552,7 +554,7 @@
 				
 			}
 			// FADE MUSIC OUT
-			else if (!playerMoving && playerWasMoving)
+			else if (!isMoving && wasMoving)
 			{
 				// player stopped moving: fade out and stop all music (stop handled by onComplete in SoundManager)
 				sound.pathFader[path].fadeTo(0, 2);
@@ -969,36 +971,14 @@
 				var scaleAnimSpeed:Number = FP.scaleClamp(Math.max(Math.abs(velocity.x), Math.abs(velocity.y)), 0, 2, 0, 1);	
 				who.rate = scaleAnimSpeed * FP.frameRate * FP.elapsed;
 				
-				// continue updating the grandchild fade
-				if (!fadeSprite.active) 
-				{
-					fadeSprite.active = true;
-				}
-				
 			} else {
 				
 				// freeze the animation
 				who.setFrame(0);
-				
-				// stop the grandChild fading out
-				if (fadeSprite.active) 
-				{
-					fadeSprite.active = false;
-				}
 			}
 		}
 		
-		/**
-		 * event handler once auto-accouchement animation has stopped playing
-		 */
-		public function onAccoucheComplete():void
-		{
-			// set player sprite to grandchild
-			graphic = grandChild;
-			state = "grandChild";
-			accouche = false;
-			hasControl = true;
-		}
+
 		
 		/**
 		 * event handler once child-appear animation has stopped playing
@@ -1038,7 +1018,7 @@
 			// add a robot with death animation
 			robotFather = new Robot(x, y, "fatherDeath");
 			FP.world.add(robotFather)
-			robotFather.robotDeath.play("die");
+			robotFather.robotFatherDeath.play("die");
 			robotFatherIsAlive = true;
 			
 			// change player sprite to child and set to invisible
@@ -1048,6 +1028,29 @@
 				
 		}
 		
+		/**
+		 * Method that triggers the change form child(daughter) to grandchild
+		 */
+		public function daughterDeathSequence():void
+		{
+			// remove control from player
+			hasControl = false;
+			
+			// set status to dying (used to check frames and make child appear at the rigth time)
+			isDaughterDying = true;
+			
+			// add a robot with death animation
+			robotDaughter = new Robot(x, y, "robotdaughter");
+			FP.world.add(robotDaughter)
+			robotDaughter.robotDaughterDeath.play("push");
+			robotDaughterIsAlive = true;
+			
+			// change player sprite to grandChild and set to invisible
+			graphic = grandChild;
+			grandChild.alpha = 0;
+			graphic.visible = false;
+			
+		}
 
 		
 		/**
@@ -1055,11 +1058,50 @@
 		 */
 		private function testChildAppear():void
 		{
-			if (robotFather.robotDeath.frame == 12 && !hasControl) 
+			if (robotFather.robotFatherDeath.frame == 12 && !hasControl) 
 			{
 				takeChildControl();
 				trace("take control of child");
 			}
+		}
+		
+		/**
+		 * Test to see if it's the right time to make the grandChild appear
+		 */
+		private function testGrandChildAppear():void
+		{
+			if (robotDaughter.robotDaughterDeath.frame == 24 && !hasControl) 
+			{
+				takeGrandChildControl();
+				trace("take control of grand child");
+			}
+		}
+		
+		/**
+		 * If robot fade out is complete, remove from world
+		 */
+		public function testRemoveRobotFather():void
+		{
+			if (robotFather.remove) 
+			{
+				FP.world.remove(robotFather);
+				robotFatherIsAlive = false;
+				trace("removed robot father from world");
+			}
+		}
+		
+		/**
+		 * If robot fade out is complete, remove from world
+		 */
+		public function testRemoveRobotDaughter():void
+		{
+			if (robotDaughter.remove) 
+			{
+				//FP.world.remove(robotDaughter);
+				robotDaughterIsAlive = false;
+				trace("removed robot daughter from world");
+			}
+
 		}
 		
 		/**
@@ -1085,8 +1127,32 @@
 			//set player state to child
 			state = "child";
 			
-			// update robot status
-			robotFatherIsAlive = false;
+		}
+		
+		/**
+		 * once the father is dead, player takes control of child
+		 */
+		public function takeGrandChildControl():void
+		{
+			//make player child graphic visible 
+			graphic.visible = true;
+			
+			// tween its alpha value
+			var alphaTween:VarTween = new VarTween(null, 2);
+			alphaTween.tween(this.grandChild, "alpha", 1, 1);
+			addTween(alphaTween);
+			alphaTween.start();
+			
+			// give control back to player
+			hasControl = true;
+			
+			// start final countdown to end
+			// will check in Game update to start death sequence before end
+			timeGrandChildToEnd.start();
+						
+			//set player state to child
+			state = "grandChild";
+
 		}
 		
 		/**
