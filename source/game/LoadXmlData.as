@@ -43,6 +43,7 @@ package game
 		public static var CITATION:String;
 		
 		public static var VOLUME:Number;
+		public static var HUD:Boolean;
 		
 		public function LoadXmlData() 
 		{
@@ -85,6 +86,10 @@ package game
 			
 			//volume
 			VOLUME = Number(gameData.volume.text());
+			
+			
+			// HUD
+			HUD = stringToBoolean(gameData.HUD.text());
 			
 			trace("done assigning data in LoadXmlData");
 

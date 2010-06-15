@@ -8,6 +8,10 @@ Bugs:
 ----
 > music comes back when death sequence starts, even though volume set to zero
 > music does not fade out during static animations
+> shutterRight does not close on model 2
+> the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
+this is probably due to the camera trail effect.
+
 
 Next: release 2.0
 -----------------
@@ -19,6 +23,7 @@ Next: release 2.0
 > nouveau rouleau
 > reglage cache horizontal et vertical selon les 3 modeles de transmission
 > nouvelle anim de fond pere-fils
+> ajout d'une barre de progression avec un switch dans gamedata.xml
 
 To do list:
 ----------

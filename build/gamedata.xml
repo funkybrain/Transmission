@@ -1,10 +1,14 @@
 <data>
 	
-	<volume>0</volume>	<!-- entre 0 et 1-->
+	<!-- volume entre 0 et 1-->
+	<volume>0</volume>
+	
+	<!-- HUD timer + bar de progression-->
+	<HUD>true</HUD>
 	
 	<!-- debug for overlay-->
-	<debug>true</debug>
-	<godmode>true</godmode>
+	<debug>false</debug>
+	<godmode>false</godmode>
 	<LD>true</LD><!-- mettre à true pour tester le vrai LD-->
 	
 	<!-- variables utilisées pour les calculs de vitesse-->

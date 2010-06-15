@@ -80,7 +80,7 @@ package game
 	
 		public var vectorZero:Point = new Point();
 		
-		private var _lifeTimer:GameOverlay;
+		private var _overlay:GameOverlay;
 		
 		// store ratio in easy to manipulate variables
 		public var ratioRouge:Number; 
@@ -222,8 +222,8 @@ package game
 			fadeCurtainIn();
 
 			// add game overlay
-			_lifeTimer = new GameOverlay();
-			add(_lifeTimer);
+			_overlay = new GameOverlay();
+			add(_overlay);
 			
 			// initialize shutters
 			initShutters();
@@ -557,10 +557,8 @@ package game
 			// update path ratios
 			_calculatePathRatios();
 
-			
 			// update shutter positions
 			updateShutters();
-			
 			
 			//test to see if we're near game end
 			checkGrandChildNearDeath();
@@ -568,23 +566,12 @@ package game
 			// update debug text
 			updateDebugText();
 			
-			//update SoundManager - required so the tweens actually get updated
-			//player.sound.update();
-			
-			// if son is alive follow father
-			/*if (robotChildIsAlive) 
-			{
-				robotChild.x = player.moveHistory[0].x;
-				robotChild.y = player.moveHistory[0].y;
-				if (player.velocity.x!=0 || player.velocity.y!=0) 
-				{
-					robotChild.robotChild.play("walk");
-				} else robotChild.robotChild.setFrame(0);
-			}*/
+			// draw progress bar
+			var bar:int = FP.scaleClamp(player.x, 0, 7980 * 2, 0, _overlay.maxLength);
+			_overlay.drawProgressBar(bar);
 			
 			// camera following
 			cameraFollow();
-			
 			
 			// freeze or unfreeze timers and sounds
 			checkTimers();
@@ -642,6 +629,12 @@ package game
 				FP.volume = player.grandChild.alpha;
 				//trace("vol: " + FP.volume);
 			}
+			
+			// hide/show overlay
+			if (LoadXmlData.HUD) 
+			{
+				_overlay.visible = true;
+			} else _overlay.visible = false;
 		}
 		// end Game UPDATE LOOP
 		
@@ -1305,7 +1298,7 @@ package game
 			}
 			
 			//temp position for overlay timer
-			_lifeTimer.updateTimer(Math.floor(timer));
+			_overlay.updateTimer(Math.floor(timer));
 		}
 		
 		/**
