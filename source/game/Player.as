@@ -191,7 +191,7 @@
 			
 			
 			// layer
-			layer = 5;
+			layer = 1;
 			
 			// set position vector as entity's coordinates
 			position.x = this.x;
@@ -702,7 +702,11 @@
 		{
 			for (var i:int = 0; i < 3; i++) 
 			{
-				pathDistToTotalRatio[i] = pathDistance[i] / totaldistance;
+				if (totaldistance != 0) 
+				{
+					pathDistToTotalRatio[i] = pathDistance[i] / totaldistance;
+
+				} else pathDistToTotalRatio[i] = 0;
 			}
 				//trace(distance);
 				//trace(pathDistance[pathIndex]);

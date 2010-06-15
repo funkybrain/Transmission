@@ -10,7 +10,13 @@ package game
 	import net.flashpunk.utils.Draw;
 	
 	/**
-	 * Class is used to draw a blind on the main game window 
+	 * Shutter class is used to draw a sliding cache based on player path distance ratios
+	 * 
+	 * La longueur de l'écran est fonction du ratio du chemin x
+	 * La hauteur de l'écran est fonction du ratio du chemin z
+	 * Le chemin x est le chemin ayant le ratio le plus élevé
+	 * le chemin z est celui ayant le ratio le moins élevé
+	 * 
 	 */
 		
 	public class Shutter extends Entity
@@ -19,42 +25,45 @@ package game
 		 /**
 		 * Textures
 		 */
-		[Embed(source = '../../assets/shutterTexture.png')] private const SHUTTER:Class;
+		[Embed(source = '../../assets/shutterTexture.png')] private const RIGHT:Class;
+		[Embed(source = '../../assets/shutterTexture_DN.png')] private const DOWN:Class;
+		[Embed(source = '../../assets/shutterTexture_UP.png')] private const UP:Class;
 		
 		 /**
 		 * Class properties
 		 */
-		 public var hBlind:Image = new Image(SHUTTER);
-		 private var _debug:Boolean = false;
-		 
-		 //private var _rect:Rectangle = new Rectangle(0, 0, 400, 480);
-		 
-		public function Shutter(x:int=0, y:int=0) 
+		public var shutter:Image;
+				 
+		public function Shutter(x:int=0, y:int=0, pos:String="") 
 		{
 			this.x = x;
 			this.y = y;
+			type = "shutter";
 			
-			graphic = hBlind;
-			//graphic.scrollX = .5;
-			//graphic.scrollY = .5;
+			layer = 2;			
 			
-			layer = 0;
-			
+			// set the appropritae shutter graphic
+			init(pos);
 		}
 		
-		override public function render():void 
+		private function init(pos:String):void
 		{
-			super.render();
-			if (_debug) 
+			switch (pos) 
 			{
-				Draw.line(x, y, x, y + 480);
+				case "right":
+					shutter = new Image(RIGHT);
+					break;
+				case "up":
+					shutter = new Image(UP);
+					break;
+				case "down":
+					shutter = new Image(DOWN);
+					break;
 			}
+			
+			graphic = shutter;
+			trace("create shutter " + pos);
 		}
-		
-		/**
-		 * Getter functions.
-		 */
-		//public function get canvas():Canvas { return _hBlind; }
 		
 	}
 

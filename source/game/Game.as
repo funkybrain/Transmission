@@ -83,11 +83,11 @@ package game
 		private var _lifeTimer:GameOverlay;
 		
 		// store ratio in easy to manipulate variables
-		public var r:Number; 
-		public var v:Number; 
-		public var b:Number;
-		public var maxRatio:Number;
-		public var minRatio:Number;
+		public var ratioRouge:Number; 
+		public var ratioVert:Number; 
+		public var ratioBleu:Number;
+		private var _maxPathRatio:Number;
+		private var _minPathRatio:Number;
 		
 		// List<Animation> to store background animations
 		public var animationList:Vector.<Animation> = new Vector.<Animation>();
@@ -105,11 +105,17 @@ package game
 		public var masterfader:NumTween;
 		
 		// Shutters 
-		public var rightShutter:Shutter = new Shutter(800,0);
-		public var shutterSpring:NumTween = new NumTween();
-		private var _lastShutterPosH:Number = FP.camera.x + FP.screen.width / 2;
-		private var _shutterX:int;
-		private var _shutterY:int;
+		private var _shutterRight:Shutter;
+		private var _shutterRightX:int;
+		private var _shutterRightY:int;
+		
+		private var _shutterUp:Shutter;
+		private var _shutterUpX:int;
+		private var _shutterUpY:int;
+		
+		private var _shutterDown:Shutter;
+		private var _shutterDownX:int;
+		private var _shutterDownY:int;
 		
 		// Fade in screen
 		private var _fadeInCurtain:Curtain;
@@ -213,10 +219,6 @@ package game
 			// refresh screen color
 			FP.screen.color = 0x808080;
 			
-			//add shutters to main window
-			add(rightShutter);
-			addTween(shutterSpring);
-			
 			// fade game in
 			fadeCurtainIn();
 
@@ -224,17 +226,34 @@ package game
 			_lifeTimer = new GameOverlay();
 			add(_lifeTimer);
 			
+			// initialize shutters
+			initShutters();
+			
 			//TODO remove kill vol befor publish
 			FP.volume = LoadXmlData.VOLUME;
 						
 		} // end constructor
 		
-		
+		/**
+		 * Create the inital fade in as the game appears
+		 */
 		public function fadeCurtainIn():void
 		{
 			_fadeInCurtain = new Curtain(FP.width, FP.height, "in");
 			add(_fadeInCurtain);
 			trace("fade In");
+		}
+		
+		/**
+		 * Initialize shutters for game
+		 */
+		private function initShutters():void
+		{
+			_shutterRight = new Shutter(400, 0, "right");
+			_shutterDown = new Shutter(0, 240, "down");
+			_shutterUp = new Shutter(0, 0, "up");
+			
+			addList(_shutterDown, _shutterRight, _shutterUp);
 		}
 		
 		/**
@@ -244,18 +263,7 @@ package game
 		{
 			// child appears as a robot. Nothing transmitted yet.
 			player.state = "childAlive";
-			//robotChildIsAlive = true;
-			
-			// start countdown to actual transmission to child
-			//player.timeFatherToChild.start(); 			
-			
-			// start countdown to father death
-			//player.timeFatherToDeath.start();
-			
-			// add robot child
-			//robotChild = new Robot(player.x, player.y,"robotchild");
-			//add(robotChild);
-			
+
 			// remove control from player
 			player.hasControl = false;
 			
@@ -336,8 +344,8 @@ package game
 		public function transmitFatherToChild():void
 		{
 		
-			var ratx:Number = Math.max(r, v, b); // ratio du chemin le plus parcouru
-			var ratz:Number = Math.min(r, v, b); // ratio du chemin le moins parcouru
+			var ratx:Number = Math.max(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le plus parcouru
+			var ratz:Number = Math.min(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le moins parcouru
 			var classement:Array = player.pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order
 			
 			// debug stuff
@@ -522,18 +530,12 @@ package game
 			}
 			
 			// update path ratios
-			r = player.pathDistToTotalRatio[0]; 
-			v = player.pathDistToTotalRatio[1]; 
-			b = player.pathDistToTotalRatio[2];
-			maxRatio = Math.max(r,v,b);
-			minRatio = Math.min(r,v,b);
+			_calculatePathRatios();
+
 			
 			// update shutter positions
-			if (player.x>FP.screen.width/2-10) 
-			{
-				updateShutters();
-				
-			}
+			updateShutters();
+			
 			
 			//test to see if we're near game end
 			checkGrandChildNearDeath();
@@ -618,6 +620,21 @@ package game
 		}
 		// end Game UPDATE LOOP
 		
+		/**
+		 * Calculate the path ratios
+		 */
+		private function _calculatePathRatios():void
+		{
+			ratioRouge = player.pathDistToTotalRatio[0]; 
+			ratioVert = player.pathDistToTotalRatio[1]; 
+			ratioBleu = player.pathDistToTotalRatio[2];
+			_maxPathRatio = Math.max(ratioRouge,ratioVert,ratioBleu);
+			_minPathRatio = Math.min(ratioRouge,ratioVert,ratioBleu);
+		}
+		
+		/**
+		 * Camera pan event when epitaphe starts to appear
+		 */
 		private function onCameraPan():void
 		{
 			trace("camera pan complete");
@@ -723,33 +740,45 @@ package game
 		 */
 		public function updateShutters():void
 		{
-			var xmin:Number = FP.camera.x + FP.screen.width / 2;					
-			var xmax:Number = FP.camera.x + FP.screen.width;
+			/* RIGHT shutter */
+			var shutterRightClosed:Number = FP.camera.x + FP.screen.width / 2;					
+			var shutterRightOpen:Number = FP.camera.x + FP.screen.width;
+			var shutterRightTarget:Number = FP.scaleClamp(_maxPathRatio, 0.33, 0.99, shutterRightClosed, shutterRightOpen);
 			
-			var xtarget:Number = FP.scaleClamp(maxRatio, 0.3, 0.9, xmin, xmax);
 			
-			/*if (shutterSpring.active==false && int(xtarget) != int(_lastShutterPosH)) 
+			if (player.totaldistance >= 1000) 
 			{
-				shutterSpring.tween(_lastShutterPosH, xtarget, 3);					
-				shutterSpring.start();
-				trace("start tween shutter");
-				trace("moving from: " + (_lastShutterPosH - FP.camera.x));
-				trace("moving to: " + (xtarget - FP.camera.x));
-				trace("speed: " + player.playerCeilingVelocity.length);
-				
-			}*/
-			//BUG i don't think the tween is working, even though the xtarget position seems ok
-			//_shutterX = shutterSpring.value;
-			_shutterX = xtarget;
-			_shutterY = FP.camera.y;
-
-			rightShutter.x = _shutterX;
-			rightShutter.y = _shutterY;
+				_shutterRight.x = shutterRightTarget;
+			} else _shutterRight.x = shutterRightClosed;
 			
-			// store current position for next loop
-			_lastShutterPosH = rightShutter.x;
+			_shutterRight.y = 0;
+			
+			/* UP shutter */
+			var shutterUpClosed:Number = 0;					
+			var shutterUpOpen:Number = -FP.screen.height/2;
+			var shutterUpTarget:Number = FP.scaleClamp(_minPathRatio, 0, 0.33, shutterUpClosed, shutterUpOpen);
+
+			if (player.totaldistance >= 1000) 
+			{
+				_shutterUp.y = shutterUpTarget;
+			}
+			
+			_shutterUp.x = FP.camera.x;
+			
+			/* DOWN shutter */
+			var shutterDownClosed:Number = FP.screen.height / 2;					
+			var shutterDownOpen:Number = FP.screen.height;
+			var shutterDownTarget:Number = FP.scaleClamp(_minPathRatio, 0, 0.33, shutterDownClosed, shutterDownOpen);			
+			
+			if (player.totaldistance >= 1000) 
+			{
+				_shutterDown.y = shutterDownTarget;
+			}
+			
+			_shutterDown.x = FP.camera.x;
+			
 		}
-		// end updateShutters()
+
 		
 		/**
 		 * Test to see if GrandChild is close to death
@@ -1059,9 +1088,9 @@ package game
 				
 			}
 			
-			var father_var:String = "Red - Vb: " + Number(player.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(player.pathDistance[0]).toFixed(2) + " r: " + Number(player.pathDistToTotalRatio[0]).toFixed(2) + " Vr: " + Number(player.pathMaxVel[0]).toFixed(2) + "\n"
-									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " Vv: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
-									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" r: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " Vb: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
+			var father_var:String = "Red - Vb: " + Number(player.pathBaseSpeed[0]).toFixed(2) + " d: " + Number(player.pathDistance[0]).toFixed(2) + " ratr: " + Number(player.pathDistToTotalRatio[0]).toFixed(2) + " Vr: " + Number(player.pathMaxVel[0]).toFixed(2) + "\n"
+									+"Green - Vb: " + Number(player.pathBaseSpeed[1]).toFixed(2) + " d: " + Number(player.pathDistance[1]).toFixed(2) +" ratv: " + Number(player.pathDistToTotalRatio[1]).toFixed(2) + " Vv: " + Number(player.pathMaxVel[1]).toFixed(2) + "\n"
+									+"Blue - Vb: " + Number(player.pathBaseSpeed[2]).toFixed(2) + " d: " + Number(player.pathDistance[2]).toFixed(2) +" ratb: " + Number(player.pathDistToTotalRatio[2]).toFixed(2) + " Vb: " + Number(player.pathMaxVel[2]).toFixed(2) + "\n"
 									+"Timer: " + Math.floor(timer) + " State: " + player.state.toUpperCase() +"\n"//+ " Row: " + player.row + " Col: " + player.col 
 									+"modele de vitesse: " + player.typeVitesse[player.currentPathIndex] + "\n"
 									+"Vinstantanée: " + Number(player.pathInstantVel[player.currentPathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n"

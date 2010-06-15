@@ -32,7 +32,7 @@
 		
 		public var totaldistance:Number=0; // total distance traveled on all paths
 		public var pathDistance:Array = new Array(); // distance travelled on each path
-		public var pathDistToTotalRatio:Array = new Array(); // ratio of distance travelled on each path by total distance
+		public var pathDistToTotalRatio:Array = new Array(0,0,0); // ratio of distance travelled on each path by total distance
 		 
 		/**
 		 * Constructor.
