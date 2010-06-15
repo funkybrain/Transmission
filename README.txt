@@ -12,9 +12,13 @@ Bugs:
 Next: release 2.0
 -----------------
 > nouvelle animation fille -> petit-fils
+> modif avatar naissance fille (ajout de couleurs)
 > musique credits joue
 > compteur apparition du bebe enleve
 > quand la mort du petit fils commence, le compteur de temps ne s'arrete plus
+> nouveau rouleau
+> reglage cache horizontal et vertical selon les 3 modeles de transmission
+> nouvelle anim de fond pere-fils
 
 To do list:
 ----------

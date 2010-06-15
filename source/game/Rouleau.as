@@ -15,7 +15,7 @@ package game
 		
 		public var spriteRouleau:Spritemap = new Spritemap(ROULEAU, 20, 480);
 		
-		private var _animation:Array = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8);
+		private var _animation:Array = new Array(0, 1, 2, 3, 4, 5);
 		
 		public var previousX:int;
 		

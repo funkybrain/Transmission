@@ -1565,12 +1565,7 @@
   </player>
   <animations>
     <anim_junky x="150" y="0"/>
-    <anim_serveuse x="630" y="0"/>
     <anim_prison x="1080" y="0"/>
+    <anim_fatherchild x="660" y="190"/>
   </animations>
-    <waypoints>
-    <!-- x 4380 -->
-	<!-- trigger x="1000" y="0"/ -->
-  </waypoints>
-
 </level>

@@ -1,0 +1,6 @@
+anim pere fils
+
+120X200 
+18 frames
+
+total doc 2160X200

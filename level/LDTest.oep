@@ -20,7 +20,8 @@
 			<object name="anim_crash" image="slot_crash.png" width="30" height="30" />
 			<object name="anim_prison" image="slot_prison.png" width="30" height="30" />
 			<object name="anim_serveuse" image="slot_serveuse.png" width="30" height="30" />
-			<object name="anim_junky" image="slot_junky.png" width="30" height="30" />			
+			<object name="anim_junky" image="slot_junky.png" width="30" height="30" />	
+			<object name="anim_fatherchild" image="slot_fatherchild.png" width="30" height="30" />			
 		
 		</folder>
 		

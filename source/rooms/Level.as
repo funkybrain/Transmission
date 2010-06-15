@@ -228,6 +228,15 @@
 				trace("junky x: " + _animationList[index_six-1].x);
 			}
 			
+			for each (var t:XML in level.animations.anim_fatherchild)
+			{
+				// add new animation to Vector and Level
+				var _x7:int = int(t.@x) + _offset;
+				var index_seven:int = _animationList.push(new Animation(_x7, t.@y, "fatherchild", 1));
+				world.add(_animationList[index_seven - 1]);
+				trace("fatherchild x: " + _animationList[index_seven-1].x);
+			}
+			
 			return _animationList;
 		}
 		
