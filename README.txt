@@ -23,7 +23,8 @@ To do list:
 > can we avoid the slowdown when player only crosses path without changing?
 > implement moovesmooth
 > preloader!
-
+> remove tileset to save on memory
+> blend shutter textures
 
 > A x min avant la fin du timer:
 - fade music out

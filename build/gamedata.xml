@@ -1,6 +1,6 @@
 <data>
 	
-	<volume>0.8</volume>	<!-- entre 0 et 1-->
+	<volume>0</volume>	<!-- entre 0 et 1-->
 	
 	<!-- debug for overlay-->
 	<debug>true</debug>

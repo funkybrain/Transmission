@@ -106,16 +106,15 @@ package game
 		
 		// Shutters 
 		private var _shutterRight:Shutter;
-		private var _shutterRightX:int;
-		private var _shutterRightY:int;
+		private var _shutterRightTween:NumTween;
 		
 		private var _shutterUp:Shutter;
-		private var _shutterUpX:int;
-		private var _shutterUpY:int;
+		private var _shutterUpTween:NumTween;
 		
 		private var _shutterDown:Shutter;
-		private var _shutterDownX:int;
-		private var _shutterDownY:int;
+		private var _shutterDownTween:NumTween;
+		
+		private var _shutterChangeState:int = 3;
 		
 		// Fade in screen
 		private var _fadeInCurtain:Curtain;
@@ -253,6 +252,14 @@ package game
 			_shutterDown = new Shutter(0, 240, "down");
 			_shutterUp = new Shutter(0, 0, "up");
 			
+			_shutterDownTween = new NumTween();
+			_shutterRightTween = new NumTween();
+			_shutterUpTween = new NumTween();
+			
+			addTween(_shutterDownTween);
+			addTween(_shutterRightTween);
+			addTween(_shutterUpTween);
+			
 			addList(_shutterDown, _shutterRight, _shutterUp);
 		}
 		
@@ -337,16 +344,34 @@ package game
 			trace("fade out");
 		}
 		
+		/**
+		 * 
+		 * @return array of (distance path/total distance) sorted in ascending order
+		 */
+		private function _getClassementPath():Array
+		{
+
+			return player.pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order			
+		}
+		
+		private function _getRatx():Number
+		{
+			return Math.max(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le plus parcouru
+		}
+		
+		private function _getRatz():Number
+		{
+			return Math.min(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le moins parcouru
+		}
 		
 		/**
 		 * Calculs de transmission
 		 */
 		public function transmitFatherToChild():void
-		{
-		
-			var ratx:Number = Math.max(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le plus parcouru
-			var ratz:Number = Math.min(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le moins parcouru
-			var classement:Array = player.pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order
+		{		
+			var ratx:Number = _getRatx();
+			var ratz:Number = _getRatz();
+			var classement:Array = _getClassementPath();
 			
 			// debug stuff
 			for (var h:int = 0; h < 3; h++) 
@@ -740,42 +765,213 @@ package game
 		 */
 		public function updateShutters():void
 		{
-			/* RIGHT shutter */
-			var shutterRightClosed:Number = FP.camera.x + FP.screen.width / 2;					
-			var shutterRightOpen:Number = FP.camera.x + FP.screen.width;
-			var shutterRightTarget:Number = FP.scaleClamp(_maxPathRatio, 0.33, 0.99, shutterRightClosed, shutterRightOpen);
+			var debug:Boolean = false;
 			
+			var maxR:Number = _getRatx();
+			var minR:Number = _getRatz();
 			
-			if (player.totaldistance >= 1000) 
-			{
-				_shutterRight.x = shutterRightTarget;
-			} else _shutterRight.x = shutterRightClosed;
+			var tiggerLimit:Number = 1000;
 			
+			/* RIGHT shutter*/
+			var shutterRightClosed:Number = FP.screen.width / 2;					
+			var shutterRightOpen:Number = FP.screen.width;
+			var shutterRightMid:Number = 2 * FP.screen.width / 3;
 			_shutterRight.y = 0;
 			
+			if (player.totaldistance < tiggerLimit) 
+			{
+				_shutterRight.x = FP.camera.x + shutterRightClosed;
+			}
+						
 			/* UP shutter */
 			var shutterUpClosed:Number = 0;					
-			var shutterUpOpen:Number = -FP.screen.height/2;
-			var shutterUpTarget:Number = FP.scaleClamp(_minPathRatio, 0, 0.33, shutterUpClosed, shutterUpOpen);
-
-			if (player.totaldistance >= 1000) 
-			{
-				_shutterUp.y = shutterUpTarget;
-			}
-			
+			var shutterUpOpen:Number = -FP.screen.height / 2;
+			var shutterUpMid:Number = -FP.screen.height / 4;
 			_shutterUp.x = FP.camera.x;
-			
+
 			/* DOWN shutter */
 			var shutterDownClosed:Number = FP.screen.height / 2;					
 			var shutterDownOpen:Number = FP.screen.height;
-			var shutterDownTarget:Number = FP.scaleClamp(_minPathRatio, 0, 0.33, shutterDownClosed, shutterDownOpen);			
+			var shutterDownMid:Number = 3 * FP.screen.height / 4;
+			_shutterDown.x = FP.camera.x;			
 			
-			if (player.totaldistance >= 1000) 
+			
+			// Modèle 1-a: 0.6<maxR<1 et 0=<minR<0.2
+			if (maxR > 0.6 && minR < 0.2 && player.totaldistance >= tiggerLimit)
 			{
-				_shutterDown.y = shutterDownTarget;
+				/* RIGHT shutter */
+				if (!_shutterRightTween.active && _shutterChangeState !=0) 
+				{
+					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightOpen, 4, Ease.sineIn);
+					_shutterRightTween.start();
+				}
+				
+				if (_shutterRightTween.active) 
+				{
+					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
+				} else _shutterRight.x = FP.camera.x + shutterRightOpen;
+				
+				/* UP shutter */
+				if (!_shutterUpTween.active && _shutterChangeState !=0) 
+				{
+					_shutterUpTween.tween(_shutterUp.y, shutterUpClosed, 4, Ease.sineIn);
+					_shutterUpTween.start();
+				}
+				
+				if (_shutterUpTween.active) 
+				{
+					_shutterUp.y = _shutterUpTween.value;
+				} else _shutterUp.y = shutterUpClosed;
+				
+				
+				/* DOWN shutter */		
+
+				if (!_shutterDownTween.active && _shutterChangeState !=0) 
+				{
+					_shutterDownTween.tween(_shutterDown.y, shutterDownClosed, 4, Ease.sineIn);
+					_shutterDownTween.start();
+				}
+				
+				if (_shutterDownTween.active) 
+				{
+					_shutterDown.y = _shutterDownTween.value;
+				} else _shutterDown.y = shutterDownClosed;
+				
+				// set new shutter state
+				_shutterChangeState = 0;
+				
+				//debug
+				if (_counter > 0.4 && debug) 
+				{
+					_counter -= _counter;
+					trace("1a");
+					
+					if (_shutterRightTween.active) 
+					{
+						trace(_shutterRightTween.value);
+					}
+				}
+			}
+			// Modèle 1-b: 0.43=<maxR=<0.6 et 0=<minR<0.15
+			else if (maxR >= 0.43 && maxR <= 0.6 && minR <= 0.15 && player.totaldistance >= tiggerLimit)
+			{	
+				/* RIGHT shutter */
+				if (!_shutterRightTween.active && _shutterChangeState !=1) 
+				{
+					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightMid, 4, Ease.sineIn);
+					_shutterRightTween.start();
+				}
+				
+				if (_shutterRightTween.active) 
+				{
+					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
+				} else _shutterRight.x = FP.camera.x + shutterRightMid;
+				
+				
+				/* UP shutter */
+				if (!_shutterUpTween.active && _shutterChangeState !=1) 
+				{
+					_shutterUpTween.tween(_shutterUp.y, shutterUpMid, 4, Ease.sineIn);
+					_shutterUpTween.start();
+				}
+				
+				if (_shutterUpTween.active) 
+				{
+					_shutterUp.y = _shutterUpTween.value;
+				} else _shutterUp.y = shutterUpMid;
+				
+				
+				/* DOWN shutter */		
+
+				if (!_shutterDownTween.active && _shutterChangeState !=1) 
+				{
+					_shutterDownTween.tween(_shutterDown.y, shutterDownMid, 4, Ease.sineIn);
+					_shutterDownTween.start();
+				}
+				
+				if (_shutterDownTween.active) 
+				{
+					_shutterDown.y = _shutterDownTween.value;
+				} else _shutterDown.y = shutterDownMid;
+				
+
+				// set new shutter state
+				_shutterChangeState = 1;
+				
+				
+				//debug
+				if (_counter > 0.4 && debug) 
+				{
+					_counter -= _counter;
+					trace("1b");
+					
+					if (_shutterRightTween.active) 
+					{
+						trace(_shutterRightTween.value);
+					}
+				}
+
+			}
+			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
+			else if (maxR >= 0.34 && maxR <= 0.6 && minR >= 0.15 && minR <= 0.33 && player.totaldistance >= tiggerLimit)
+			{
+				/* RIGHT shutter */
+				if (!_shutterRightTween.active && _shutterChangeState !=2) 
+				{
+					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightClosed, 4, Ease.sineIn);
+					_shutterRightTween.start();
+				}
+				
+				if (_shutterRightTween.active) 
+				{
+					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
+				} else _shutterRight.x = FP.camera.x + shutterRightClosed;
+				
+				
+				/* UP shutter */
+				if (!_shutterUpTween.active && _shutterChangeState !=2) 
+				{
+					_shutterUpTween.tween(_shutterUp.y, shutterUpOpen, 4, Ease.sineIn);
+					_shutterUpTween.start();
+				}
+				
+				if (_shutterUpTween.active) 
+				{
+					_shutterUp.y = _shutterUpTween.value;
+				} else _shutterUp.y = shutterUpOpen;
+				
+				
+				/* DOWN shutter */		
+
+				if (!_shutterDownTween.active && _shutterChangeState !=2) 
+				{
+					_shutterDownTween.tween(_shutterDown.y, shutterDownOpen, 4, Ease.sineIn);
+					_shutterDownTween.start();
+				}
+				
+				if (_shutterDownTween.active) 
+				{
+					_shutterDown.y = _shutterDownTween.value;
+				} else _shutterDown.y = shutterDownOpen;
+				
+				// set new shutter state
+				_shutterChangeState = 2;
+				
+
+				//debug
+				if (_counter > 0.4 && debug) 
+				{
+					_counter -= _counter;
+					trace("2");
+					
+					if (_shutterRightTween.active) 
+					{
+						trace(_shutterRightTween.value);
+					}
+				}
+
 			}
 			
-			_shutterDown.x = FP.camera.x;
 			
 		}
 

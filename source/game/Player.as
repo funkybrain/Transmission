@@ -1088,7 +1088,8 @@
 		{
 			if (robotFather.remove) 
 			{
-				FP.world.remove(robotFather);
+				//BUG removing father removes background image!
+				//FP.world.remove(robotFather);
 				robotFatherIsAlive = false;
 				trace("removed robot father from world");
 			}
@@ -1101,6 +1102,7 @@
 		{
 			if (robotDaughter.remove) 
 			{
+				//BUG removing daughter removes path spritemap
 				//FP.world.remove(robotDaughter);
 				robotDaughterIsAlive = false;
 				trace("removed robot daughter from world");

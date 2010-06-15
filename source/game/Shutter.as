@@ -52,6 +52,7 @@ package game
 			{
 				case "right":
 					shutter = new Image(RIGHT);
+					shutter.x = 10; // offset by 10 pixel to avoir thin opening at screen edge
 					break;
 				case "up":
 					shutter = new Image(UP);
