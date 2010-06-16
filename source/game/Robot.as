@@ -41,7 +41,7 @@
 			this.y = _y;
 			
 			// layer
-			layer = 1;
+			layer = Layers.ROBOT;
 			
 			// offset graphics so that they are centered around entity's origin
 			robotFatherDeath.x = -15;

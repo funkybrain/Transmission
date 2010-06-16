@@ -222,7 +222,7 @@
 			
 			
 			// layer
-			layer = 1;
+			layer = Layers.PLAYER;
 			
 			// set position vector as entity's coordinates
 			position.x = this.x;

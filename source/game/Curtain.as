@@ -59,7 +59,7 @@ package game
 			graphic = _fadeMask;
 			
 			// must be on top of everything
-			layer = 1;
+			layer = Layers.CURTAIN;
 			
 			
 			//intialize curtain

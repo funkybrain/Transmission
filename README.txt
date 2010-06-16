@@ -25,6 +25,7 @@ Next: release 2.0
 > ajout d'une barre de progression avec un switch dans gamedata.xml
 > modif des phases de transmission: duree determinee par valeur dans gamedata
 > jingle de transmission activee
+> ajustement des layers
 
 To do list:
 ----------

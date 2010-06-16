@@ -17,7 +17,7 @@ package game
 		public var displayTimer:Text;
 		
 		// progress bar diplayed at screen bottom
-		private var _lineTopLeft:Point = new Point(60, 445);
+		/*private var _lineTopLeft:Point = new Point(60, 445);
 		private var _lineBotLeft:Point = new Point(60, 475)
 		private var _lineTopRight:Point = new Point(740, 445);
 		private var _lineBotRight:Point = new Point(740, 475);
@@ -25,6 +25,21 @@ package game
 		private var _rectOrigin:Point = new Point(60, 450);
 		private var _rectWidth:int = 0;
 		private var _rectHeight:int = 20;		
+		
+		private var _cursorTop:Point = new Point();
+		private var _cursorBot:Point = new Point();
+		
+		public var maxLength:int;*/
+		
+		// plus fin
+		private var _lineTopLeft:Point = new Point(15, 445);
+		private var _lineBotLeft:Point = new Point(15, 470)
+		private var _lineTopRight:Point = new Point(730, 445);
+		private var _lineBotRight:Point = new Point(730, 470);
+
+		private var _rectOrigin:Point = new Point(15, 450);
+		private var _rectWidth:int = 0;
+		private var _rectHeight:int = 15;		
 		
 		private var _cursorTop:Point = new Point();
 		private var _cursorBot:Point = new Point();
@@ -42,12 +57,12 @@ package game
 			displayTimer = new Text("", 0, 0, 50, 50);
 			displayTimer.font = "over";
 			displayTimer.color = 0xDFFEDC;
-			displayTimer.size = 40;
+			displayTimer.size = 36;
 			
 
 			graphic = displayTimer;
 			
-			layer = 0;
+			layer = Layers.OVERLAY;
 			
 			maxLength = _lineTopRight.x - _lineTopLeft.x;
 		}
@@ -55,9 +70,8 @@ package game
 		public function updateTimer(time:Number):void
 		{
 			displayTimer.text = time.toString();
-			x = FP.camera.x + 750;
+			x = FP.camera.x + 745;
 			y = FP.camera.y + 435;
-			
 			//trace("timer: " + timer.text);
 		}
 		
@@ -82,7 +96,7 @@ package game
 			Draw.rect(FP.camera.x + _lineTopLeft.x, _lineTopLeft.y, (_lineTopRight.x - _lineTopLeft.x), (_lineBotLeft.y - _lineTopLeft.y), 0xFFFFFF, 0.5);
 			
 			
-			Draw.linePlus(FP.camera.x + _cursorTop.x, _cursorTop.y, FP.camera.x + _cursorBot.x, _cursorBot.y, 0xEE9EFA, 1, 5);
+			Draw.linePlus(FP.camera.x + _cursorTop.x, _cursorTop.y, FP.camera.x + _cursorBot.x, _cursorBot.y, 0x2C45AA, 1, 5);
 			
 
 		}

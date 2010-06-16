@@ -40,7 +40,7 @@ package game
 			this.y = y;
 			type = "shutter";
 			
-			layer = 2;			
+			layer = Layers.SHUTTERS;		
 			
 			// set the appropritae shutter graphic
 			init(pos);

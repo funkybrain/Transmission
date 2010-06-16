@@ -34,7 +34,7 @@ package game
 		{
 			this.graphic = spriteRouleau;
 			
-			layer = 2;
+			layer = Layers.ROULEAU;
 			
 			_spinning = new NumTween(_onSpinComplete);
 			_spinRate = new NumTween();
