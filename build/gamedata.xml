@@ -4,7 +4,7 @@
 	<transmitTimer>10</transmitTimer>
 	
 	<!-- volume entre 0 et 1-->
-	<volume>0</volume>
+	<volume>0.5</volume>
 	
 	<!-- HUD timer + bar de progression-->
 	<HUD>true</HUD>

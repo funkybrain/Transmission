@@ -6,8 +6,7 @@ Embedding assets: http://www.bit-101.com/blog/?p=853
 
 Bugs:
 ----
-> music comes back when death sequence starts, even though volume set to zero
-> music does not fade out during static animations
+> music comes back when death sequence starts (or at grandchild transmition?), even though volume set to zero
 > shutterRight does not close on model 2
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
@@ -24,6 +23,8 @@ Next: release 2.0
 > reglage cache horizontal et vertical selon les 3 modeles de transmission
 > nouvelle anim de fond pere-fils
 > ajout d'une barre de progression avec un switch dans gamedata.xml
+> modif des phases de transmission: duree determinee par valeur dans gamedata
+> jingle de transmission activee
 
 To do list:
 ----------

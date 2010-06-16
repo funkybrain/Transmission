@@ -19,14 +19,15 @@ package game
 		[Embed(source = '../../sounds/Chemin3.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC_BLUE:Class;
 	
-
+		[Embed(source = '../../sounds/groove.mp3', mimeType = 'audio/mpeg')]
+			private static const SOUND_TRANSMIT:Class;
+	
 		/**
 		 * Sound properties
 		 */
 		public var pathSound:Vector.<Sfx> = new Vector.<Sfx>(); // List<Sfx> to store path sounds/music
 		public var pathFader:Vector.<SfxFader> = new Vector.<SfxFader>(); // List<SfxFader> to store path sounds faders
-		//public var pathFaderNoStop:Vector.<SfxFader> = new Vector.<SfxFader>(); // List<SfxFader> to store path sounds faders
-
+		public var transmitJingle:Sfx;
 		
 		
 			
@@ -40,9 +41,7 @@ package game
 			pathFader[1] = new SfxFader(pathSound[1], _onFaderComplete);
 			pathFader[2] = new SfxFader(pathSound[2], _onFaderComplete);
 			
-			/*pathFaderNoStop[0] = new SfxFader(pathSound[0]);
-			pathFaderNoStop[1] = new SfxFader(pathSound[1]);
-			pathFaderNoStop[2] = new SfxFader(pathSound[2]);*/
+			transmitJingle = new Sfx(SOUND_TRANSMIT);
 
 			processRules();
 		}

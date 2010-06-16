@@ -386,7 +386,7 @@
 			}
 			
 			// start playing path sound + music
-			_startSounds();
+			startSounds();
 			
 			// stop music on the player's starting path.. will resume once player starts moving
 			//sound.pathSound[_pathPreviousIndex].stop();
@@ -399,7 +399,7 @@
 		/**
 		 * Initialize all sounds
 		 */
-		private function _startSounds():void
+		private function startSounds():void
 		{
 			// start all sounds but only turn up volume on current path
 			for each (var music:Sfx in sound.pathSound) 
@@ -475,7 +475,7 @@
 			}
 			
 			// fade sounds to ensure the correct path music is playing if the player is moving
-			_playPathMusic(currentPathIndex);
+			playPathMusic(currentPathIndex);
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
@@ -509,7 +509,7 @@
 				{
 					//trace("permanent path change");
 					// play music based on current path and latest path change
-					_changePathMusic();
+					changePathMusic();
 				}
 				_pathSwitched = false;
 				_pathSwitchClonedPosition = false;
@@ -575,7 +575,7 @@
 		/**
 		 * Play path music if player is moving
 		 */
-		private function _playPathMusic(path:int):void
+		private function playPathMusic(path:int):void
 		{
 			// FADE MUSIC IN
 			if (isMoving && !wasMoving) 
@@ -621,14 +621,23 @@
 				}
 				//trace(" \n");
 			}
-			
-			
+		}
+		
+		/**
+		 * If there's no fader currently active, fade the path music out
+		 */
+		private function stopPathMusic(path:int):void
+		{
+			if (!sound.pathFader[path].active) 
+			{
+				sound.pathFader[path].fadeTo(0, 2);
+			}
 		}
 		
 		/**
 		 * Change music track based on path changes
 		 */
-		private function _changePathMusic():void
+		private function changePathMusic():void
 		{
 			//compare the two stores path indexes (seperated by 30 pixels distance)
 			//if they are different, then player has really changed path
@@ -670,21 +679,22 @@
 		 */
 		private function scalePlayerSprite():void
 		{
-			if (graphic == child) 
+			if (graphic == child && timeToGrandChild.active) 
 			{
 				// map the time of child's life to the scale of it's sprite
 				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration,
 				(timeToGrandChild.duration / 2), _daughterMinSize, 1);
 				
 				child.scale = mapped;
-				//trace("child scale: " + mapped);
-			} else if(graphic == grandChild)
+				
+			} else if(graphic == grandChild && timeGrandChildToEnd.active)
 			{
 				//map the time of grandchild's life to the scale of it's sprite
 				var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining,
 				timeGrandChildToEnd.duration, 0, _grandChildMinSize, 1);
+				
 				grandChild.scale = mapped2;
-			}
+			}	
 		}
 		
 		
@@ -1203,7 +1213,7 @@
 		 */
 		public function startTransmitionTimer(length:Number):void
 		{
-			transmitTimer = new Alarm(length, _onTransmitTimerComplete, 2);
+			transmitTimer = new Alarm(length, onTransmitTimerComplete, 2);
 			addTween(transmitTimer);
 			transmitTimer.start();
 			
@@ -1214,7 +1224,7 @@
 			trace("start transmition timer");
 		}
 		
-		private function _onTransmitTimerComplete():void
+		private function onTransmitTimerComplete():void
 		{
 			isTransmitting = false;
 			
@@ -1263,7 +1273,7 @@
 		 * 
 		 * @return array of (distance path/total distance) sorted in ascending order
 		 */
-		private function _getClassementPath():Array
+		private function getClassementPath():Array
 		{
 
 			return pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order			
@@ -1286,7 +1296,7 @@
 		{		
 			var ratx:Number = getRatx();
 			var ratz:Number = getRatz();
-			var classement:Array = _getClassementPath();
+			var classement:Array = getClassementPath();
 			
 			// debug stuff
 			for (var h:int = 0; h < 3; h++) 
@@ -1439,6 +1449,9 @@
 		 */
 		public function onTimeToChild():void
 		{
+			// kill the path music
+			stopPathMusic(currentPathIndex);
+			
 			// child appears as a robot. Nothing transmitted yet.
 			state = "childAlive";
 
@@ -1456,12 +1469,17 @@
 		 */
 		public function onTimeFatherToDeath():void
 		{
+			// kill the path music
+			stopPathMusic(currentPathIndex);
+			
 			// start the transmition timer
 			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
-			trace("transit timer: " + LoadXmlData.TRANS_TIMER);
+			
 			// trigger the father death sequence
 			fatherDeathSequence();
 			
+			// cue-in jingle
+			sound.transmitJingle.play();
 		}
 		
 	
@@ -1471,11 +1489,17 @@
 		 */
 		public function onTimeToGrandChild():void
 		{
+			// kill the path music
+			stopPathMusic(currentPathIndex);
+			
 			// start the transmition timer
 			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
 			
 			// trigger the daughter death sequence
 			daughterDeathSequence();
+			
+			// cue-in jingle
+			sound.transmitJingle.play()
 
 		}
 		
