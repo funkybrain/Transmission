@@ -1,5 +1,7 @@
 package game 
 {
+	import flash.display.InteractiveObject;
+	import utils.SWFProfiler;
 	import net.flashpunk.graphics.Canvas;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.Sfx;
@@ -30,6 +32,7 @@ package game
 	import net.flashpunk.utils.Ease;
 	import net.flashpunk.utils.Draw;
 	import flash.geom.Point;
+	import utils.SWFProfiler;
 	
 	public class Game extends World
 	{
@@ -141,8 +144,6 @@ package game
 
 		public var playerGoneAWOL:Boolean = false;
 		public var grandChildDying:Boolean = false;
-		
-		
 
 		/**
 		 * Epitaphe
@@ -159,7 +160,7 @@ package game
 		 * CONSTRUCTOR
 		 */
 		public function Game() 
-		{
+		{	
 			// create first level
 			level_1 = new Level(1, 0);
 			
@@ -241,6 +242,7 @@ package game
 			_fadeInCurtain = new Curtain(FP.width, FP.height, "in");
 			add(_fadeInCurtain);
 			trace("fade In");
+			
 		}
 		
 		/**
