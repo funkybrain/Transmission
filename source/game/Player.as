@@ -51,14 +51,22 @@
 		private var zoom:VarTween;
 		
 		/**
+		 * Load external game data
+		 */
+		private var TIMER_CHILD:Number = LoadXmlData.timer_ToChild;
+		private var TIMER_FATHERTODEATH:Number = LoadXmlData.timer_FatherToDeath;
+		private var TIMER_CHILDTOGRANDCHILD:Number = LoadXmlData.timer_ChildToGrandChild;
+		private var TIMER_GRANDCHILDTOEND:Number = LoadXmlData.timer_GrandChildToEnd;
+		
+		/**
 		 * Alarms.
 		 */
 		public var timeToChild:Alarm;
-		//public var timeFatherToChild:Alarm;
 		public var timeFatherToDeath:Alarm;
 		public var timeToGrandChild:Alarm;
 		public var timeGrandChildToEnd:Alarm;
 		public var timers:Vector.<Alarm> = new Vector.<Alarm>(); // store all alarms
+		public var transmitTimer:Alarm; // plays during change of state
 		
 	
 		/**
@@ -106,6 +114,13 @@
 		// store the greater of pathMaxVel and PathChildSpeed
 		private var _maxPathSpeed:Array = new Array();
 
+				
+		// store ratio in easy to manipulate variables
+		public var ratioRouge:Number; 
+		public var ratioVert:Number; 
+		public var ratioBleu:Number;
+		private var _maxPathRatio:Number;
+		private var _minPathRatio:Number;
 		
 		/**
 		 * Special speed properties for child
@@ -142,6 +157,9 @@
 		public var framesChildAlive:Array;
 		public var framesFatherDeath:Array;
 		
+		private var _daughterMinSize:Number = 0.6;
+		private var _grandChildMinSize:Number = 0.6;
+		
 		/**
 		 * define hitbox origin.
 		 */		
@@ -171,15 +189,28 @@
 		public var isFatherDying:Boolean = false;
 		public var isDaughterDying:Boolean = false;
 		public var hasControl:Boolean = true;
+		public var isTransmitting:Boolean = false; // true if player is undergoing transformation
+		private var _isDaughterVisible:Boolean = false; // true once daughter becomes visible
+		private var _isGrandChildVisible:Boolean = false;
 
+		/**
+		 * Fade Out
+		 */
+		public var fadeOutCurtain:Curtain;
+		
+		
 		/**
 		 * For debug
 		 */
 		private var _counter:Number = 0;
 		
-		/**
-		 * CONSTRUCTOR
-		 */
+		
+		
+		
+		
+		/************************************************
+		 ************    CONSTRUCTOR      ***************
+		 ************************************************/
 		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
 			//call ancestor's construtor
@@ -294,6 +325,22 @@
 			// set up zooms
 			zoom = new VarTween();
 			addTween(zoom);
+			
+			//set all transmission timer alarms (one-shot alarms)
+			timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
+			addTween(timeToChild, true); // add and start alarm
+			
+			timeFatherToDeath = new Alarm(TIMER_FATHERTODEATH, onTimeFatherToDeath, 2);
+			addTween(timeFatherToDeath, true); // add and start alarm
+			
+			timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
+			addTween(timeToGrandChild, false); // add but don't start yet!
+			
+			timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeGrandChildToEnd, 2);
+			addTween(timeGrandChildToEnd, false); // add but don't start yet!
+			
+			timers.push(timeToChild, timeFatherToDeath,
+				timeToGrandChild, timeGrandChildToEnd);
 				
 		}
 		// END CONSTRUCTOR
@@ -365,9 +412,11 @@
 
 		}
 		 
-		/**
-		 * PLAYER UPDATE LOOP
-		 */
+		
+		
+		/************************************
+		 ******  PLAYER UPDATE LOOP *********
+		 ************************************/
 		override public function update():void 
 		{
 			// update debug game time counter
@@ -500,10 +549,8 @@
 			}*/
 			
 			// scale player graphic if required
-			if (state == "child" || state == "grandChild") 
-			{
-				_scalePlayerSprite();		
-			}
+			scalePlayerSprite();		
+			
 			
 			// check to see if it's time to make child appear
 			if (robotFatherIsAlive) 
@@ -621,18 +668,21 @@
 		/**
 		 * Scale player graphic throughout its life
 		 */
-		private function _scalePlayerSprite():void
+		private function scalePlayerSprite():void
 		{
-			if (state == "child") 
+			if (graphic == child) 
 			{
 				// map the time of child's life to the scale of it's sprite
-				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration, (timeToGrandChild.duration / 2), 0.6, 1);
+				var mapped:Number = FP.scaleClamp(timeToGrandChild.remaining, timeToGrandChild.duration,
+				(timeToGrandChild.duration / 2), _daughterMinSize, 1);
+				
 				child.scale = mapped;
 				//trace("child scale: " + mapped);
-			} else if(state == "grandChild")
+			} else if(graphic == grandChild)
 			{
 				//map the time of grandchild's life to the scale of it's sprite
-				var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining, timeGrandChildToEnd.duration, 0, 0.5, 1);
+				var mapped2:Number = FP.scaleClamp(timeGrandChildToEnd.remaining,
+				timeGrandChildToEnd.duration, 0, _grandChildMinSize, 1);
 				grandChild.scale = mapped2;
 			}
 		}
@@ -1062,10 +1112,10 @@
 		 */
 		private function testChildAppear():void
 		{
-			if (robotFather.robotFatherDeath.frame == 12 && !hasControl) 
+			if (robotFather.robotFatherDeath.frame == 12 && !_isDaughterVisible) 
 			{
-				takeChildControl();
-				trace("take control of child");
+				makeChildVisible();
+				trace("child visible");
 			}
 		}
 		
@@ -1074,9 +1124,9 @@
 		 */
 		private function testGrandChildAppear():void
 		{
-			if (robotDaughter.robotDaughterDeath.frame == 24 && !hasControl) 
+			if (robotDaughter.robotDaughterDeath.frame == 24 && !_isGrandChildVisible) 
 			{
-				takeGrandChildControl();
+				makeGrandChildVisible();
 				trace("take control of grand child");
 			}
 		}
@@ -1111,37 +1161,31 @@
 		}
 		
 		/**
-		 * once the father is dead, player takes control of child
+		 * once the father is almost dead, child fades in
 		 */
-		public function takeChildControl():void
+		public function makeChildVisible():void
 		{
 			//make player child graphic visible 
 			graphic.visible = true;
+			child.scale = _daughterMinSize;
 			
 			// tween its alpha value
 			var alphaTween:VarTween = new VarTween(null, 2);
 			alphaTween.tween(this.child, "alpha", 1, 1);
 			addTween(alphaTween);
-			alphaTween.start();
+			alphaTween.start();	
 			
-			// give control back to player
-			hasControl = true;
-			
-			//start countdown to grandchild transmission
-			timeToGrandChild.start();
-						
-			//set player state to child
-			state = "child";
-			
+			_isDaughterVisible = true;
 		}
 		
 		/**
 		 * once the father is dead, player takes control of child
 		 */
-		public function takeGrandChildControl():void
+		public function makeGrandChildVisible():void
 		{
 			//make player child graphic visible 
 			graphic.visible = true;
+			grandChild.scale = _grandChildMinSize;
 			
 			// tween its alpha value
 			var alphaTween:VarTween = new VarTween(null, 2);
@@ -1149,17 +1193,333 @@
 			addTween(alphaTween);
 			alphaTween.start();
 			
-			// give control back to player
-			hasControl = true;
-			
-			// start final countdown to end
-			// will check in Game update to start death sequence before end
-			timeGrandChildToEnd.start();
-						
-			//set player state to child
-			state = "grandChild";
+			_isGrandChildVisible = true;
 
 		}
+		
+		/**
+		 * Player is undergoing transformtion. Start countdown.
+		 * @param	length	duration of transmition in seconds
+		 */
+		public function startTransmitionTimer(length:Number):void
+		{
+			transmitTimer = new Alarm(length, _onTransmitTimerComplete, 2);
+			addTween(transmitTimer);
+			transmitTimer.start();
+			
+			isTransmitting = true;
+			
+			// remove control from player
+			hasControl = false;
+			trace("start transmition timer");
+		}
+		
+		private function _onTransmitTimerComplete():void
+		{
+			isTransmitting = false;
+			
+			// return control to player
+			hasControl = true;
+			trace("transmition complete");
+			
+			//transmit properties from father to child
+			transmitFatherToChild();
+			
+			trace("state: " + state);
+			
+			if (state == "childAlive") 
+			{
+				//start countdown to grandchild transmission
+				timeToGrandChild.start();
+				trace("start timeToGrandChild alarm");		
+				//set player state to child
+				state = "child";
+			}
+			else if (state == "child") 
+			{
+				// start final countdown to end
+				// will check in Game update to start death sequence before end
+				timeGrandChildToEnd.start();
+						
+				//set player state to child
+				state = "grandChild";
+			}
+			
+		}
+		
+		/**
+		 * Calculate the path ratios
+		 */
+		public function calculatePathRatios():void
+		{
+			ratioRouge = pathDistToTotalRatio[0]; 
+			ratioVert = pathDistToTotalRatio[1]; 
+			ratioBleu = pathDistToTotalRatio[2];
+			_maxPathRatio = Math.max(ratioRouge,ratioVert,ratioBleu);
+			_minPathRatio = Math.min(ratioRouge,ratioVert,ratioBleu);
+		}
+		
+		/**
+		 * 
+		 * @return array of (distance path/total distance) sorted in ascending order
+		 */
+		private function _getClassementPath():Array
+		{
+
+			return pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order			
+		}
+		
+		public function getRatx():Number
+		{
+			return Math.max(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le plus parcouru
+		}
+		
+		public function getRatz():Number
+		{
+			return Math.min(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le moins parcouru
+		}
+		
+		/**
+		 * Calculs de transmission
+		 */
+		public function transmitFatherToChild():void
+		{		
+			var ratx:Number = getRatx();
+			var ratz:Number = getRatz();
+			var classement:Array = _getClassementPath();
+			
+			// debug stuff
+			for (var h:int = 0; h < 3; h++) 
+			{
+				trace("classement: " + classement[h]);
+				switch (h) 
+				{
+					case 0:
+						trace("ratio z: " + pathDistToTotalRatio[classement[h]]);
+						break;
+					case 1:
+						trace("ratio y: " + pathDistToTotalRatio[classement[h]]);
+						break;
+					case 2:
+						trace("ratio x: " + pathDistToTotalRatio[classement[h]]);
+						break;
+				}
+
+			}
+			
+			// Modèle 1-a: 0.6<ratx<1 et 0=<ratz<0.2
+			if (ratx > 0.6 && ratz < 0.2)
+			{
+				// set child special speed
+				pathChildSpeed[classement[2]] = CT_VB + 0.8 * ratx;
+				pathChildSpeed[classement[1]] = VB - 0.2 * ratx;
+				pathChildSpeed[classement[0]] = VB - 0.2 * ratx;
+				
+				// reset base speed to VB
+				for (var j:int = 0; j < pathBaseSpeed.length; j++) 
+				{
+					pathBaseSpeed[j] = VB;
+				}
+				transmitModel = 1;
+				trace("Modèle 1a");
+			} 
+			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
+			else if (ratx >= 0.43 && ratx <= 0.6 && ratz <= 0.15)
+			{
+				// set child special speed
+				pathChildSpeed[classement[2]] = CT_VB + 0.6 * ratx;
+				pathChildSpeed[classement[1]] = VB;
+				pathChildSpeed[classement[0]] = VB;
+				// reset base speed to VB
+				for (var m:int = 0; m < pathBaseSpeed.length; m++) 
+				{
+					pathBaseSpeed[m] = VB;
+				}
+				trace("Modèle 1b");
+				transmitModel = 1;
+			}
+			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
+			else if (ratx >= 0.34 && ratx <= 0.6 && ratz >= 0.15 && ratz <= 0.33)
+			{ 
+				// set child special speed
+				pathChildSpeed[classement[2]] = VB;
+				pathChildSpeed[classement[1]] = VB;
+				pathChildSpeed[classement[0]] = VB;
+				
+				// reset base speed to VB
+				for (var k:int = 0; k < pathBaseSpeed.length; k++) 
+				{
+					pathBaseSpeed[k] = VB;
+				}
+				transmitModel = 2;
+				trace("Modèle 2");
+			}
+			else
+			{
+				trace("cas moyen!");
+			}
+      
+			for (var i:int = 0; i < 3; i++) {
+				trace("nouvelle VB: ("+ i + ") " + pathChildSpeed[i]);
+			}
+			
+			// remettre toues les distances à zero
+			for (var s:int = 0; s < 3; s++) 
+			{
+				//store distances and velocities
+				if (state == "father" || state == "childAlive") 
+				{
+					fatherStoredDistances[s] = pathDistance[s];
+					fatherStoredVelocities[s] = pathMaxVel[s];
+				} else	{
+					childStoredDistances[s] = pathDistance[s];
+					childStoredVelocities[s] = pathMaxVel[s];
+				}
+	
+				//reset distances to zero
+				pathDistance[s] = 0;
+			}
+			
+			
+			var sortpaths:Array = new Array();
+			var sortspeeds:Array = new Array();
+			
+			// transmettre les index de chemin pour calcul de vitesse _type3
+			if (state == "father" || state == "childAlive") 
+			{
+				// calculate all the stuff needed to set-up _type3 velocities
+				sortpaths = fatherStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
+				Dxtotale = fatherStoredDistances[sortpaths[0]]; //store the highest value DxTotal
+				
+				sortspeeds = fatherStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
+				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
+				
+				transmitIndexY = sortspeeds[1];
+				transmitIndexZ = sortspeeds[2];
+
+				trace("pere -> fils");
+				trace("chemin le plus emprunté: " + sortpaths[0]);
+				trace("Dxtotale: " + Number(Dxtotale).toFixed(1));
+				trace("chemins les plus lents: " + transmitIndexY + " " + transmitIndexZ);
+				trace("distance sur ces chemins: " + Number(fatherStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(fatherStoredDistances[sortpaths[2]]).toFixed(1));
+				
+
+			} else {
+				
+				// calculate all the stuff needed to set-up _type3 velocities
+				sortpaths = childStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
+				Dxtotale = childStoredDistances[sortpaths[0]]; //store the highest value DxTotal
+			
+				
+				sortspeeds= childStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
+				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
+				
+				transmitIndexY = sortspeeds[1];
+				transmitIndexZ = sortspeeds[2];
+
+				trace("fils -> petit_fils");
+				trace("chemin le plus emprunté: " + sortpaths[0]);
+				trace("Dxtotale: " + Number(Dxtotale).toFixed(1));
+				trace("chemins les plus lents: " + transmitIndexY + " " + transmitIndexZ);
+				trace("distance sur ces chemins: " + Number(childStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(childStoredDistances[sortpaths[2]]).toFixed(1));
+
+			}
+			
+			// reset _type3 for next transmission
+			type3 = false;
+			
+			
+		} 
+		// end transmitFatherToChild()
+		
+		
+		
+		/**
+		 * Child appears with father
+		 */
+		public function onTimeToChild():void
+		{
+			// child appears as a robot. Nothing transmitted yet.
+			state = "childAlive";
+
+			// remove control from player
+			hasControl = false;
+			
+			// swap father sprite for child appear sprite
+			graphic = childAppear;
+			childAppear.play("appear");
+			
+		}
+		
+		/**
+		 * Make father disapear and child appear
+		 */
+		public function onTimeFatherToDeath():void
+		{
+			// start the transmition timer
+			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
+			trace("transit timer: " + LoadXmlData.TRANS_TIMER);
+			// trigger the father death sequence
+			fatherDeathSequence();
+			
+		}
+		
+	
+		
+		/**
+		 * Transmit child to grandchild
+		 */
+		public function onTimeToGrandChild():void
+		{
+			// start the transmition timer
+			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
+			
+			// trigger the daughter death sequence
+			daughterDeathSequence();
+
+		}
+		
+		/**
+		 * Death of grandchild and game end
+		 */
+		public function onTimeGrandChildToEnd():void
+		{
+						
+			trace("grandchild is dead");
+			//grandChildDying = false;
+
+			// see if this helps kill the sounds
+			//playerGoneAWOL = true;
+			
+			// kill all sounds
+			for each (var soundToKill:Sfx in sound.pathSound) 
+			{
+				if (soundToKill.playing) 
+				{
+
+					soundToKill.stop();
+				}
+			}
+			
+			// fade out from game
+			fadeOutGame();
+			
+			// remove player from world
+			FP.world.removeList(sound, this);
+			
+
+		}
+		
+		private function fadeOutGame():void
+		{
+			// send Outro
+			fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
+			fadeOutCurtain.x = FP.camera.x;
+			fadeOutCurtain.y = FP.camera.y;
+			FP.world.add(fadeOutCurtain);
+			trace("fade out");
+		}
+		
 		
 		/**
 		 * Method to test if player has just released the right arrow

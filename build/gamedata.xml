@@ -1,5 +1,8 @@
 <data>
 	
+	<!-- temps de transmition en secondes -->
+	<transmitTimer>10</transmitTimer>
+	
 	<!-- volume entre 0 et 1-->
 	<volume>0</volume>
 	
@@ -29,20 +32,9 @@
 	</scurve>
 
 	<!-- variables utilisées pour les timers de transmission-->
-<!--
 	<timers>
-		<timeToChild>10</timeToChild>
-		<timeFatherToChild>10</timeFatherToChild>
+		<timeToChild>10</timeToChild>	
 		<timeFatherToDeath>15</timeFatherToDeath>
-		<timeChildToGrandChild>15</timeChildToGrandChild>
-		<timeGrandChildToEnd>15</timeGrandChildToEnd>
-	</timers>
-	 
-	-->
-	<timers>
-		<timeToChild>20</timeToChild>	
-		<!-- timeFatherToChild>20</timeFatherToChild -->
-		<timeFatherToDeath>40</timeFatherToDeath>
 		<timeChildToGrandChild>15</timeChildToGrandChild>
 		<timeGrandChildToEnd>20</timeGrandChildToEnd>
 	</timers>

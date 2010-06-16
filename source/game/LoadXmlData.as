@@ -45,6 +45,8 @@ package game
 		public static var VOLUME:Number;
 		public static var HUD:Boolean;
 		
+		public static var TRANS_TIMER:Number;
+		
 		public function LoadXmlData() 
 		{
 			loader.addEventListener(Event.COMPLETE, onComplete);
@@ -87,6 +89,8 @@ package game
 			//volume
 			VOLUME = Number(gameData.volume.text());
 			
+			//transmition timer
+			TRANS_TIMER = Number(gameData.transmitTimer.text());
 			
 			// HUD
 			HUD = stringToBoolean(gameData.HUD.text());

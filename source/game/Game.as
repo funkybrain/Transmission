@@ -73,24 +73,14 @@ package game
 		 */
 		public var data:LoadXmlData;
 		 
-		private var TIMER_CHILD:Number = LoadXmlData.timer_ToChild;
-		//private var TIMER_FATHERTOCHILD:Number = LoadXmlData.timer_FatherToChild;
-		private var TIMER_FATHERTODEATH:Number = LoadXmlData.timer_FatherToDeath;
-		private var TIMER_CHILDTOGRANDCHILD:Number = LoadXmlData.timer_ChildToGrandChild;
-		private var TIMER_GRANDCHILDTOEND:Number = LoadXmlData.timer_GrandChildToEnd;
+		
 		
 		public var player:Player;
 	
 		public var vectorZero:Point = new Point();
 		
 		private var _overlay:GameOverlay;
-		
-		// store ratio in easy to manipulate variables
-		public var ratioRouge:Number; 
-		public var ratioVert:Number; 
-		public var ratioBleu:Number;
-		private var _maxPathRatio:Number;
-		private var _minPathRatio:Number;
+
 		
 		// List<Animation> to store background animations
 		public var animationList:Vector.<Animation> = new Vector.<Animation>();
@@ -121,7 +111,7 @@ package game
 		
 		// Fade in screen
 		private var _fadeInCurtain:Curtain;
-		private var _fadeOutCurtain:Curtain;
+		
 		
 		/**
 		 * Rouleau
@@ -196,25 +186,7 @@ package game
 			debugText = new Text("", 0, 0, 400, 100);
 			debugText.font = "debugFont";
 			
-			//set all transmission timer alarms (one-shot alarms)
-			player.timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
-			player.addTween(player.timeToChild, true); // add and start alarm
 			
-			// don't need this anymore
-			//player.timeFatherToChild = new Alarm(TIMER_FATHERTOCHILD, onTimeFatherToChild, 2);
-			//player.addTween(player.timeFatherToChild, false); // add but don't start yet!
-			
-			player.timeFatherToDeath = new Alarm(TIMER_FATHERTODEATH, onTimeFatherToDeath, 2);
-			player.addTween(player.timeFatherToDeath, true); // add and start alarm
-			
-			player.timeToGrandChild = new Alarm(TIMER_CHILDTOGRANDCHILD, onTimeToGrandChild, 2);
-			player.addTween(player.timeToGrandChild, false); // add but don't start yet!
-			
-			player.timeGrandChildToEnd = new Alarm(TIMER_GRANDCHILDTOEND, onTimeGrandChildToEnd, 2);
-			player.addTween(player.timeGrandChildToEnd, false); // add but don't start yet!
-			
-			player.timers.push(player.timeToChild, player.timeFatherToDeath,
-				player.timeToGrandChild, player.timeGrandChildToEnd);
 			
 			// refresh screen color
 			FP.screen.color = 0x808080;
@@ -266,276 +238,6 @@ package game
 		}
 		
 		/**
-		 * Child appears with father
-		 */
-		public function onTimeToChild():void
-		{
-			// child appears as a robot. Nothing transmitted yet.
-			player.state = "childAlive";
-
-			// remove control from player
-			player.hasControl = false;
-			
-			// swap father sprite for child appear sprite
-			player.graphic = player.childAppear;
-			player.childAppear.play("appear");
-			
-		}
-		
-		/**
-		 * Make father disapear and child appear
-		 */
-		public function onTimeFatherToDeath():void
-		{
-			// trigger the father death sequence
-			player.fatherDeathSequence();
-			
-			//transmit properties from father to child
-			transmitFatherToChild();
-			
-
-			
-		}
-		
-	
-		
-		/**
-		 * Transmit child to grandchild
-		 */
-		public function onTimeToGrandChild():void
-		{
-			// trigger the daughter death sequence
-			player.daughterDeathSequence();
-
-			// transmit properties
-			transmitFatherToChild();
-		}
-		
-		/**
-		 * Death of grandchild and game end
-		 */
-		public function onTimeGrandChildToEnd():void
-		{
-						
-			trace("grandchild is dead");
-			grandChildDying = false;
-
-			// see if this helps kill the sounds
-			playerGoneAWOL = true;
-			
-			// kill all sounds
-			for each (var soundToKill:Sfx in player.sound.pathSound) 
-			{
-				if (soundToKill.playing) 
-				{
-
-					soundToKill.stop();
-				}
-			}
-			
-			
-			// remove player from world
-			removeList(player.sound, player);
-			
-
-			// send Outro
-			_fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
-			_fadeOutCurtain.x = FP.camera.x;
-			_fadeOutCurtain.y = FP.camera.y;
-			add(_fadeOutCurtain);
-			trace("fade out");
-		}
-		
-		/**
-		 * 
-		 * @return array of (distance path/total distance) sorted in ascending order
-		 */
-		private function _getClassementPath():Array
-		{
-
-			return player.pathDistToTotalRatio.sort(Array.RETURNINDEXEDARRAY); // will return in ascending order			
-		}
-		
-		private function _getRatx():Number
-		{
-			return Math.max(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le plus parcouru
-		}
-		
-		private function _getRatz():Number
-		{
-			return Math.min(ratioRouge, ratioVert, ratioBleu); // ratio du chemin le moins parcouru
-		}
-		
-		/**
-		 * Calculs de transmission
-		 */
-		public function transmitFatherToChild():void
-		{		
-			var ratx:Number = _getRatx();
-			var ratz:Number = _getRatz();
-			var classement:Array = _getClassementPath();
-			
-			// debug stuff
-			for (var h:int = 0; h < 3; h++) 
-			{
-				trace("classement: " + classement[h]);
-				switch (h) 
-				{
-					case 0:
-						trace("ratio z: " + player.pathDistToTotalRatio[classement[h]]);
-						break;
-					case 1:
-						trace("ratio y: " + player.pathDistToTotalRatio[classement[h]]);
-						break;
-					case 2:
-						trace("ratio x: " + player.pathDistToTotalRatio[classement[h]]);
-						break;
-				}
-
-			}
-			
-			// Modèle 1-a: 0.6<ratx<1 et 0=<ratz<0.2
-			if (ratx > 0.6 && ratz < 0.2)
-			{
-				// set child special speed
-				player.pathChildSpeed[classement[2]] = player.CT_VB + 0.8 * ratx;
-				player.pathChildSpeed[classement[1]] = player.VB - 0.2 * ratx;
-				player.pathChildSpeed[classement[0]] = player.VB - 0.2 * ratx;
-				
-				// reset base speed to VB
-				for (var j:int = 0; j < player.pathBaseSpeed.length; j++) 
-				{
-					player.pathBaseSpeed[j] = player.VB;
-				}
-				player.transmitModel = 1;
-				trace("Modèle 1a");
-			} 
-			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
-			else if (ratx >= 0.43 && ratx <= 0.6 && ratz <= 0.15)
-			{
-				// set child special speed
-				player.pathChildSpeed[classement[2]] = player.CT_VB + 0.6 * ratx;
-				player.pathChildSpeed[classement[1]] = player.VB;
-				player.pathChildSpeed[classement[0]] = player.VB;
-				// reset base speed to VB
-				for (var m:int = 0; m < player.pathBaseSpeed.length; m++) 
-				{
-					player.pathBaseSpeed[m] = player.VB;
-				}
-				trace("Modèle 1b");
-				player.transmitModel = 1;
-			}
-			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
-			else if (ratx >= 0.34 && ratx <= 0.6 && ratz >= 0.15 && ratz <= 0.33)
-			{ 
-				// set child special speed
-				player.pathChildSpeed[classement[2]] = player.VB;
-				player.pathChildSpeed[classement[1]] = player.VB;
-				player.pathChildSpeed[classement[0]] = player.VB;
-				// reset base speed to VB
-				for (var k:int = 0; k < player.pathBaseSpeed.length; k++) 
-				{
-					player.pathBaseSpeed[k] = player.VB;
-				}
-				player.transmitModel = 2;
-				trace("Modèle 2");
-			}
-			else
-			{
-				trace("cas moyen!");
-			}
-      
-			for (var i:int = 0; i < 3; i++) {
-				trace("nouvelle VB: ("+ i + ") " + player.pathChildSpeed[i]);
-			}
-			
-			// remettre toues les distances à zero
-			for (var s:int = 0; s < 3; s++) 
-			{
-				//store distances and velocities
-				if (player.state == "father" || player.state == "childAlive") 
-				{
-					player.fatherStoredDistances[s] = player.pathDistance[s];
-					player.fatherStoredVelocities[s] = player.pathMaxVel[s];
-				} else	{
-					player.childStoredDistances[s] = player.pathDistance[s];
-					player.childStoredVelocities[s] = player.pathMaxVel[s];
-				}
-	
-				//reset distances to zero
-				player.pathDistance[s] = 0;
-			}
-			
-			
-			var sortpaths:Array = new Array();
-			var sortspeeds:Array = new Array();
-			
-			// transmettre les index de chemin pour calcul de vitesse _type3
-			if (player.state == "father" || player.state == "childAlive") 
-			{
-				// calculate all the stuff needed to set-up _type3 velocities
-				sortpaths = player.fatherStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
-				player.Dxtotale = player.fatherStoredDistances[sortpaths[0]]; //store the highest value DxTotal
-				
-				sortspeeds = player.fatherStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
-				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
-				
-				player.transmitIndexY = sortspeeds[1];
-				player.transmitIndexZ = sortspeeds[2];
-
-				trace("pere -> fils");
-				trace("chemin le plus emprunté: " + sortpaths[0]);
-				trace("Dxtotale: " + Number(player.Dxtotale).toFixed(1));
-				trace("chemins les plus lents: " + player.transmitIndexY + " " + player.transmitIndexZ);
-				trace("distance sur ces chemins: " + Number(player.fatherStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(player.fatherStoredDistances[sortpaths[2]]).toFixed(1));
-				
-
-			} else {
-				
-				// calculate all the stuff needed to set-up _type3 velocities
-				sortpaths = player.childStoredDistances.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
-				player.Dxtotale = player.childStoredDistances[sortpaths[0]]; //store the highest value DxTotal
-			
-				
-				sortspeeds= player.childStoredVelocities.sort(Array.RETURNINDEXEDARRAY | Array.DESCENDING | Array.NUMERIC); // sort in descending order
-				// sortspeeds[1] and [2] are the slowest paths of the father at transmission
-				
-				player.transmitIndexY = sortspeeds[1];
-				player.transmitIndexZ = sortspeeds[2];
-
-				trace("fils -> petit_fils");
-				trace("chemin le plus emprunté: " + sortpaths[0]);
-				trace("Dxtotale: " + Number(player.Dxtotale).toFixed(1));
-				trace("chemins les plus lents: " + player.transmitIndexY + " " + player.transmitIndexZ);
-				trace("distance sur ces chemins: " + Number(player.childStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(player.childStoredDistances[sortpaths[2]]).toFixed(1));
-
-			}
-			
-			// reset _type3 for next transmission
-			player.type3 = false;
-			
-			
-		} 
-		// end transmitFatherToChild()
-		
-		
-		
-/*		public function transmitChildToGrandChild():void // may not need this
-		{
-			// transmition formulas here
-			
-			remettre toues les distances à zero
-			for (var s:int = 0; s < player.pathDistance.length; s++) 
-			{
-				//store father distances
-				player.childStoredDistances[s] = player.pathDistance[s];
-				//reset distances to zero
-				player.pathDistance[s] = 0;
-			}
-		}*/
-		// end transmitChildToGrandChild()
-		
-		/**
 		 * UPDATE LOOP FOR GAME
 		 */
 		override public function update():void 
@@ -557,7 +259,7 @@ package game
 			}
 			
 			// update path ratios
-			_calculatePathRatios();
+			player.calculatePathRatios();
 
 			// update shutter positions
 			updateShutters();
@@ -583,7 +285,7 @@ package game
 			_setAnimationSpeed();
 			
 			// if final fade out is finished, send-in Outro
-			if (null != _fadeOutCurtain && _fadeOutCurtain.complete) 
+			if (null != player.fadeOutCurtain && player.fadeOutCurtain.complete) 
 			{
 				_leaveGame();
 			}
@@ -640,17 +342,11 @@ package game
 		}
 		// end Game UPDATE LOOP
 		
-		/**
-		 * Calculate the path ratios
-		 */
-		private function _calculatePathRatios():void
-		{
-			ratioRouge = player.pathDistToTotalRatio[0]; 
-			ratioVert = player.pathDistToTotalRatio[1]; 
-			ratioBleu = player.pathDistToTotalRatio[2];
-			_maxPathRatio = Math.max(ratioRouge,ratioVert,ratioBleu);
-			_minPathRatio = Math.min(ratioRouge,ratioVert,ratioBleu);
-		}
+		
+				
+	
+		
+
 		
 		/**
 		 * Camera pan event when epitaphe starts to appear
@@ -762,8 +458,8 @@ package game
 		{
 			var debug:Boolean = false;
 			
-			var maxR:Number = _getRatx();
-			var minR:Number = _getRatz();
+			var maxR:Number = player.getRatx();
+			var minR:Number = player.getRatz();
 			
 			var tiggerLimit:Number = 1000;
 			
