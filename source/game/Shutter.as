@@ -26,7 +26,7 @@ package game
 		 * Textures
 		 */
 		[Embed(source = '../../assets/shutterTexture.png')] private const RIGHT:Class;
-		[Embed(source = '../../assets/shutterTexture_DN.png')] private const DOWN:Class;
+		[Embed(source = '../../assets/shutterTexture_UP.png')] private const DOWN:Class;
 		[Embed(source = '../../assets/shutterTexture_UP.png')] private const UP:Class;
 		
 		 /**

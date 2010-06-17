@@ -222,16 +222,16 @@ package game
 		 */
 		private function initShutters():void
 		{
-			_shutterRight = new Shutter(400, 0, "right");
-			_shutterDown = new Shutter(0, 240, "down");
+			_shutterRight = new Shutter(FP.width - 200, 0, "right");
+			_shutterDown = new Shutter(0, FP.height - 120, "up");
 			_shutterUp = new Shutter(0, 0, "up");
 			
 			_shutterDownTween = new NumTween();
 			_shutterRightTween = new NumTween();
 			_shutterUpTween = new NumTween();
 			
-			addTween(_shutterDownTween);
 			addTween(_shutterRightTween);
+			addTween(_shutterDownTween);
 			addTween(_shutterUpTween);
 			
 			addList(_shutterDown, _shutterRight, _shutterUp);
@@ -249,13 +249,13 @@ package game
 			super.update();
 			
 			// update rouleau position
-			_updateRouleauPositions();
+			updateRouleauPositions();
 			
 			// unravel final words
 			if (null != finalWords) 
 			{
 				// update the text length of final words
-				_updateFinalWords();
+				updateFinalWords();
 			}
 			
 			// update path ratios
@@ -282,12 +282,12 @@ package game
 			
 			
 			//set backgound animation framerates based on player speed
-			_setAnimationSpeed();
+			setAnimationSpeed();
 			
 			// if final fade out is finished, send-in Outro
 			if (null != player.fadeOutCurtain && player.fadeOutCurtain.complete) 
 			{
-				_leaveGame();
+				leaveGame();
 			}
 			
 			
@@ -295,14 +295,14 @@ package game
 			// test to see if next level needs to be imported
 			if (FP.camera.x > (level_1.width - FP.width - 100) && !_levelTwoAdded) 
 			{
-				_importNextLevel();
+				importNextLevel();
 				_levelTwoAdded = true;
 				trace("import level2");
 			}
 			
 			// clean-up animation and background list to save on memory
-			_removeAnimations();
-			_removeBackgrounds();
+			removeAnimations();
+			removeBackgrounds();
 			
 			// check to see if player has triggered rouleau
 			if (rouleauStart.x > rouleauTriggerX && !_rouleauTriggered) 
@@ -315,7 +315,7 @@ package game
 					_cameraPan.start();
 					
 					// start Epitaphe
-					_startFinalWords();
+					startFinalWords();
 			}
 
 			// debug
@@ -379,7 +379,7 @@ package game
 		/**
 		 * Import new level
 		 */
-		private function _importNextLevel():void
+		private function importNextLevel():void
 		{
 			// create first level
 			level_2 = new Level(2, worldWidth);
@@ -456,214 +456,318 @@ package game
 		 */
 		public function updateShutters():void
 		{
-			var debug:Boolean = false;
+			var debug:Boolean = true;
 			
 			var maxR:Number = player.getRatx();
 			var minR:Number = player.getRatz();
+			//trace("maxR " +maxR + "minR " +minR);
 			
-			var tiggerLimit:Number = 1000;
+			var triggerLimit:Number = 1000;
+			
+			/************************/
+			/* Setup shutter presets*/
+			/************************/
 			
 			/* RIGHT shutter*/
-			var shutterRightClosed:Number = FP.screen.width / 2;					
-			var shutterRightOpen:Number = FP.screen.width;
-			var shutterRightMid:Number = 2 * FP.screen.width / 3;
-			_shutterRight.y = 0;
+			var shutterRightClosed:Number = FP.width - 200;					
+			var shutterRightMid:Number = FP.width - 100;
+			var shutterRightOpen:Number = FP.width - 20;
 			
-			if (player.totaldistance < tiggerLimit) 
-			{
-				_shutterRight.x = FP.camera.x + shutterRightClosed;
-			}
+			_shutterRight.y = 0;
 						
 			/* UP shutter */
-			var shutterUpClosed:Number = 0;					
-			var shutterUpOpen:Number = -FP.screen.height / 2;
-			var shutterUpMid:Number = -FP.screen.height / 4;
+			var shutterUpClosed:Number = -10;					
+			var shutterUpMid:Number = - 40;
+			var shutterUpOpen:Number =  - 110;
+			
 			_shutterUp.x = FP.camera.x;
 
 			/* DOWN shutter */
-			var shutterDownClosed:Number = FP.screen.height / 2;					
-			var shutterDownOpen:Number = FP.screen.height;
-			var shutterDownMid:Number = 3 * FP.screen.height / 4;
+			var shutterDownClosed:Number = FP.height - 110;					
+			var shutterDownMid:Number = FP.height - 80;
+			var shutterDownOpen:Number = FP.height - 10;
+			
 			_shutterDown.x = FP.camera.x;			
 			
-			
-			// Modèle 1-a: 0.6<maxR<1 et 0=<minR<0.2
-			if (maxR > 0.6 && minR < 0.2 && player.totaldistance >= tiggerLimit)
+			// all shutter stay closed until player reaches trigger limit
+			if (player.totaldistance < triggerLimit) 
 			{
+				_shutterRight.x = FP.camera.x + shutterRightClosed;
+				_shutterUp.y = shutterUpClosed;
+				_shutterDown.y = shutterDownClosed;
+			}
+			
+			/*************************************************************************
+			 ****    MODEL 1A                                                    *****
+			 ****  0.6<maxR<1 and 0=<minR<0.2                                  *******
+			 ****                                                              *******
+			 * also applies if player inherited model 1a but not yet at speed type 3 *
+			 ************************************************************************/
+			
+			if ((maxR > 0.6 && minR < 0.2 && player.totaldistance >= triggerLimit)
+				|| (player.transmitModel == 0 && !player.type3))
+			{
+				
 				/* RIGHT shutter */
+				
+				// change of state - start the tween
 				if (!_shutterRightTween.active && _shutterChangeState !=0) 
 				{
+					// tween open the shutter
 					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightOpen, 4, Ease.sineIn);
 					_shutterRightTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterRightTween.active) 
 				{
 					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
-				} else _shutterRight.x = FP.camera.x + shutterRightOpen;
+				}
+				
+				// tween not active and no change of state - shutter should be open
+				if (!_shutterRightTween.active && _shutterChangeState == 0) 
+				{
+					_shutterRight.x = FP.camera.x + shutterRightOpen;
+				}
 				
 				/* UP shutter */
+
+				// change of state - start the tween
 				if (!_shutterUpTween.active && _shutterChangeState !=0) 
 				{
 					_shutterUpTween.tween(_shutterUp.y, shutterUpClosed, 4, Ease.sineIn);
 					_shutterUpTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterUpTween.active) 
 				{
 					_shutterUp.y = _shutterUpTween.value;
-				} else _shutterUp.y = shutterUpClosed;
+				}
+				
+				// tween not active and no change of state - shutter should be closed
+				if (!_shutterUpTween.active && _shutterChangeState == 0) 
+				{
+					_shutterUp.y = shutterUpClosed;
+				}
+				
 				
 				
 				/* DOWN shutter */		
 
+				// change of state - start the tween
 				if (!_shutterDownTween.active && _shutterChangeState !=0) 
 				{
 					_shutterDownTween.tween(_shutterDown.y, shutterDownClosed, 4, Ease.sineIn);
 					_shutterDownTween.start();
 				}
-				
+				// tween active - update shutter position
 				if (_shutterDownTween.active) 
 				{
 					_shutterDown.y = _shutterDownTween.value;
 				} else _shutterDown.y = shutterDownClosed;
 				
-				// set new shutter state
-				_shutterChangeState = 0;
+				// tween not active and no change of state - shutter should be closed
+				if (!_shutterDownTween.active && _shutterChangeState == 0) 
+				{
+					_shutterDown.y = shutterDownClosed;
+				}
+				
 				
 				//debug
-				if (_counter > 0.4 && debug) 
+				if (_counter > 0.4 && debug && _shutterChangeState != 0) 
 				{
 					_counter -= _counter;
-					trace("1a");
+					trace("modele 1a");
 					
 					if (_shutterRightTween.active) 
 					{
 						trace(_shutterRightTween.value);
 					}
 				}
+				
+				// set new shutter state
+				_shutterChangeState = 0;
+				
 			}
-			// Modèle 1-b: 0.43=<maxR=<0.6 et 0=<minR<0.15
-			else if (maxR >= 0.43 && maxR <= 0.6 && minR <= 0.15 && player.totaldistance >= tiggerLimit)
+			
+			/*************************************************************************
+			 ****    MODEL 1B                                                     ****
+			 ****  0.43=<maxR=<0.6                                                ****
+			 ****  0=<minR<0.15                                                   ****
+			 * also applies if player inherited model 1b but not yet at speed type 3 *
+			 ************************************************************************/
+			
+			else if ((maxR >= 0.43 && maxR <= 0.6 && minR <= 0.15
+				&& player.totaldistance >= triggerLimit) || (player.transmitModel == 1 && !player.type3))
 			{	
 				/* RIGHT shutter */
+				// change of state - start the tween
 				if (!_shutterRightTween.active && _shutterChangeState !=1) 
 				{
 					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightMid, 4, Ease.sineIn);
 					_shutterRightTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterRightTween.active) 
 				{
 					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
-				} else _shutterRight.x = FP.camera.x + shutterRightMid;
+				}
+				
+				// tween not active and no change of state - shutter should be at mid position
+				if (!_shutterRightTween.active && _shutterChangeState == 1) 
+				{
+					_shutterRight.x = FP.camera.x + shutterRightMid;
+				}
 				
 				
 				/* UP shutter */
+				// change of state - start the tween
 				if (!_shutterUpTween.active && _shutterChangeState !=1) 
 				{
 					_shutterUpTween.tween(_shutterUp.y, shutterUpMid, 4, Ease.sineIn);
 					_shutterUpTween.start();
 				}
-				
+				// tween active - update shutter position
 				if (_shutterUpTween.active) 
 				{
 					_shutterUp.y = _shutterUpTween.value;
-				} else _shutterUp.y = shutterUpMid;
+				}
 				
+				// tween not active and no change of state - shutter should be at mid position
+				if (!_shutterUpTween.active && _shutterChangeState == 1) 
+				{
+					_shutterUp.y = shutterUpMid;
+				} 
 				
-				/* DOWN shutter */		
-
+				/* DOWN shutter */					
+				// change of state - start the tween
 				if (!_shutterDownTween.active && _shutterChangeState !=1) 
 				{
 					_shutterDownTween.tween(_shutterDown.y, shutterDownMid, 4, Ease.sineIn);
 					_shutterDownTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterDownTween.active) 
 				{
 					_shutterDown.y = _shutterDownTween.value;
-				} else _shutterDown.y = shutterDownMid;
+				}
 				
-
-				// set new shutter state
-				_shutterChangeState = 1;
+				// tween not active and no change of state - shutter should be at mid position
+				if (!_shutterDownTween.active && _shutterChangeState == 1) 
+				{
+					_shutterDown.y = shutterDownMid;
+				}
 				
 				
 				//debug
-				if (_counter > 0.4 && debug) 
+				if (_counter > 0.4 && debug && _shutterChangeState != 1) 
 				{
 					_counter -= _counter;
-					trace("1b");
+					trace("modele 1b");
 					
 					if (_shutterRightTween.active) 
 					{
 						trace(_shutterRightTween.value);
 					}
 				}
+				
+				// set new shutter state
+				_shutterChangeState = 1;
+				
 
 			}
-			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
-			else if (maxR >= 0.34 && maxR <= 0.6 && minR >= 0.15 && minR <= 0.33 && player.totaldistance >= tiggerLimit)
+			
+			/************************
+			 ****   MODEL2    *******
+			 **** 0.34=<ratx=<0.6  **
+			 **** 0.15=<ratz<0.33 ***
+			 * also applies if type3*
+			 * or model 2           *
+			 ************************/
+
+			else if ((maxR >= 0.34 && maxR <= 0.6 && minR >= 0.15 && minR <= 0.33
+				&& player.totaldistance >= triggerLimit) || player.transmitModel == 2 || player.type3)
 			{
 				/* RIGHT shutter */
+				// change of state - start the tween
 				if (!_shutterRightTween.active && _shutterChangeState !=2) 
 				{
 					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightClosed, 4, Ease.sineIn);
 					_shutterRightTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterRightTween.active) 
 				{
 					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
-				} else _shutterRight.x = FP.camera.x + shutterRightClosed;
+				}
 				
+				// tween not active and no change of state - shutter should be at closed position
+				if (!_shutterRightTween.active && _shutterChangeState == 2) 
+				{
+					_shutterRight.x = FP.camera.x + shutterRightClosed;
+				}
 				
 				/* UP shutter */
+				// change of state - start the tween
 				if (!_shutterUpTween.active && _shutterChangeState !=2) 
 				{
 					_shutterUpTween.tween(_shutterUp.y, shutterUpOpen, 4, Ease.sineIn);
 					_shutterUpTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterUpTween.active) 
 				{
 					_shutterUp.y = _shutterUpTween.value;
-				} else _shutterUp.y = shutterUpOpen;
+				}
 				
+				// tween not active and no change of state - shutter should be at open position
+				if (!_shutterUpTween.active && _shutterChangeState == 2) 
+				{
+					_shutterUp.y = shutterUpOpen;
+				}
 				
 				/* DOWN shutter */		
-
+				// change of state - start the tween
 				if (!_shutterDownTween.active && _shutterChangeState !=2) 
 				{
 					_shutterDownTween.tween(_shutterDown.y, shutterDownOpen, 4, Ease.sineIn);
 					_shutterDownTween.start();
 				}
 				
+				// tween active - update shutter position
 				if (_shutterDownTween.active) 
 				{
 					_shutterDown.y = _shutterDownTween.value;
 				} else _shutterDown.y = shutterDownOpen;
+			
+				// tween not active and no change of state - shutter should be at open position
+				if (!_shutterDownTween.active && _shutterChangeState == 2) 
+				{
+					_shutterDown.y = shutterDownOpen;
+				}	
+					
 				
-				// set new shutter state
-				_shutterChangeState = 2;
-				
-
 				//debug
-				if (_counter > 0.4 && debug) 
+				if (_counter > 0.4 && debug && _shutterChangeState != 2) 
 				{
 					_counter -= _counter;
-					trace("2");
+					trace("modele 2");
 					
 					if (_shutterRightTween.active) 
 					{
 						trace(_shutterRightTween.value);
 					}
 				}
-
+				
+				// set new shutter state
+				_shutterChangeState = 2;
+				
 			}
-			
-			
 		}
 
 		
@@ -708,7 +812,7 @@ package game
 		 * Generate final words
 		 */
 		
-		private function _startFinalWords():void
+		private function startFinalWords():void
 		{
 			// add Epitaphe object
 			finalWords = new Epitaphe();
@@ -733,7 +837,7 @@ package game
 		/**
 		 * unravel the words as player moves
 		 */
-		private function _updateFinalWords():void
+		private function updateFinalWords():void
 		{
 			// display one character every 25 pixels the player moves
 			var wordslength:int = (player.x - rouleauTriggerX) / 25;
@@ -766,7 +870,7 @@ package game
 		/**
 		 * Update rouleau positions and animations
 		 */
-		private function _updateRouleauPositions():void
+		private function updateRouleauPositions():void
 		{
 			
 			var contactPoint:Number = player.x 
@@ -837,7 +941,7 @@ package game
 					rouleauStart.x, rouleauEnd.previousX);
 				
 				// update the width of the text underlay
-				_stretchPapyrus();
+				stretchPapyrus();
 			}
 	
 		}
@@ -845,7 +949,7 @@ package game
 		/**
 		 * Update the width of the papyrus to match distance between rouleau
 		 */
-		private function _stretchPapyrus():void
+		private function stretchPapyrus():void
 		{
 				// update text underlay by stretching the rectangle
 				var width:Number = rouleauEnd.x - rouleauStart.x;// + rouleauEnd.spriteRouleau.width / 2;
@@ -859,7 +963,7 @@ package game
 		/**
 		 * Game END
 		 */
-		private function _leaveGame():void
+		private function leaveGame():void
 		{
 			if (false == _outroCalled) 
 			{
@@ -880,7 +984,7 @@ package game
 		/**
 		 * adjust the framerates of the background animations based on player speed
 		 */
-		private function _setAnimationSpeed():void
+		private function setAnimationSpeed():void
 		{
 			// first map player velocity to framerate
 			var rate:Number = FP.scaleClamp(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 4, 0, 1);	
@@ -914,7 +1018,7 @@ package game
 		/**
 		 * Clean-up animations that have moved off the edge of the camera
 		 */
-		private function _removeAnimations():void
+		private function removeAnimations():void
 		{	
 			for (var m:int = 0; m < animationList.length; m++)
 			{
@@ -933,7 +1037,7 @@ package game
 		/**
 		 * Clean-up backgrounds that have moved off the edge of the camera
 		 */
-		private function _removeBackgrounds():void
+		private function removeBackgrounds():void
 		{	
 			for (var bg:int = 0; bg < backgroundList.length; bg++)
 			{

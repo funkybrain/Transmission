@@ -33,10 +33,10 @@
 
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
-		<timeToChild>10</timeToChild>	
-		<timeFatherToDeath>15</timeFatherToDeath>
-		<timeChildToGrandChild>15</timeChildToGrandChild>
-		<timeGrandChildToEnd>20</timeGrandChildToEnd>
+		<timeToChild>40</timeToChild>	
+		<timeFatherToDeath>80</timeFatherToDeath>
+		<timeChildToGrandChild>30</timeChildToGrandChild>
+		<timeGrandChildToEnd>30</timeGrandChildToEnd>
 	</timers>
 	
 	

@@ -86,7 +86,7 @@
 		public var S_MIN:Number; // s-cruve mini abcisse
 		public var S_MAX:Number; // s-cruve max abcisse
 		
-		public var transmitModel:uint;
+		public var transmitModel:uint = 3; // initialize to anything but 0,1,2
 		public var transmitIndexX:Number;
 		public var transmitIndexY:Number;
 		public var transmitIndexZ:Number;
@@ -948,7 +948,7 @@
 					typeVitesse[i] = "normale (pere)";
 				}
 				
-				if ((state=="child" || state=="grandChild") && transmitModel==1) 
+				if ((state=="child" || state=="grandChild") && (transmitModel==0 || transmitModel == 1)) 
 				{
 					
 					// check if type 3 comes into effect
@@ -1330,7 +1330,7 @@
 				{
 					pathBaseSpeed[j] = VB;
 				}
-				transmitModel = 1;
+				transmitModel = 0;
 				trace("Modèle 1a");
 			} 
 			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
