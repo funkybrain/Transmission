@@ -133,7 +133,7 @@ package game
 		
 
 		public var playerGoneAWOL:Boolean = false;
-		public var grandChildDying:Boolean = false;
+		public var launchEndMusic:Boolean = false;
 
 		/**
 		 * Epitaphe
@@ -203,6 +203,12 @@ package game
 			
 			//TODO remove kill vol befor publish
 			FP.volume = LoadXmlData.VOLUME;
+			
+			// kill credit sound if it was paying
+			if (player.sound.musicEnd.playing) 
+			{
+				player.sound.musicEnd.stop();
+			}
 						
 		} // end constructor
 		
@@ -326,13 +332,22 @@ package game
 			
 			
 			// fade volume out when grandchild is dying
-			if (grandChildDying) 
+			if (player.deathImminent && !launchEndMusic) 
 			{
 				//FP.volume = masterfader.value;
 				//set the volume to the alpha value of the grandChild as it fades out
-				FP.volume = player.grandChild.alpha;
+				//FP.volume = player.grandChild.alpha;
 				//trace("vol: " + FP.volume);
+				for (var i:int = 0; i < 3; i++) 
+				{
+					player.stopPathMusic(i);
+				}
+				
+				trace("end music kicks in");
+				launchEndMusic = true;
+				player.fadeInEndMusic();
 			}
+			
 			
 			// hide/show overlay
 			if (LoadXmlData.HUD) 
@@ -804,7 +819,7 @@ package game
 			masterfader.start();*/
 			
 			// set flag for mechanics that need to know the death sequence has started
-			grandChildDying = true;
+			
 
 		}
 		
@@ -977,7 +992,7 @@ package game
 				FP.world.removeAll();
 				
 				//reset vol to play credits
-				FP.volume = 0.8;
+				//FP.volume = 0.8;
 			}
 		}
 		

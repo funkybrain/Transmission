@@ -475,7 +475,11 @@
 			}
 			
 			// fade sounds to ensure the correct path music is playing if the player is moving
-			playPathMusic(currentPathIndex);
+			if (!deathImminent) 
+			{
+				playPathMusic(currentPathIndex);
+			}
+
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
@@ -578,7 +582,7 @@
 		private function playPathMusic(path:int):void
 		{
 			// FADE MUSIC IN
-			if (isMoving && !wasMoving) 
+			if (isMoving && !wasMoving && !deathImminent) 
 			{
 				// player is moving, hence all music must play
 				for each (var music:Sfx in sound.pathSound) 
@@ -597,7 +601,7 @@
 				
 				//sound.pathFader[path].start(); //starts automatically (cf fp source code)
 				
-				//trace("fade path (" + path +") volume up");
+				trace("fade path (" + path +") volume up");
 				
 			}
 			// FADE MUSIC OUT
@@ -606,7 +610,7 @@
 				// player stopped moving: fade out and stop all music (stop handled by onComplete in SoundManager)
 				sound.pathFader[path].fadeTo(0, 2);
 				
-				//trace("fade path (" + path +") volume down");
+				trace("fade path (" + path +") volume down");
 			}
 	
 			
@@ -626,12 +630,22 @@
 		/**
 		 * If there's no fader currently active, fade the path music out
 		 */
-		private function stopPathMusic(path:int):void
+		public function stopPathMusic(path:int):void
 		{
 			if (!sound.pathFader[path].active) 
 			{
 				sound.pathFader[path].fadeTo(0, 2);
 			}
+		}
+		
+		/**
+		 * Fade the end music in when grand child starts to disappear
+		 */
+		public function fadeInEndMusic():void
+		{
+			
+			sound.musicEnd.play(0);
+			sound.endFader.fadeTo(1, 2, Ease.sineIn);
 		}
 		
 		/**
@@ -1529,8 +1543,8 @@
 			fadeOutGame();
 			
 			// remove player from world
-			FP.world.removeList(sound, this);
-			
+			//FP.world.removeList(sound, this);
+			FP.world.remove(this);
 
 		}
 		

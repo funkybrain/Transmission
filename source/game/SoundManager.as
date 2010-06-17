@@ -21,13 +21,26 @@ package game
 	
 		[Embed(source = '../../sounds/groove.mp3', mimeType = 'audio/mpeg')]
 			private static const SOUND_TRANSMIT:Class;
+		
+		[Embed(source = '../../sounds/MusiqueDebut.mp3', mimeType = 'audio/mpeg')]
+			private static const MUSIC_START:Class;	
+		
+		[Embed(source = '../../sounds/MusiqueFin.mp3', mimeType = 'audio/mpeg')]
+			private static const MUSIC_END:Class;	
 	
 		/**
 		 * Sound properties
 		 */
 		public var pathSound:Vector.<Sfx> = new Vector.<Sfx>(); // List<Sfx> to store path sounds/music
 		public var pathFader:Vector.<SfxFader> = new Vector.<SfxFader>(); // List<SfxFader> to store path sounds faders
+		
 		public var transmitJingle:Sfx;
+		
+		public var musicStart:Sfx;
+		public var startFader:SfxFader;
+		
+		public var musicEnd:Sfx;
+		public var endFader:SfxFader;
 		
 		
 			
@@ -42,6 +55,9 @@ package game
 			pathFader[2] = new SfxFader(pathSound[2], _onFaderComplete);
 			
 			transmitJingle = new Sfx(SOUND_TRANSMIT);
+			
+			musicEnd = new Sfx(MUSIC_END);
+			endFader = new SfxFader(musicEnd);
 
 			processRules();
 		}
@@ -53,6 +69,8 @@ package game
 			{
 				this.addTween(fader);
 			}
+			
+			this.addTween(endFader);
 		}
 		
 		private function _onFaderComplete():void

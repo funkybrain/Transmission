@@ -5,6 +5,7 @@ package game
 	import flash.media.SoundChannel;
 	
 	
+	
 	public class Credits extends Intro
 	{
 	
@@ -19,9 +20,9 @@ package game
 		
 		public function Credits() 
 		{
-			music = new _music();
-			fader = new SoundChannel();
-			fader = music.play();
+			//music = new _music();
+			//fader = new SoundChannel();
+			//fader = music.play();
 			super();
 		}
 		
@@ -33,7 +34,7 @@ package game
 		override public function onRemovedFromStage(event:Event):void 
 		{
 			super.onRemovedFromStage(event);
-			fader.stop();
+			//fader.stop();
 		}
 		
 	}

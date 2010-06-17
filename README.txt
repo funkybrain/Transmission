@@ -26,6 +26,7 @@ Next: release 2.0
 > modif des phases de transmission: duree determinee par valeur dans gamedata
 > jingle de transmission activee
 > ajustement des layers
+> musique de fin commence avec la disparition progressive du petit-fils et continue pendant les credits
 
 To do list:
 ----------
@@ -37,14 +38,7 @@ To do list:
 > remove tileset to save on memory
 > blend shutter textures
 
-> A x min avant la fin du timer:
-- fade music out
-- fade in death music
-- prendre contrôle du joueur et avancer tout droit
-
-> Afficher masque noir sur l'écran
-- masque vertical lié au ratio de distance le plus petit (bcp de changements = ouverture)
-
+> if at Tdeath - 10s pas de declenchement rouleau, attendre declenchement puis ajouter 10s de vie
 
 
 
