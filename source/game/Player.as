@@ -477,7 +477,7 @@
 			}
 			
 			// fade sounds to ensure the correct path music is playing if the player is moving
-			if (!deathImminent) 
+			if (!deathImminent && !isTransmitting) 
 			{
 				playPathMusic(currentPathIndex);
 			}
@@ -511,7 +511,7 @@
 			if (Point.distance(position,_pathSwitchLocation) > 30 && _pathSwitched == true) 
 			{
 				//trace("distance > 30px");
-				if (_pathSwitchTable[0]!=_pathSwitchTable[1]) // paths are still different after 30px
+				if (_pathSwitchTable[0]!=_pathSwitchTable[1] && !isTransmitting && !deathImminent) // paths are still different after 30px
 				{
 					//trace("permanent path change");
 					// play music based on current path and latest path change
@@ -576,7 +576,7 @@
 				// player is moving, hence all music must play
 				for each (var music:Sfx in sound.pathSound) 
 				{
-					// hence only resume the music if it was stopped
+					// only resume the music if it was stopped
 					if (!music.playing) 
 					{
 						music.resume();	
@@ -585,21 +585,21 @@
 				}
 				
 				// BUT only turn on the volume of the current path
-				sound.pathFader[path].fadeTo(1, 1, Ease.quintIn);
-
+				sound.pathFader[path].fadeTo(1, 1, Ease.quintIn);				
 				
-				//sound.pathFader[path].start(); //starts automatically (cf fp source code)
-				
-				trace("fade path (" + path +") volume up");
+				//trace("fade path (" + path +") volume up");
 				
 			}
 			// FADE MUSIC OUT
-			else if (!isMoving && wasMoving)
+			else if (!isMoving && wasMoving && !deathImminent)
 			{
+				for each (var fader:SfxFader in sound.pathFader) 
+				{
+					fader.fadeTo(0, 1, Ease.sineOut);
+				}
 				// player stopped moving: fade out and stop all music (stop handled by onComplete in SoundManager)
-				sound.pathFader[path].fadeTo(0, 2);
 				
-				trace("fade path (" + path +") volume down");
+				//trace("fade path (" + path +") volume down");
 			}
 	
 			
@@ -617,17 +617,16 @@
 		}
 		
 		/**
-		 * If there's no fader currently active, fade the path music out
+		 * fade the path music out
 		 */
 		public function fadeOutPathMusic(path:int):void
-		{
-			/*if (!sound.pathFader[path].active) 
+		{	
+			if (sound.pathSound[path].volume != 0) 
 			{
-				sound.pathFader[path].fadeTo(0, 2);
-			}*/
-			
-			sound.pathFader[path].fadeTo(0, 2);
+				sound.pathFader[path].fadeTo(0, 1);
+			}
 		}
+		
 		
 		
 		
@@ -636,7 +635,7 @@
 		 */
 		private function changePathMusic():void
 		{
-			//compare the two stores path indexes (seperated by 30 pixels distance)
+			//compare the two stored path indexes (seperated by 30 pixels distance)
 			//if they are different, then player has really changed path
 			//as opposed to crossed an intersection
 			if (_pathSwitchTable[1]!=_pathSwitchTable[0]) 
@@ -652,17 +651,29 @@
 				// fade out last path music
 				//trace("playing sound: " + idFrom);
 
-				fromSound.fadeTo(0, 2, Ease.sineOut);
+				fromSound.fadeTo(0, 1, Ease.sineOut);
 				
 				
 				// fade in new path music
 				//trace("moving to sound: " + idTo);
 
-				if (!sound.pathSound[idTo].playing) 
+/*				if (!sound.pathSound[idTo].playing) 
 				{
 					toSound.sfx.resume();
 					trace("resuming...");
+				}*/
+				
+				for each (var music:Sfx in sound.pathSound) 
+				{
+					// only resume the music if it was stopped
+					if (!music.playing) 
+					{
+						music.resume();
+						trace("resuming...");
+					}
+					//trace("music state: " + music.playing);
 				}
+				
 				toSound.fadeTo(1, 2, Ease.sineIn);
 				
 				
@@ -1131,10 +1142,10 @@
 		 */
 		private function testGrandChildAppear():void
 		{
-			if (robotDaughter.robotDaughterDeath.frame == 24 && !_isGrandChildVisible) 
+			if (robotDaughter.robotDaughterDeath.frame == 23 && !_isGrandChildVisible) 
 			{
 				makeGrandChildVisible();
-				trace("take control of grand child");
+				trace("grand child visible");
 			}
 		}
 		
@@ -1241,6 +1252,7 @@
 				trace("start timeToGrandChild alarm");		
 				//set player state to child
 				state = "child";
+				trace("has control of child");
 			}
 			else if (state == "child") 
 			{
@@ -1250,6 +1262,7 @@
 						
 				//set player state to child
 				state = "grandChild";
+				trace("has control of grand child");
 			}
 			
 		}
@@ -1449,7 +1462,7 @@
 			// kill all path music
 			for (var i:int = 0; i < 3; i++) 
 			{
-				fadeOutPathMusic(currentPathIndex);
+				fadeOutPathMusic(i);
 			}
 
 			
@@ -1471,7 +1484,10 @@
 		public function onTimeFatherToDeath():void
 		{
 			// kill the path music
-			fadeOutPathMusic(currentPathIndex);
+			for (var i:int = 0; i < 3; i++) 
+			{
+				fadeOutPathMusic(i);
+			}
 			
 			// start the transmition timer
 			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
@@ -1491,7 +1507,11 @@
 		public function onTimeToGrandChild():void
 		{
 			// kill the path music
-			fadeOutPathMusic(currentPathIndex);
+			for (var i:int = 0; i < 3 ; i++) 
+			{
+				fadeOutPathMusic(i);
+			}
+
 			
 			// start the transmition timer
 			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
@@ -1526,12 +1546,14 @@
 				}
 			}
 			
+			// remove sound object from world
+			FP.world.remove(sound);
+			
 			// fade out from game
 			fadeOutGame();
 			
-			// remove player from world
-			//FP.world.removeList(sound, this);
-			//FP.world.remove(this);
+			// remove player from game
+			FP.world.remove(this);
 
 		}
 		

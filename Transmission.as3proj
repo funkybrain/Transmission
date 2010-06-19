@@ -9,7 +9,7 @@
     <movie width="800" />
     <movie height="480" />
     <movie version="10" />
-    <movie background="#808080" />
+    <movie background="#FFFFFF" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>

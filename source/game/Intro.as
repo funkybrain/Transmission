@@ -9,10 +9,7 @@ package game
 	import net.flashpunk.utils.Key;
 	
 	public class Intro
-	{
-		
-		
-		
+	{	
 		[Embed(source='../../assets/introTransmission.swf', symbol='wrapper')]
 		private var _movie:Class;
 		
@@ -22,7 +19,7 @@ package game
 		{
 			
 			Input.define("Enter", Key.ENTER);
-			
+			FP.engine.stage.frameRate = 12;
 			init(_movie);
 		}
 		
@@ -55,7 +52,6 @@ package game
 			movieSWF.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 			movieSWF.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			movieSWF.removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
-			
 			
 			trace("removed all event listeners from stage");
 

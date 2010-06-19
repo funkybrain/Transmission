@@ -1,10 +1,10 @@
 <data>
 	
 	<!-- temps de transmition en secondes -->
-	<transmitTimer>10</transmitTimer>
+	<transmitTimer>14</transmitTimer>
 	
 	<!-- volume entre 0 et 1-->
-	<volume>0.5</volume>
+	<volume>0.9</volume>
 	
 	<!-- HUD timer + bar de progression-->
 	<HUD>true</HUD>
@@ -17,35 +17,43 @@
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
 		<VB>0</VB>	<!-- Vb pere-->
-		<CT_VB>0.4</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
+		<CT_VB>0.6</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
 	</vitesse>
 
 	<!-- variables utilisées pour le calcul de S-Curve-->
 	<scurve>
 		<COEFF_D>1.6</COEFF_D>
-		<COEFF_D_CHILD>2.4</COEFF_D_CHILD>
-		<COEFF_D_GRANDCHILD>2.9</COEFF_D_GRANDCHILD>
+		<COEFF_D_CHILD>2</COEFF_D_CHILD>
+		<COEFF_D_GRANDCHILD>2.4</COEFF_D_GRANDCHILD>
 		
 		<D_MAX>1800</D_MAX>
-		<S_MIN>-1</S_MIN>
-		<S_MAX>1.9</S_MAX>
+		<S_MIN>-1.2</S_MIN>
+		<S_MAX>2</S_MAX>
 	</scurve>
 
-	<!-- variables utilisées pour les timers de transmission-->
+	<!-- variables utilisées pour les timers de transmission
 	<timers>
 		<timeToChild>20</timeToChild>	
 		<timeFatherToDeath>30</timeFatherToDeath>
 		<timeChildToGrandChild>20</timeChildToGrandChild>
 		<timeGrandChildToEnd>20</timeGrandChildToEnd>
 	</timers>
+-->
+	
+<!-- variables utilisées pour les timers de transmission-->
+	<timers>
+		<timeToChild>60</timeToChild>	
+		<timeFatherToDeath>80</timeFatherToDeath>
+		<timeChildToGrandChild>80</timeChildToGrandChild>
+		<timeGrandChildToEnd>80</timeGrandChildToEnd>
+	</timers>
 	
 	
 	
 	<!-- Texte de fin-->
 	<citation>
-		L'homme est impur car dans son subconscient il ne pense qu'a caresser son ego
-		d'un geste nonchalant, dans l'espoir de se gratter la vertue
-		prise entre deux enclumes de tarte au jasmin.
+		Je me souviens de mon père, comme il se souvient du sien, certainement. 
+		Mais sur son enfance, apposer la mienne.(test)
 	</citation>	
 	
 </data>

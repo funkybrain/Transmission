@@ -47,14 +47,12 @@ package game
 			pathSound[1] = new Sfx(MUSIC_GREEN, null);
 			pathSound[2] = new Sfx(MUSIC_BLUE, null);
 			
-			pathFader[0] = new SfxFader(pathSound[0], _onFaderComplete);
-			pathFader[1] = new SfxFader(pathSound[1], _onFaderComplete);
-			pathFader[2] = new SfxFader(pathSound[2], _onFaderComplete);
+			pathFader[0] = new SfxFader(pathSound[0], _onFaderRedComplete);
+			pathFader[1] = new SfxFader(pathSound[1], _onFaderGreenComplete);
+			pathFader[2] = new SfxFader(pathSound[2], _onFaderBlueComplete);
 			
 			transmitJingle = new Sfx(SOUND_TRANSMIT);
-			
-			//musicEnd = new Sfx(MUSIC_END);
-			//endFader = new SfxFader(musicEnd);
+
 
 			processRules();
 		}
@@ -66,28 +64,74 @@ package game
 			{
 				this.addTween(fader);
 			}
-			
-			//this.addTween(endFader);
 		}
 		
-		private function _onFaderComplete():void
+		private function _onFaderRedComplete():void
 		{
 			// if this was called by a fade out, stop the music until the next resume
 			// do nothing if it was called by a fade in
 			// first make sur ALL music is muted - this would be an indication that all music should stop
 			// and should also avoid stopping music if xfading between paths
-			if (pathFader[0].sfx.volume==0 && pathFader[1].sfx.volume==0 && pathFader[2].sfx.volume==0) 
+			if (pathSound[0].volume==0 && pathSound[1].volume==0 && pathSound[2].volume==0) 
 			{
+				trace("onFaderRedComplete");
 				var j:int = 0;
-				for each (var fader:SfxFader in pathFader) 
+				for each (var sound:Sfx in pathSound) 
 				{		
-					fader.sfx.stop();
-					trace("fader ("+ j +") Complete");
-					trace("scrub ("+ j +") " + pathSound[j].position.toFixed(1));
+					if (sound.playing) 
+					{
+						sound.stop();
+						trace("Sound ("+j+") Stopped - Scrub: " + pathSound[j].position.toFixed(1));
+					}
 					j++;
 				}
 			}
 			
+		}
+		
+		private function _onFaderGreenComplete():void
+		{
+			// if this was called by a fade out, stop the music until the next resume
+			// do nothing if it was called by a fade in
+			// first make sur ALL music is muted - this would be an indication that all music should stop
+			// and should also avoid stopping music if xfading between paths
+			if (pathSound[0].volume==0 && pathSound[1].volume==0 && pathSound[2].volume==0) 
+			{
+				trace("onFaderGreenComplete");
+				var k:int = 0;
+				for each (var sound:Sfx in pathSound) 
+				{		
+					if (sound.playing) 
+					{
+						sound.stop();
+						trace("Sound (" + k + ") Stopped - Scrub: " + pathSound[k].position.toFixed(1));
+					}					
+					k++;
+				}
+			}
+			
+		}
+		
+		private function _onFaderBlueComplete():void
+		{
+			// if this was called by a fade out, stop the music until the next resume
+			// do nothing if it was called by a fade in
+			// first make sur ALL music is muted - this would be an indication that all music should stop
+			// and should also avoid stopping music if xfading between paths
+			if (pathSound[0].volume==0 && pathSound[1].volume==0 && pathSound[2].volume==0) 
+			{
+				trace("onFaderBlueComplete");
+				var l:int = 0;
+				for each (var sound:Sfx in pathSound) 
+				{		
+					if (sound.playing) 
+					{
+					sound.stop();
+					trace("Sound (" + l + ") Stopped - Scrub: " + pathSound[l].position.toFixed(1));	
+					}
+					l++;
+				}				
+			}
 		}
 		
 	} // end SoundManager class

@@ -156,7 +156,9 @@ package game
 		 * CONSTRUCTOR
 		 */
 		public function Game() 
-		{	
+		{
+			FP.engine.stage.frameRate = 60;
+			
 			// create first level
 			level_1 = new Level(1, 0);
 			
@@ -333,27 +335,6 @@ package game
 			}
 			
 			
-			// fade volume out when grandchild is dying
-			if (player.deathImminent && !launchEndMusic) 
-			{
-				//FP.volume = masterfader.value;
-				//set the volume to the alpha value of the grandChild as it fades out
-				//FP.volume = player.grandChild.alpha;
-				//trace("vol: " + FP.volume);
-				for (var i:int = 0; i < 3; i++) 
-				{
-					player.fadeOutPathMusic(i);
-				}
-				
-				
-				trace("end music kicks in");
-				launchEndMusic = true;
-				
-				// call end music. starts during death scene and extends to credits
-				fadeInEndMusic();
-			}
-			
-			
 			// hide/show overlay
 			if (LoadXmlData.HUD) 
 			{
@@ -468,7 +449,7 @@ package game
 				
 				
 				//unfreeze timers
-				if (timer.active == false)
+				if (timer.active == false && !player.deathImminent)
 				{
 					if (player.isMoving == true && player.hasControl) 
 					{
@@ -806,7 +787,7 @@ package game
 		public function checkGrandChildNearDeath():void
 		{
 			
-			if (player.timeGrandChildToEnd.remaining <= 10 && player.deathImminent==false) 
+			if (player.timeGrandChildToEnd.remaining <= 10 && !player.deathImminent) 
 			{
 				startDeathSequence(10); // 10 seconds to death
 				player.deathImminent = true;
@@ -825,16 +806,17 @@ package game
 			player.fadeSprite.tween(player.grandChild, "alpha", 0.1, time, Ease.expoOut);
 			player.addTween(player.fadeSprite);
 			player.fadeSprite.start();
-			
-			// fade music out
-			/*masterfader = new NumTween();
-			masterfader.tween(FP.volume, 0, time, Ease.circOut);
-			addTween(masterfader);
-			masterfader.start();*/
-			
-			// set flag for mechanics that need to know the death sequence has started
-			
 
+			// fade out all sounds
+			for (var i:int = 0; i < 3; i++) 
+			{
+				player.fadeOutPathMusic(i);
+			}
+				
+			// call end music. starts during death scene and extends to credits
+			trace("end music kicks in");
+			launchEndMusic = true;
+			fadeInEndMusic();
 		}
 		
 		/**
@@ -1010,7 +992,7 @@ package game
 			creditMusic = new CreditMusic();
 			add(creditMusic);
 			creditMusic.musicEnd.play(0);
-			creditMusic.fadeMusicIn.fadeTo(1, 2, Ease.sineIn);
+			creditMusic.fadeMusicIn.fadeTo(1, 1, Ease.sineIn);
 			trace("fadeInEndMusic() called");
 		}
 		
