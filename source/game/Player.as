@@ -188,6 +188,7 @@
 		public var isChildAlive:Boolean = false;
 		public var isFatherDying:Boolean = false;
 		public var isDaughterDying:Boolean = false;
+		public var isPlayerDead:Boolean = false;
 		public var hasControl:Boolean = true;
 		public var isTransmitting:Boolean = false; // true if player is undergoing transformation
 		private var _isDaughterVisible:Boolean = false; // true once daughter becomes visible
@@ -290,6 +291,7 @@
 			Input.define("L", Key.LEFT);
 			Input.define("U", Key.UP);
 			Input.define("D", Key.DOWN);
+			
 			
 			// Initialize
 			// distance (0) on each path type
@@ -537,21 +539,6 @@
 			//store current position as next previous position
 			previousPos = position.clone();
 			
-			//store current player position in move history 
-			/*if (velocity.x!=0 || velocity.y!=0) 
-			{
-				_moveIndex = moveHistory.push(previousPos);
-				_pathHistoryIndex = pathHistory.push(currentPathIndex);
-				
-				//pop oldest move history from List to keep only the last 60 moves
-				if (_moveIndex==60) 
-				{
-					moveHistory.shift();
-					pathHistory.shift();
-				}
-			
-			}*/
-			
 			// scale player graphic if required
 			scalePlayerSprite();		
 			
@@ -569,6 +556,8 @@
 				testGrandChildAppear();
 				testRemoveRobotDaughter();
 			}
+			
+			
 			
 			//update sound manager
 			sound.update();
@@ -630,23 +619,17 @@
 		/**
 		 * If there's no fader currently active, fade the path music out
 		 */
-		public function stopPathMusic(path:int):void
+		public function fadeOutPathMusic(path:int):void
 		{
-			if (!sound.pathFader[path].active) 
+			/*if (!sound.pathFader[path].active) 
 			{
 				sound.pathFader[path].fadeTo(0, 2);
-			}
+			}*/
+			
+			sound.pathFader[path].fadeTo(0, 2);
 		}
 		
-		/**
-		 * Fade the end music in when grand child starts to disappear
-		 */
-		public function fadeInEndMusic():void
-		{
-			
-			sound.musicEnd.play(0);
-			sound.endFader.fadeTo(1, 2, Ease.sineIn);
-		}
+		
 		
 		/**
 		 * Change music track based on path changes
@@ -1463,8 +1446,12 @@
 		 */
 		public function onTimeToChild():void
 		{
-			// kill the path music
-			stopPathMusic(currentPathIndex);
+			// kill all path music
+			for (var i:int = 0; i < 3; i++) 
+			{
+				fadeOutPathMusic(currentPathIndex);
+			}
+
 			
 			// child appears as a robot. Nothing transmitted yet.
 			state = "childAlive";
@@ -1484,7 +1471,7 @@
 		public function onTimeFatherToDeath():void
 		{
 			// kill the path music
-			stopPathMusic(currentPathIndex);
+			fadeOutPathMusic(currentPathIndex);
 			
 			// start the transmition timer
 			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
@@ -1504,7 +1491,7 @@
 		public function onTimeToGrandChild():void
 		{
 			// kill the path music
-			stopPathMusic(currentPathIndex);
+			fadeOutPathMusic(currentPathIndex);
 			
 			// start the transmition timer
 			startTransmitionTimer(LoadXmlData.TRANS_TIMER);
@@ -1524,7 +1511,7 @@
 		{
 						
 			trace("grandchild is dead");
-			//grandChildDying = false;
+			isPlayerDead = true;
 
 			// see if this helps kill the sounds
 			//playerGoneAWOL = true;
@@ -1544,7 +1531,7 @@
 			
 			// remove player from world
 			//FP.world.removeList(sound, this);
-			FP.world.remove(this);
+			//FP.world.remove(this);
 
 		}
 		
@@ -1554,6 +1541,7 @@
 			fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
 			fadeOutCurtain.x = FP.camera.x;
 			fadeOutCurtain.y = FP.camera.y;
+			
 			FP.world.add(fadeOutCurtain);
 			trace("fade out");
 		}

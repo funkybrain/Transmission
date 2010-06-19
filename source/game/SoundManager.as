@@ -19,15 +19,13 @@ package game
 		[Embed(source = '../../sounds/Chemin3.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC_BLUE:Class;
 	
-		[Embed(source = '../../sounds/groove.mp3', mimeType = 'audio/mpeg')]
+		[Embed(source = '../../sounds/transmission.mp3', mimeType = 'audio/mpeg')]
 			private static const SOUND_TRANSMIT:Class;
 		
 		[Embed(source = '../../sounds/MusiqueDebut.mp3', mimeType = 'audio/mpeg')]
 			private static const MUSIC_START:Class;	
 		
-		[Embed(source = '../../sounds/MusiqueFin.mp3', mimeType = 'audio/mpeg')]
-			private static const MUSIC_END:Class;	
-	
+		
 		/**
 		 * Sound properties
 		 */
@@ -39,8 +37,7 @@ package game
 		public var musicStart:Sfx;
 		public var startFader:SfxFader;
 		
-		public var musicEnd:Sfx;
-		public var endFader:SfxFader;
+
 		
 		
 			
@@ -56,8 +53,8 @@ package game
 			
 			transmitJingle = new Sfx(SOUND_TRANSMIT);
 			
-			musicEnd = new Sfx(MUSIC_END);
-			endFader = new SfxFader(musicEnd);
+			//musicEnd = new Sfx(MUSIC_END);
+			//endFader = new SfxFader(musicEnd);
 
 			processRules();
 		}
@@ -70,7 +67,7 @@ package game
 				this.addTween(fader);
 			}
 			
-			this.addTween(endFader);
+			//this.addTween(endFader);
 		}
 		
 		private function _onFaderComplete():void
@@ -84,18 +81,14 @@ package game
 				var j:int = 0;
 				for each (var fader:SfxFader in pathFader) 
 				{		
-				 
-				
 					fader.sfx.stop();
-					/*trace("fader ("+ j +") Complete");
-					trace("scrub ("+ j +") " + pathSound[j].position.toFixed(1));*/
-				
+					trace("fader ("+ j +") Complete");
+					trace("scrub ("+ j +") " + pathSound[j].position.toFixed(1));
 					j++;
 				}
 			}
 			
 		}
-		
 		
 	} // end SoundManager class
 

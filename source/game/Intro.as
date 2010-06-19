@@ -16,7 +16,7 @@ package game
 		[Embed(source='../../assets/introTransmission.swf', symbol='wrapper')]
 		private var _movie:Class;
 		
-		internal var introMovieClip:MovieClip;
+		internal var movieSWF:MovieClip;
 		
 		public function Intro() 
 		{
@@ -29,55 +29,57 @@ package game
 		public function init(_clip:Class):void
 		{
 			
-			introMovieClip = new _clip();
+			movieSWF = new _clip();
 			
-			introMovieClip.x = 0;
-			introMovieClip.y = 0;
+			movieSWF.x = 0;
+			movieSWF.y = 0;
 			
-			introMovieClip.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			movieSWF.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
-			FP.stage.addChild(introMovieClip);
+			FP.stage.addChild(movieSWF);
 			
 		}
 		
 		private function onAddedToStage(event:Event):void
 		{
 			//introMovieClip.stop(); // does nothing!
-			trace("added to stage");
-			introMovieClip.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			introMovieClip.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+			trace("added movie to stage");
+			movieSWF.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			movieSWF.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 
 		}
 		
 		public function onRemovedFromStage(event:Event):void
 		{
 			
-			introMovieClip.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-			introMovieClip.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			introMovieClip.removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+			movieSWF.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+			movieSWF.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			movieSWF.removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 			
 			
-			trace("removed all event listeners");
+			trace("removed all event listeners from stage");
 
 
 		}
 		
-		private function onEnterFrame(event:Event):void
+		public function onEnterFrame(event:Event):void
 		{
 			
-			if (introMovieClip.currentFrame == introMovieClip.totalFrames) 
+			if (movieSWF.currentFrame == movieSWF.totalFrames) 
 			{
 				// stop playing movie
-				introMovieClip.stop();
+				movieSWF.stop();
 				
 				// check if user wants to start game
 				
 				if (Input.check("Enter")) 
 				{
-					FP.stage.removeChild(introMovieClip);
-					trace("launch world");
+					// remove movie from stage
+					FP.stage.removeChild(movieSWF);
+					
 					// call world
 					FP.world = new Game;
+					trace("start game");
 				}
 				
 			}

@@ -8,6 +8,7 @@ package game
 	import net.flashpunk.graphics.Canvas;
 	import net.flashpunk.graphics.Image;
 	import net.flashpunk.utils.Draw;
+	import flash.display.BlendMode;
 	
 	/**
 	 * Shutter class is used to draw a sliding cache based on player path distance ratios
@@ -52,7 +53,7 @@ package game
 			{
 				case "right":
 					shutter = new Image(RIGHT);
-					shutter.x = 10; // offset by 10 pixel to avoir thin opening at screen edge
+					//shutter.x = 10; // offset by 10 pixel to avoir thin opening at screen edge
 					break;
 				case "up":
 					shutter = new Image(UP);
@@ -63,7 +64,8 @@ package game
 			}
 			
 			graphic = shutter;
-			trace("create shutter " + pos);
+			shutter.blend = BlendMode.MULTIPLY;
+			//trace("create shutter " + pos);
 		}
 		
 	}

@@ -34,7 +34,7 @@
 	<!-- variables utilisées pour les timers de transmission-->
 	<timers>
 		<timeToChild>20</timeToChild>	
-		<timeFatherToDeath>40</timeFatherToDeath>
+		<timeFatherToDeath>30</timeFatherToDeath>
 		<timeChildToGrandChild>20</timeChildToGrandChild>
 		<timeGrandChildToEnd>20</timeGrandChildToEnd>
 	</timers>

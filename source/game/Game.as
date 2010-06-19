@@ -9,6 +9,8 @@ package game
 	import net.flashpunk.tweens.sound.SfxFader;
 	import net.flashpunk.tweens.sound.Fader;
 	import net.flashpunk.World;
+	import net.flashpunk.utils.Input;
+	import net.flashpunk.utils.Key;
 	import rooms.Level;
 	import game.Debug;
 	import game.LoadXmlData;
@@ -22,7 +24,6 @@ package game
 	import game.Background;
 	import game.Animation;
 	import game.Shutter;
-	import game.Outro;
 	import net.flashpunk.Entity;
 	import net.flashpunk.FP;
 	import net.flashpunk.graphics.Anim;
@@ -33,6 +34,7 @@ package game
 	import net.flashpunk.utils.Draw;
 	import flash.geom.Point;
 	import utils.SWFProfiler;
+	import game.CreditMusic;
 	
 	public class Game extends World
 	{
@@ -125,7 +127,7 @@ package game
 		/**
 		 * Booleans
 		 */
-		private var _outroCalled:Boolean = false;
+		private var _creditsCalled:Boolean = false;
 		private var _masterFaderComplete:Boolean = true;
 		private var _levelTwoAdded:Boolean = false;
 		private var _rouleauTriggered:Boolean = false;
@@ -140,6 +142,10 @@ package game
 		 */ 
 		public var finalWords:Epitaphe;
 
+		/**
+		 * Music for credits
+		 */
+		public var creditMusic:CreditMusic;
 		
 		/**
 		 * For debug
@@ -186,7 +192,8 @@ package game
 			debugText = new Text("", 0, 0, 400, 100);
 			debugText.font = "debugFont";
 			
-			
+			//
+			Input.define("Enter", Key.ENTER);
 			
 			// refresh screen color
 			FP.screen.color = 0x808080;
@@ -204,11 +211,6 @@ package game
 			//TODO remove kill vol befor publish
 			FP.volume = LoadXmlData.VOLUME;
 			
-			// kill credit sound if it was paying
-			if (player.sound.musicEnd.playing) 
-			{
-				player.sound.musicEnd.stop();
-			}
 						
 		} // end constructor
 		
@@ -290,10 +292,10 @@ package game
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
 			
-			// if final fade out is finished, send-in Outro
+			// if final fade out is finished, send-in Credits
 			if (null != player.fadeOutCurtain && player.fadeOutCurtain.complete) 
 			{
-				leaveGame();
+				callCredits();
 			}
 			
 			
@@ -340,12 +342,15 @@ package game
 				//trace("vol: " + FP.volume);
 				for (var i:int = 0; i < 3; i++) 
 				{
-					player.stopPathMusic(i);
+					player.fadeOutPathMusic(i);
 				}
+				
 				
 				trace("end music kicks in");
 				launchEndMusic = true;
-				player.fadeInEndMusic();
+				
+				// call end music. starts during death scene and extends to credits
+				fadeInEndMusic();
 			}
 			
 			
@@ -354,6 +359,15 @@ package game
 			{
 				_overlay.visible = true;
 			} else _overlay.visible = false;
+			
+			
+			// check to see if it's time to kill the credit music
+			if (Input.check("Enter") &&  player.isPlayerDead && !creditMusic.fadeMusicOut.active)
+			{
+				trace("player hit Enter - kill credit music");
+				fadeOutEndMusic();
+			}
+			
 		}
 		// end Game UPDATE LOOP
 		
@@ -978,22 +992,36 @@ package game
 		/**
 		 * Game END
 		 */
-		private function leaveGame():void
+		private function callCredits():void
 		{
-			if (false == _outroCalled) 
+			if (false == _creditsCalled) 
 			{
-				trace("call credits");
-				
-				
 				var playCredits:Credits = new Credits();
-				_outroCalled = true;
-				
-				// remove all entities from world
-				FP.world.removeAll();
-				
-				//reset vol to play credits
-				//FP.volume = 0.8;
+				_creditsCalled = true;
+				trace("call credits");
 			}
+		}
+		
+		/**
+		 * Fade in the end music when grand child starts to disappear
+		 */
+		public function fadeInEndMusic():void
+		{	
+			creditMusic = new CreditMusic();
+			add(creditMusic);
+			creditMusic.musicEnd.play(0);
+			creditMusic.fadeMusicIn.fadeTo(1, 2, Ease.sineIn);
+			trace("fadeInEndMusic() called");
+		}
+		
+		/**
+		 * Fade out the end music when players hits return. This will also restart the game
+		 * via the fader's callback function
+		 */
+		public function fadeOutEndMusic():void
+		{
+			creditMusic.fadeMusicOut.fadeTo(0, 2, Ease.sineOut);
+			trace("fadeOutEndMusic() called");
 		}
 		
 		/**

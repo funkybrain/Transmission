@@ -5,6 +5,7 @@
 	import rooms.*;
 	import game.LoadXmlData;
 	import splash.Splash;
+	import utils.SWFProfiler;
 
 	
 	/**
@@ -29,6 +30,10 @@
 			var s:Splash = new Splash;
 			FP.world.add(s);
 			s.start(splashComplete);
+			
+			
+			SWFProfiler.init(FP.stage, this);
+
 		}
 		
 		public function splashComplete():void
