@@ -287,7 +287,7 @@
 			childAlive.add("walk", framesChildAlive, 12, true);
 			fatherDeath.add("die", framesFatherDeath, 2, false);
 			
-			// offset the graphic to center it at the netity's origin
+			// offset the graphic to center it on the entity's origin
 			father.x = -15;
 			father.y = -15;
 			
@@ -412,13 +412,13 @@
 			shutterRightOpen = FP.width - 20;
 						
 			/* UP shutter */
-			shutterUpClosed = -10;					
+			shutterUpClosed = -20;					
 			shutterUpMid = - 40;
 			shutterUpOpen =  - 110;
 			
 
 			/* DOWN shutter */
-			shutterDownClosed = FP.height - 110;					
+			shutterDownClosed = FP.height - 100;					
 			shutterDownMid = FP.height - 80;
 			shutterDownOpen = FP.height - 10;
 			
@@ -525,8 +525,6 @@
 			// update speed on paths based on new pathDistance
 			calculateSpeed(currentPathIndex);
 			
-			//check if a new animated tile needs to be placed where player has walked
-			addNewTile(this.x, this.y, Path.TILE_GRID);
 			
 			// update movement status of player
 			if (!wasMoving && isMoving) 
@@ -545,6 +543,9 @@
 				move(currentPathIndex);
 			}
 			
+			//check if a new animated tile needs to be placed where player has walked
+			addNewTile(this.x, this.y, Path.TILE_GRID);
+
 			
 			// update movement status of player
 			if (!wasMoving && velocity.length) 
@@ -798,8 +799,11 @@
 			// convert x,y into row, col
 			var tileExists:Boolean = false;
 			
-			col = Math.floor(_x / _step);
-			row = Math.floor(_y / _step);
+			//col = Math.floor(_x / _step);
+			//row = Math.floor(_y / _step);
+			
+			col = Math.floor(_x) / _step;
+			row = Math.floor(_y) / _step;
 			
 			// loop through vector to see if a path of index (row,col) already exists
 			for (var m:int = 0; m < pathTileList.length; m++)
@@ -812,7 +816,7 @@
 					break;
 				}
 				
-				// remove tiles that are 200 pixels behind camra position
+				// remove tiles that are 200 pixels behind camera position
 				if (value.x < (FP.camera.x - 200)) 
 				{
 					pathTileList.splice(m, 1);
@@ -825,7 +829,9 @@
 			{
 				// add new animated tile to Vector and Level
 				var index:int = pathTileList.push(new PathTile(col, row, _step, currentPathIndex));
-				//trace("path index: " + pathIndex);
+				trace("adding tile of color : " + currentPathIndex);
+				trace("in row: " + row + " col: " + col);
+				
 				FP.world.add(pathTileList[index-1]);
 			}
 		}

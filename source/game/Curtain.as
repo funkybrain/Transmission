@@ -80,7 +80,7 @@ package game
 			else // type = "out"
 			{
 				// fade out effect
-				_fadeTween.tween(0, 1, 5, Ease.circIn);
+				_fadeTween.tween(0, 1, 11, Ease.circIn);
 			}
 			
 			addTween(_fadeTween);

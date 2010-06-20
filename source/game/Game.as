@@ -125,9 +125,7 @@ package game
 		private var _levelTwoAdded:Boolean = false;
 		private var _rouleauTriggered:Boolean = false;
 		private var _inContact:Boolean = false;
-		
 
-		public var playerGoneAWOL:Boolean = false;
 		public var launchEndMusic:Boolean = false;
 
 		/**
@@ -676,7 +674,7 @@ package game
 			{
 				
 				// stop animations when player leaves world
-				if (playerGoneAWOL || player.accouche) 
+				if (player.isPlayerDead || !player.hasControl) 
 				{
 					animation.spriteName.rate = 0;
 				} else 

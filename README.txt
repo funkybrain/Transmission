@@ -9,7 +9,8 @@ Bugs:
 
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
-> no music at beginning
+> path tile placement is screwed: placing wrong tile color
+
 
 Next: release 2.0
 -----------------
@@ -30,12 +31,11 @@ Next: release 2.0
 To do list:
 ----------
 
-> can we control framerate playback of embedded swf movies?
+
 > can we avoid the slowdown when player only crosses path without changing?
 > implement moovesmooth
 > preloader!
 > remove tileset to save on memory
-> blend shutter textures
 
 > if at Tdeath - 10s pas de declenchement rouleau, attendre declenchement puis ajouter 10s de vie
 
