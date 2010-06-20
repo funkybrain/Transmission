@@ -58,7 +58,7 @@ package game
 		 * Camera following information.
 		 */
 		public const FOLLOW_TRAIL:Number = 50;
-		public const FOLLOW_RATE:Number = .9;
+		public const FOLLOW_RATE:Number = .5; // was .9
 		public var worldWidth:uint;
 		public var worldHeight:uint;
 				
@@ -89,6 +89,9 @@ package game
 		public var backgroundList:Vector.<Background> = new Vector.<Background>();
 		
 		
+		// List<Shutters> to store shutters
+		public var shutters:Vector.<Shutter> = new Vector.<Shutter>();
+		
 		/**
 		 * Special effects and Tweens
 		 */
@@ -99,17 +102,7 @@ package game
 		// Sound Tweens
 		public var masterfader:NumTween;
 		
-		// Shutters 
-		private var _shutterRight:Shutter;
-		private var _shutterRightTween:NumTween;
 		
-		private var _shutterUp:Shutter;
-		private var _shutterUpTween:NumTween;
-		
-		private var _shutterDown:Shutter;
-		private var _shutterDownTween:NumTween;
-		
-		private var _shutterChangeState:int = 3;
 		
 		// Fade in screen
 		private var _fadeInCurtain:Curtain;
@@ -180,6 +173,9 @@ package game
 			// add player to world
 			player = level_1.addPlayerToWorld(this);
 			
+			// add shutters to world
+			shutters = player.shuttersAddToWorld(this);
+			
 			// add rouleau to world
 			rouleauStart = new Rouleau();
 			add(rouleauStart);
@@ -207,8 +203,7 @@ package game
 			_overlay = new GameOverlay();
 			add(_overlay);
 			
-			// initialize shutters
-			initShutters();
+
 			
 			//TODO remove kill vol befor publish
 			FP.volume = LoadXmlData.VOLUME;
@@ -227,25 +222,7 @@ package game
 			
 		}
 		
-		/**
-		 * Initialize shutters for game
-		 */
-		private function initShutters():void
-		{
-			_shutterRight = new Shutter(FP.width - 200, 0, "right");
-			_shutterDown = new Shutter(0, FP.height - 120, "up");
-			_shutterUp = new Shutter(0, 0, "up");
-			
-			_shutterDownTween = new NumTween();
-			_shutterRightTween = new NumTween();
-			_shutterUpTween = new NumTween();
-			
-			addTween(_shutterRightTween);
-			addTween(_shutterDownTween);
-			addTween(_shutterUpTween);
-			
-			addList(_shutterDown, _shutterRight, _shutterUp);
-		}
+		
 		
 		/**
 		 * UPDATE LOOP FOR GAME
@@ -270,9 +247,6 @@ package game
 			
 			// update path ratios
 			player.calculatePathRatios();
-
-			// update shutter positions
-			updateShutters();
 			
 			//test to see if we're near game end
 			checkGrandChildNearDeath();
@@ -461,326 +435,10 @@ package game
 		}
 		// end checkTimers()
 		
-		/**
-		 * Update shutter positions
-		 */
-		public function updateShutters():void
-		{
-			var debug:Boolean = true;
-			
-			var maxR:Number = player.getRatx();
-			var minR:Number = player.getRatz();
-			//trace("maxR " +maxR + "minR " +minR);
-			
-			var triggerLimit:Number = 1000;
-			
-			/************************/
-			/* Setup shutter presets*/
-			/************************/
-			
-			/* RIGHT shutter*/
-			var shutterRightClosed:Number = FP.width - 200;					
-			var shutterRightMid:Number = FP.width - 100;
-			var shutterRightOpen:Number = FP.width - 20;
-			
-			_shutterRight.y = 0;
-						
-			/* UP shutter */
-			var shutterUpClosed:Number = -10;					
-			var shutterUpMid:Number = - 40;
-			var shutterUpOpen:Number =  - 110;
-			
-			_shutterUp.x = FP.camera.x;
-
-			/* DOWN shutter */
-			var shutterDownClosed:Number = FP.height - 110;					
-			var shutterDownMid:Number = FP.height - 80;
-			var shutterDownOpen:Number = FP.height - 10;
-			
-			_shutterDown.x = FP.camera.x;			
-			
-			// all shutter stay closed until player reaches trigger limit
-			if (player.totaldistance < triggerLimit) 
-			{
-				_shutterRight.x = FP.camera.x + shutterRightClosed;
-				_shutterUp.y = shutterUpClosed;
-				_shutterDown.y = shutterDownClosed;
-			}
-			
-			/*************************************************************************
-			 ****    MODEL 1A                                                    *****
-			 ****  0.6<maxR<1 and 0=<minR<0.2                                  *******
-			 ****                                                              *******
-			 * also applies if player inherited model 1a but not yet at speed type 3 *
-			 ************************************************************************/
-			
-			if ((maxR > 0.6 && minR < 0.2 && player.totaldistance >= triggerLimit)
-				|| (player.transmitModel == 0 && !player.type3))
-			{
-				
-				/* RIGHT shutter */
-				
-				// change of state - start the tween
-				if (!_shutterRightTween.active && _shutterChangeState !=0) 
-				{
-					// tween open the shutter
-					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightOpen, 4, Ease.sineIn);
-					_shutterRightTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterRightTween.active) 
-				{
-					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be open
-				if (!_shutterRightTween.active && _shutterChangeState == 0) 
-				{
-					_shutterRight.x = FP.camera.x + shutterRightOpen;
-				}
-				
-				/* UP shutter */
-
-				// change of state - start the tween
-				if (!_shutterUpTween.active && _shutterChangeState !=0) 
-				{
-					_shutterUpTween.tween(_shutterUp.y, shutterUpClosed, 4, Ease.sineIn);
-					_shutterUpTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterUpTween.active) 
-				{
-					_shutterUp.y = _shutterUpTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be closed
-				if (!_shutterUpTween.active && _shutterChangeState == 0) 
-				{
-					_shutterUp.y = shutterUpClosed;
-				}
-				
-				
-				
-				/* DOWN shutter */		
-
-				// change of state - start the tween
-				if (!_shutterDownTween.active && _shutterChangeState !=0) 
-				{
-					_shutterDownTween.tween(_shutterDown.y, shutterDownClosed, 4, Ease.sineIn);
-					_shutterDownTween.start();
-				}
-				// tween active - update shutter position
-				if (_shutterDownTween.active) 
-				{
-					_shutterDown.y = _shutterDownTween.value;
-				} else _shutterDown.y = shutterDownClosed;
-				
-				// tween not active and no change of state - shutter should be closed
-				if (!_shutterDownTween.active && _shutterChangeState == 0) 
-				{
-					_shutterDown.y = shutterDownClosed;
-				}
-				
-				
-				//debug
-				if (_counter > 0.4 && debug && _shutterChangeState != 0) 
-				{
-					_counter -= _counter;
-					trace("modele 1a");
-					
-					if (_shutterRightTween.active) 
-					{
-						trace(_shutterRightTween.value);
-					}
-				}
-				
-				// set new shutter state
-				_shutterChangeState = 0;
-				
-			}
-			
-			/*************************************************************************
-			 ****    MODEL 1B                                                     ****
-			 ****  0.43=<maxR=<0.6                                                ****
-			 ****  0=<minR<0.15                                                   ****
-			 * also applies if player inherited model 1b but not yet at speed type 3 *
-			 ************************************************************************/
-			
-			else if ((maxR >= 0.43 && maxR <= 0.6 && minR <= 0.15
-				&& player.totaldistance >= triggerLimit) || (player.transmitModel == 1 && !player.type3))
-			{	
-				/* RIGHT shutter */
-				// change of state - start the tween
-				if (!_shutterRightTween.active && _shutterChangeState !=1) 
-				{
-					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightMid, 4, Ease.sineIn);
-					_shutterRightTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterRightTween.active) 
-				{
-					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be at mid position
-				if (!_shutterRightTween.active && _shutterChangeState == 1) 
-				{
-					_shutterRight.x = FP.camera.x + shutterRightMid;
-				}
-				
-				
-				/* UP shutter */
-				// change of state - start the tween
-				if (!_shutterUpTween.active && _shutterChangeState !=1) 
-				{
-					_shutterUpTween.tween(_shutterUp.y, shutterUpMid, 4, Ease.sineIn);
-					_shutterUpTween.start();
-				}
-				// tween active - update shutter position
-				if (_shutterUpTween.active) 
-				{
-					_shutterUp.y = _shutterUpTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be at mid position
-				if (!_shutterUpTween.active && _shutterChangeState == 1) 
-				{
-					_shutterUp.y = shutterUpMid;
-				} 
-				
-				/* DOWN shutter */					
-				// change of state - start the tween
-				if (!_shutterDownTween.active && _shutterChangeState !=1) 
-				{
-					_shutterDownTween.tween(_shutterDown.y, shutterDownMid, 4, Ease.sineIn);
-					_shutterDownTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterDownTween.active) 
-				{
-					_shutterDown.y = _shutterDownTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be at mid position
-				if (!_shutterDownTween.active && _shutterChangeState == 1) 
-				{
-					_shutterDown.y = shutterDownMid;
-				}
-				
-				
-				//debug
-				if (_counter > 0.4 && debug && _shutterChangeState != 1) 
-				{
-					_counter -= _counter;
-					trace("modele 1b");
-					
-					if (_shutterRightTween.active) 
-					{
-						trace(_shutterRightTween.value);
-					}
-				}
-				
-				// set new shutter state
-				_shutterChangeState = 1;
-				
-
-			}
-			
-			/************************
-			 ****   MODEL2    *******
-			 **** 0.34=<ratx=<0.6  **
-			 **** 0.15=<ratz<0.33 ***
-			 * also applies if type3*
-			 * or model 2           *
-			 ************************/
-
-			else if ((maxR >= 0.34 && maxR <= 0.6 && minR >= 0.15 && minR <= 0.33
-				&& player.totaldistance >= triggerLimit) || player.transmitModel == 2 || player.type3)
-			{
-				/* RIGHT shutter */
-				// change of state - start the tween
-				if (!_shutterRightTween.active && _shutterChangeState !=2) 
-				{
-					_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightClosed, 4, Ease.sineIn);
-					_shutterRightTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterRightTween.active) 
-				{
-					_shutterRight.x = FP.camera.x + _shutterRightTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be at closed position
-				if (!_shutterRightTween.active && _shutterChangeState == 2) 
-				{
-					_shutterRight.x = FP.camera.x + shutterRightClosed;
-				}
-				
-				/* UP shutter */
-				// change of state - start the tween
-				if (!_shutterUpTween.active && _shutterChangeState !=2) 
-				{
-					_shutterUpTween.tween(_shutterUp.y, shutterUpOpen, 4, Ease.sineIn);
-					_shutterUpTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterUpTween.active) 
-				{
-					_shutterUp.y = _shutterUpTween.value;
-				}
-				
-				// tween not active and no change of state - shutter should be at open position
-				if (!_shutterUpTween.active && _shutterChangeState == 2) 
-				{
-					_shutterUp.y = shutterUpOpen;
-				}
-				
-				/* DOWN shutter */		
-				// change of state - start the tween
-				if (!_shutterDownTween.active && _shutterChangeState !=2) 
-				{
-					_shutterDownTween.tween(_shutterDown.y, shutterDownOpen, 4, Ease.sineIn);
-					_shutterDownTween.start();
-				}
-				
-				// tween active - update shutter position
-				if (_shutterDownTween.active) 
-				{
-					_shutterDown.y = _shutterDownTween.value;
-				} else _shutterDown.y = shutterDownOpen;
-			
-				// tween not active and no change of state - shutter should be at open position
-				if (!_shutterDownTween.active && _shutterChangeState == 2) 
-				{
-					_shutterDown.y = shutterDownOpen;
-				}	
-					
-				
-				//debug
-				if (_counter > 0.4 && debug && _shutterChangeState != 2) 
-				{
-					_counter -= _counter;
-					trace("modele 2");
-					
-					if (_shutterRightTween.active) 
-					{
-						trace(_shutterRightTween.value);
-					}
-				}
-				
-				// set new shutter state
-				_shutterChangeState = 2;
-				
-			}
-		}
-
 		
+		
+		
+		 
 		/**
 		 * Test to see if GrandChild is close to death
 		 */

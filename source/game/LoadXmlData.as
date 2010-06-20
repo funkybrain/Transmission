@@ -99,11 +99,13 @@ package game
 
 			//trace("starting intro movie");
 			//remove comment to play intro movie
-			var playIntro:Intro = new Intro();
+			
+			//var playIntro:Intro = new Intro();
 
 			//trace("creating world");			
 			// comment out to pplay intro movie
-			//FP.world = new Game;
+			
+			FP.world = new Game;
 			
 		}
 		

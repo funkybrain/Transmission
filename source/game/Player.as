@@ -200,6 +200,43 @@
 		public var fadeOutCurtain:Curtain;
 		
 		
+		// Shutters 
+		public var _shutterRight:Shutter;
+		private var _shutterRightTween:NumTween;
+		
+		public var _shutterUp:Shutter;
+		private var _shutterUpTween:NumTween;
+		
+		public var _shutterDown:Shutter;
+		private var _shutterDownTween:NumTween;
+		
+		private var _shutterIsMoving:Boolean = false;
+		private var _shutterModel:String = "";
+		private const ONE_A:String = "1a";
+		private const ONE_B:String = "1b";
+		private const TWO:String = "2";
+		
+	
+		public var shutterList:Vector.<Shutter>;
+		
+		
+		/* RIGHT shutter*/
+		public var shutterRightClosed:Number;					
+		public var shutterRightMid:Number;
+		public var shutterRightOpen:Number;
+								
+		/* UP shutter */
+		public var shutterUpClosed:Number;					
+		public var shutterUpMid:Number;
+		public var shutterUpOpen:Number;
+			
+		/* DOWN shutter */
+		public var shutterDownClosed:Number;					
+		public var shutterDownMid:Number;
+		public var shutterDownOpen:Number;
+			
+		
+		
 		/**
 		 * For debug
 		 */
@@ -324,9 +361,6 @@
 			// to avoid crash in case child appears before player has moved
 			moveHistory.push(new Point());
 			
-			// set up zooms
-			zoom = new VarTween();
-			addTween(zoom);
 			
 			//set all transmission timer alarms (one-shot alarms)
 			timeToChild = new Alarm(TIMER_CHILD, onTimeToChild, 2);
@@ -344,8 +378,55 @@
 			timers.push(timeToChild, timeFatherToDeath,
 				timeToGrandChild, timeGrandChildToEnd);
 				
+				
 		}
 		// END CONSTRUCTOR
+		
+		/**
+		 * Initialize shutters for game
+		 */
+		public function shuttersAddToWorld(world:World):Vector.<Shutter>
+		{
+			_shutterRight = new Shutter(FP.width - 200, 0, "right");
+			_shutterDown = new Shutter(0, FP.height - 120, "up");
+			_shutterUp = new Shutter(0, 0, "up");
+			
+			shutterList = new Vector.<Shutter>();
+			shutterList.push(_shutterDown, _shutterRight, _shutterUp);
+			
+			_shutterRightTween = new NumTween(shutterOnMoveComplete, 0);
+			_shutterDownTween = new NumTween(shutterOnMoveComplete, 0);
+			_shutterUpTween = new NumTween(shutterOnMoveComplete, 0);
+			
+			addTween(_shutterRightTween);
+			addTween(_shutterDownTween);
+			addTween(_shutterUpTween);
+			
+			/************************/
+			/* Setup shutter presets*/
+			/************************/
+			
+			/* RIGHT shutter*/
+			shutterRightClosed = FP.width - 200;					
+			shutterRightMid = FP.width - 100;
+			shutterRightOpen = FP.width - 20;
+						
+			/* UP shutter */
+			shutterUpClosed = -10;					
+			shutterUpMid = - 40;
+			shutterUpOpen =  - 110;
+			
+
+			/* DOWN shutter */
+			shutterDownClosed = FP.height - 110;					
+			shutterDownMid = FP.height - 80;
+			shutterDownOpen = FP.height - 10;
+			
+			// add shutters to world
+			world.addList(_shutterDown, _shutterRight, _shutterUp);
+			
+			return shutterList;
+		}
 		
 		/**
 		 * Debug info for persistent getCurrentPath bug
@@ -557,7 +638,8 @@
 				testRemoveRobotDaughter();
 			}
 			
-			
+			// update shutter position
+			shuttersUpdate();
 			
 			//update sound manager
 			sound.update();
@@ -1451,6 +1533,239 @@
 			
 		} 
 		// end transmitFatherToChild()
+		
+		/**
+		 * Update shutter positions
+		 */
+		public function shuttersUpdate():void
+		{
+			var debug:Boolean = true;
+			var maxR:Number = getRatx();
+			var minR:Number = getRatz();			
+			var triggerLimit:Number = 1000;
+			
+			// check to see which model to move to based on player state
+			if (state == "father" && totaldistance < triggerLimit) 
+			{
+				_shutterRight.x = FP.camera.x + shutterRightClosed;
+				_shutterUp.x = FP.camera.x;
+				_shutterDown.x = FP.camera.x;
+				
+				
+			} else if (state == "father" || state == "childAlive") 
+			{
+				// move to model 1A
+				if (maxR > 0.6 && minR < 0.2)
+				{
+					if (!_shutterIsMoving && _shutterModel != ONE_A) 
+					{
+						shuttersModelOneA();
+						trace("moving to shutters 1a");
+					}
+					
+					
+				}
+				// move to model 1B
+				else if (maxR >= 0.43 && maxR <= 0.6 && minR <= 0.15) 
+				{
+					if (!_shutterIsMoving && _shutterModel != ONE_B) 
+					{
+						shuttersModelOneB();
+					}
+					
+				}
+				// move to model 2
+				else if (maxR >= 0.34 && maxR <= 0.6 && minR >= 0.15 && minR <= 0.33) 
+				{
+					if (!_shutterIsMoving && _shutterModel != TWO) 
+					{
+						shuttersModelTwo();
+					}
+					
+				}
+				
+				// update shutter positions
+				shuttersMove();	
+			}
+									
+		}
+		
+		/**
+		 * move shutters to the tweened position
+		 */
+		public function shuttersMove():void
+		{
+			_shutterRight.x = FP.camera.x + Math.ceil(_shutterRightTween.value);
+			_shutterRight.y = 0;	
+			
+			
+			_shutterUp.x = FP.camera.x;
+			_shutterUp.y = Math.ceil(_shutterUpTween.value);
+			
+			_shutterDown.x = FP.camera.x;
+			_shutterDown.y = Math.ceil(_shutterDownTween.value);
+
+		}
+		
+		/**
+		 * Called when any of the shutter tweens are complete
+		 */
+		public function shutterOnMoveComplete():void
+		{
+			_shutterIsMoving = false;
+		}
+
+		
+		/**
+		 * Move shutters to closed position
+		 */
+		public function shuttersOpen():void
+		{
+			var debug:Boolean = true;
+			_shutterIsMoving = true;
+			
+			/* RIGHT shutter */
+			_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightOpen, 4, Ease.sineIn);
+			_shutterRightTween.start();
+				
+			/* UP shutter */
+			_shutterUpTween.tween(_shutterUp.y, shutterUpOpen, 4, Ease.sineIn);
+			_shutterUpTween.start();
+					
+			/* DOWN shutter */		
+			_shutterDownTween.tween(_shutterDown.y, shutterDownOpen, 4, Ease.sineIn);
+			_shutterDownTween.start();
+			
+		}
+		
+		/**
+		 * Move shutters to open position
+		 */
+		public function shuttersClose():void
+		{
+			var debug:Boolean = true;
+			_shutterIsMoving = true;
+			
+			/* RIGHT shutter */
+			_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightClosed, 4, Ease.sineIn);
+			_shutterRightTween.start();
+				
+			/* UP shutter */
+			_shutterUpTween.tween(_shutterUp.y, shutterUpClosed, 4, Ease.sineIn);
+			_shutterUpTween.start();
+					
+			/* DOWN shutter */		
+			_shutterDownTween.tween(_shutterDown.y, shutterDownClosed, 4, Ease.sineIn);
+			_shutterDownTween.start();
+		}
+		
+		/**
+		 * Move shutters to position 1a
+		 */
+		public function shuttersModelOneA():void
+		{
+			var debug:Boolean = true;
+			_shutterIsMoving = true;
+			_shutterModel = ONE_A;
+			
+			/* RIGHT shutter */
+			_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightOpen, 4, Ease.sineIn);
+			_shutterRightTween.start();
+			
+				
+			/* UP shutter */
+			_shutterUpTween.tween(_shutterUp.y, shutterUpClosed, 4, Ease.sineIn);
+			_shutterUpTween.start();
+					
+			/* DOWN shutter */		
+			_shutterDownTween.tween(_shutterDown.y, shutterDownClosed, 4, Ease.sineIn);
+			_shutterDownTween.start();
+				
+				
+			//debug
+			if (_counter > 0.4 && debug) 
+			{
+				_counter -= _counter;
+				trace("modele 1a");
+					
+				if (_shutterRightTween.active) 
+				{
+					trace(_shutterRightTween.value);
+				}
+			}
+		}
+		
+		/**
+		 * Move shutters to position 1b
+		 */
+		public function shuttersModelOneB():void
+		{
+			var debug:Boolean = true;
+			_shutterIsMoving = true;
+			_shutterModel = ONE_B;
+			
+			/* RIGHT shutter */
+			_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightMid, 4, Ease.sineIn);
+			_shutterRightTween.start();
+				
+			/* UP shutter */
+			_shutterUpTween.tween(_shutterUp.y, shutterUpMid, 4, Ease.sineIn);
+			_shutterUpTween.start();
+				
+			/* DOWN shutter */					
+			_shutterDownTween.tween(_shutterDown.y, shutterDownMid, 4, Ease.sineIn);
+			_shutterDownTween.start();
+			
+				
+			//debug
+			if (_counter > 0.4 && debug) 
+			{
+				_counter -= _counter;
+				trace("modele 1b");
+					
+				if (_shutterRightTween.active) 
+				{
+					trace(_shutterRightTween.value);
+				}
+			}
+		}
+		
+		/**
+		 * Move shutters to position 2
+		 */
+		public function shuttersModelTwo():void
+		{
+			var debug:Boolean = true;
+			_shutterIsMoving = true;
+			_shutterModel = TWO;
+			
+			/* RIGHT shutter */
+			_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightClosed, 4, Ease.sineIn);
+			_shutterRightTween.start();
+			
+			/* UP shutter */
+			_shutterUpTween.tween(_shutterUp.y, shutterUpOpen, 4, Ease.sineIn);
+			_shutterUpTween.start();
+				
+			/* DOWN shutter */		
+			_shutterDownTween.tween(_shutterDown.y, shutterDownOpen, 4, Ease.sineIn);
+			_shutterDownTween.start();
+			
+						
+			//debug
+			if (_counter > 0.4 && debug) 
+			{
+				_counter -= _counter;
+				trace("modele 2");
+				
+				if (_shutterRightTween.active) 
+				{
+					trace(_shutterRightTween.value);
+				}
+			}
+		}
+		
+		
 		
 		
 		

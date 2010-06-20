@@ -74,14 +74,14 @@ package game
 			// and should also avoid stopping music if xfading between paths
 			if (pathSound[0].volume==0 && pathSound[1].volume==0 && pathSound[2].volume==0) 
 			{
-				trace("onFaderRedComplete");
+				//trace("onFaderRedComplete");
 				var j:int = 0;
 				for each (var sound:Sfx in pathSound) 
 				{		
 					if (sound.playing) 
 					{
 						sound.stop();
-						trace("Sound ("+j+") Stopped - Scrub: " + pathSound[j].position.toFixed(1));
+						//trace("Sound ("+j+") Stopped - Scrub: " + pathSound[j].position.toFixed(1));
 					}
 					j++;
 				}
@@ -97,14 +97,14 @@ package game
 			// and should also avoid stopping music if xfading between paths
 			if (pathSound[0].volume==0 && pathSound[1].volume==0 && pathSound[2].volume==0) 
 			{
-				trace("onFaderGreenComplete");
+				//trace("onFaderGreenComplete");
 				var k:int = 0;
 				for each (var sound:Sfx in pathSound) 
 				{		
 					if (sound.playing) 
 					{
 						sound.stop();
-						trace("Sound (" + k + ") Stopped - Scrub: " + pathSound[k].position.toFixed(1));
+						//trace("Sound (" + k + ") Stopped - Scrub: " + pathSound[k].position.toFixed(1));
 					}					
 					k++;
 				}
@@ -120,14 +120,14 @@ package game
 			// and should also avoid stopping music if xfading between paths
 			if (pathSound[0].volume==0 && pathSound[1].volume==0 && pathSound[2].volume==0) 
 			{
-				trace("onFaderBlueComplete");
+				//trace("onFaderBlueComplete");
 				var l:int = 0;
 				for each (var sound:Sfx in pathSound) 
 				{		
 					if (sound.playing) 
 					{
 					sound.stop();
-					trace("Sound (" + l + ") Stopped - Scrub: " + pathSound[l].position.toFixed(1));	
+					//trace("Sound (" + l + ") Stopped - Scrub: " + pathSound[l].position.toFixed(1));	
 					}
 					l++;
 				}				
