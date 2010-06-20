@@ -86,7 +86,7 @@
 		public var S_MIN:Number; // s-cruve mini abcisse
 		public var S_MAX:Number; // s-cruve max abcisse
 		
-		public var transmitModel:uint = 3; // initialize to anything but 0,1,2
+		public var transmitModel:String = "";
 		public var transmitIndexX:Number;
 		public var transmitIndexY:Number;
 		public var transmitIndexZ:Number;
@@ -215,7 +215,7 @@
 		private const ONE_A:String = "1a";
 		private const ONE_B:String = "1b";
 		private const TWO:String = "2";
-		
+		private const OPEN:String = "open";
 	
 		public var shutterList:Vector.<Shutter>;
 		
@@ -1006,7 +1006,7 @@
 			pathFastest = Math.max(pathMaxVel[0], pathMaxVel[1], pathMaxVel[2]);
 
 			// ensure the right D is being used
-			if (transmitModel==2) 
+			if (transmitModel == TWO) 
 			{
 				if (state=="child") 
 				{
@@ -1038,7 +1038,7 @@
 					typeVitesse[i] = "normale (pere)";
 				}
 				
-				if ((state=="child" || state=="grandChild") && (transmitModel==0 || transmitModel == 1)) 
+				if ((state=="child" || state=="grandChild") && (transmitModel == ONE_A || transmitModel == ONE_B)) 
 				{
 					
 					// check if type 3 comes into effect
@@ -1081,7 +1081,7 @@
 					}
 				}
 				
-				if ((state=="child" || state=="grandChild") && transmitModel==2) 
+				if ((state=="child" || state=="grandChild") && transmitModel == TWO) 
 				{
 					pathInstantVel[i] = pathMaxVel[i];
 					typeVitesse[i] = "modele 2 - un seul type de vitesse (vb+d*scurve)";
@@ -1325,7 +1325,7 @@
 			//transmit properties from father to child
 			transmitFatherToChild();
 			
-			trace("state: " + state);
+			
 			
 			if (state == "childAlive") 
 			{
@@ -1346,6 +1346,8 @@
 				state = "grandChild";
 				trace("has control of grand child");
 			}
+			
+			trace("state: " + state);
 			
 		}
 		
@@ -1422,7 +1424,7 @@
 				{
 					pathBaseSpeed[j] = VB;
 				}
-				transmitModel = 0;
+				transmitModel = ONE_A;
 				trace("Modèle 1a");
 			} 
 			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
@@ -1438,7 +1440,7 @@
 					pathBaseSpeed[m] = VB;
 				}
 				trace("Modèle 1b");
-				transmitModel = 1;
+				transmitModel = ONE_B;
 			}
 			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
 			else if (ratx >= 0.34 && ratx <= 0.6 && ratz >= 0.15 && ratz <= 0.33)
@@ -1453,7 +1455,7 @@
 				{
 					pathBaseSpeed[k] = VB;
 				}
-				transmitModel = 2;
+				transmitModel = TWO;
 				trace("Modèle 2");
 			}
 			else
@@ -1560,7 +1562,7 @@
 					if (!_shutterIsMoving && _shutterModel != ONE_A) 
 					{
 						shuttersModelOneA();
-						trace("moving to shutters 1a");
+						//trace("moving to shutters 1a");
 					}
 					
 					
@@ -1583,6 +1585,29 @@
 					}
 					
 				}
+				// update shutter positions
+				shuttersMove();	
+				
+			} else if (state == "child" || state == "grandChild") 
+			{
+				if (transmitModel == ONE_A && _shutterModel != ONE_A && !type3 && !deathImminent) 
+				{
+					shuttersModelOneA();
+				} else if (transmitModel == ONE_B && _shutterModel != ONE_B && !type3 && !deathImminent) 
+				{
+					shuttersModelOneB();
+				} else if (transmitModel == TWO && _shutterModel != TWO && !type3 && !deathImminent) 
+				{
+					shuttersModelTwo();
+				} else if (type3 && _shutterModel != TWO && !deathImminent) 
+				{
+					shuttersModelTwo();
+				} else if (deathImminent && _shutterModel != OPEN) 
+				{
+					shuttersOpen();
+				}
+				//trace("transmit model: " + transmitModel);
+				//trace("shutter model: "+ _shutterModel);
 				
 				// update shutter positions
 				shuttersMove();	
@@ -1623,6 +1648,7 @@
 		{
 			var debug:Boolean = true;
 			_shutterIsMoving = true;
+			_shutterModel = OPEN;
 			
 			/* RIGHT shutter */
 			_shutterRightTween.tween((_shutterRight.x-FP.camera.x), shutterRightOpen, 4, Ease.sineIn);

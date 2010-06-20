@@ -6,11 +6,10 @@ Embedding assets: http://www.bit-101.com/blog/?p=853
 
 Bugs:
 ----
-> music comes back when death sequence starts (or at grandchild transmition?), even though volume set to zero
-> shutterRight does not close on model 2
+
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
-
+> no music at beginning
 
 Next: release 2.0
 -----------------
