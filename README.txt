@@ -9,9 +9,9 @@ Bugs/Polish:
 
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
-> change the event handmers in intro so pressing enter feels immediate
+
 > car crash animations no longer trigger
-> add intro-> fade + text on black "Je me souviens de mes parents..."  -> fade to game
+
 
 
 Release Candidate 3
@@ -24,6 +24,9 @@ Release Candidate 3
 > le joueur garde le controle pendant la naissance de sa fille
 
 > correction du bug pas de son apres la transmission si touche appuyee
+> repond plus vite a la touche entree en intro
+> ajout du texte d'introduction "Je me souviens..."
+
 
 Next: release 2.0
 -----------------

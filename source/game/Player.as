@@ -1897,27 +1897,18 @@
 					soundToKill.stop();
 				}
 			}
-			
-			// remove sound object from world
-			FP.world.remove(sound);
-			
-			// fade out from game
-			fadeOutGame();
-			
-			// remove player from game
-			FP.world.remove(this);
+
 
 		}
 		
-		private function fadeOutGame():void
+		public function fadeOutGame():void
 		{
 			// send Outro
-			fadeOutCurtain = new Curtain(FP.width + 10, FP.height, "out");
+			fadeOutCurtain = new Curtain(FP.width, FP.height, "out", 15);
 			fadeOutCurtain.x = FP.camera.x;
 			fadeOutCurtain.y = FP.camera.y;
-			
-			FP.world.add(fadeOutCurtain);
 			trace("fade out");
+			//return fadeOutCurtain;
 		}
 		
 		

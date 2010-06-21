@@ -27,23 +27,25 @@ package game
 		 * Class properties
 		 */
 		 
-		private var _fadeMask:Image;
-		private var _fadeTween:NumTween; 
-		private var _fadeAlpha:Number;
-		private var _w:int;
-		private var _h:int;
-		private var _rect:Rectangle;
-		private var _type:String;
+		protected var _fadeMask:Image;
+		protected var _fadeTween:NumTween; 
+		protected var _fadeAlpha:Number;
+		protected var _w:int;
+		protected var _h:int;
+		protected var _rect:Rectangle;
+		protected var _type:String;
+		protected var _time:int;
 
 				
 		public var complete:Boolean = false;
 
 		
-		public function Curtain(w:int, h:int, model:String) 
+		public function Curtain(w:int, h:int, model:String, time:int) 
 		{
 			this._w = w;
 			this._h = h;
 			this._type = model;
+			this._time = time;
 			
 			// set at origin
 			this.x = 0;
@@ -63,24 +65,24 @@ package game
 			
 			
 			//intialize curtain
-			_init();
+			init();
 			
 			
 		}
 		
-		private function _init():void
+		protected function init():void
 		{
 			_fadeTween = new NumTween(_onComplete)
 						
 			if (_type == "in") 
 			{
 				// fade in effect
-				_fadeTween.tween(1, 0, 5, Ease.circIn);
+				_fadeTween.tween(1, 0, _time, Ease.circIn);
 			}
 			else // type = "out"
 			{
 				// fade out effect
-				_fadeTween.tween(0, 1, 15, Ease.circIn);
+				_fadeTween.tween(0, 1, _time, Ease.circIn);
 			}
 			
 			addTween(_fadeTween);
@@ -96,7 +98,7 @@ package game
 
 		}
 		
-		private function _onComplete():void
+		protected function _onComplete():void
 		{
 			complete = true;
 		}

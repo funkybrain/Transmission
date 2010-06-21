@@ -1,5 +1,6 @@
 package game 
 {
+	import adobe.utils.CustomActions;
 	import flash.display.InteractiveObject;
 	import utils.SWFProfiler;
 	import net.flashpunk.graphics.Canvas;
@@ -133,6 +134,12 @@ package game
 		 */ 
 		public var finalWords:Epitaphe;
 
+		
+		/**
+		 * Intro Text
+		 */
+		private var _introText:IntroText;
+		 
 		/**
 		 * Music for credits
 		 */
@@ -206,15 +213,25 @@ package game
 			//TODO remove kill vol befor publish
 			FP.volume = LoadXmlData.VOLUME;
 			
-						
+			trace("end of Game constructor");			
 		} // end constructor
+		
+		override public function begin():void 
+		{
+			trace("begin method called")
+			super.begin();
+			
+			_introText = new IntroText();
+			add(_introText);
+		}
+		
 		
 		/**
 		 * Create the inital fade in as the game appears
 		 */
 		public function fadeCurtainIn():void
 		{
-			_fadeInCurtain = new Curtain(FP.width, FP.height, "in");
+			_fadeInCurtain = new Curtain(FP.width, FP.height, "in", 15);
 			add(_fadeInCurtain);
 			trace("fade In");
 			
@@ -266,11 +283,22 @@ package game
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
 			
-			// if final fade out is finished, send-in Credits
-			if (null != player.fadeOutCurtain && player.fadeOutCurtain.complete) 
+			
+			// leave game smoothmy at player death
+			if (player.isPlayerDead) 
 			{
-				callCredits();
+				if (null == player.fadeOutCurtain) 
+				{
+					leaveGameSequence();
+				}
+				
+				// if final fade out is finished, send-in Credits
+				if (null != player.fadeOutCurtain && player.fadeOutCurtain.complete) 
+				{					
+					callCredits();
+				}
 			}
+
 			
 			
 			
@@ -325,8 +353,21 @@ package game
 		// end Game UPDATE LOOP
 		
 		
-				
-	
+		/**
+		 * Leave game smoothly
+		 */		
+		private function leaveGameSequence():void
+		{
+			
+			// send in fade out
+			player.fadeOutGame();
+			add(player.fadeOutCurtain);
+			
+			// remove sound object from world
+			remove(player.sound);
+						
+
+		}
 		
 
 		
@@ -636,7 +677,8 @@ package game
 			{
 				var playCredits:Credits = new Credits();
 				_creditsCalled = true;
-				trace("call credits");
+				trace("call credits and remove player");
+				remove(player);
 			}
 		}
 		
@@ -813,7 +855,7 @@ package game
 			{
 				// the higher the value
 				// the more offset to the right the player will be
-				return player.x - _cameraPan.value;
+				return player.x - Math.floor(_cameraPan.value);
 			} else	return player.x - FP.width / 2; 
 			
 		}

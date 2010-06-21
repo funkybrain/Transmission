@@ -47,6 +47,7 @@ package game
 			// add movie to stage
 			FP.stage.addChild(movieSWF);
 			
+			
 			// add music to world
 			FP.world.addTween(_musicFader);
 			
@@ -55,18 +56,17 @@ package game
 		public function onFadeComplete():void
 		{
 			_music = null;
-			// remove movie from stage
-			FP.stage.removeChild(movieSWF);
-					
+								
 			// call world
 			FP.world = new Game;
-			trace("start game");
+			//trace("start game");
+			
 		}
 		
 		public function onAddedToStage(event:Event):void
 		{
 			//introMovieClip.stop(); // does nothing!
-			trace("added movie to stage");
+			//trace("added movie to stage");
 			movieSWF.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			movieSWF.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 			
@@ -97,14 +97,13 @@ package game
 				// stop playing movie
 				movieSWF.stop();
 				
-				// check if user wants to start game
-				
 				if (Input.check("Enter")) 
 				{
-					
 					// fade out music
 					_musicFader.fadeTo(0, 1);
-
+					
+					// remove movie from stage
+					FP.stage.removeChild(movieSWF);
 				}
 				
 			}
