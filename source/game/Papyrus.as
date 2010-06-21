@@ -17,11 +17,6 @@ package game
 		
 		[Embed(source='../../assets/texturePapyrus.png')] private static const TEXTURE:Class;
 		//public static const TEXTURE : Class;
-		//private static const _bitmap : BitmapData = new TEXTURE().bitmapData;
-		
-		/*[Embed(source='../../assets/texturePapyrus_alpha.png')]
-		public static const ALPHA : Class;
-		private static const _alpha2 : BitmapData = new ALPHA().bitmapData;*/
 		
 		private var _canvas:Canvas;
 		public var rect:Rectangle;
@@ -38,7 +33,7 @@ package game
 			_width = w;
 			_height = h;
 			
-			layer = 2;
+			layer = Layers.PAPYRUS;
 			
 			// rect area of the CANVAS that will be filled with thexture
 			rect = new Rectangle(0, 0, 0, _height);
@@ -51,11 +46,7 @@ package game
 			var a:uint = 0xe6; //
 			_bitmap.merge(_alpha, sq, pt, mult, mult, mult, a);
 
-			//_bitmap:BitmapData = new TEXTURE().bitmapData;
-			
-			
-			//trace("transparent: " + _bitmap.transparent);
-			
+
 			//trace("rect " + rect);
 			//trace("bmp rect: " + _bitmap.rect);
 			

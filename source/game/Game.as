@@ -507,30 +507,30 @@ package game
 		private function updateFinalWords():void
 		{
 			// display one character every 25 pixels the player moves
-			var wordslength:int = (player.x - rouleauTriggerX) / 25;
-			var letterWidth:int = 10; // average width of one letter
+			var wordslength:int = int(player.x - rouleauTriggerX) / 25;
+			var letterWidth:int = 20; // average width of one letter
 			
 			//trace("wordslength: " + wordslength);
 			
 			finalWords.unravelFinalWord(wordslength);
 			
 			// move final words forward to keep up with player
-			if (player.isMoving) 
+/*			if (player.isMoving && player.velocity.y == 0) 
 			{
 				finalWords.x += 0.2; // need to scale it to player speed and only fior up/down moves
-			}
+			}*/
+			/*if (!StringUtils.endsWith(finalWords.supportSyllogisme.text, " ")) 
+			{
+				
+			}*/
+
+			var displaylength:String = StringUtils.removeExtraWhitespace(finalWords.supportSyllogisme.text);
+			finalWords.x = player.x - (displaylength.length * letterWidth);
 			
 			if (wordslength > 1) 
 			{
 				finalWords.visible = true;
-
-			}
-			
-/*			if (wordslength > 10) 
-			{
-				finalWords.supportSyllogisme.scrollX = 0.9;
-			}*/
-			
+			}			
 		}
 		
 		

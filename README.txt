@@ -9,7 +9,7 @@ Bugs:
 
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
-> at worst, stop adding 10pix during word unwrap if player isn't moving horizontaly
+> change the event handmers in intro so pressing enter feels immediate
 
 Next: release 2.0
 -----------------

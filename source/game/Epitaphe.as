@@ -8,10 +8,7 @@ package game
 	
 	public class Epitaphe extends Entity
 	{
-		
-/*		[Embed(source='../../assets/fonts/BMblock.TTF', fontFamily = 'block')]
-		private static const FONT:Class;
-*/		
+			
 		[Embed(source='../../assets/fonts/ARIAL.TTF', fontFamily = 'quote')]
 		private static const FONT:Class;
 		
@@ -33,9 +30,6 @@ package game
 			supportSyllogisme.size = 36;
 			supportSyllogisme.color = 0xFFFFFF;
 			
-			//BUG why is the scrollX screwing things up when text is diplayed in level 2?
-			//supportSyllogisme.scrollX = 0.8; 
-			
 			graphic = supportSyllogisme;
 			
 			_SYLLOGISME = LoadXmlData.CITATION;
@@ -46,7 +40,7 @@ package game
 		
 		override public function update():void 
 		{
-			_showOnlyThatMuch = _SYLLOGISME.slice(0, _lengthToDisplay);
+			_showOnlyThatMuch = _SYLLOGISME.slice(0, _lengthToDisplay + 1);
 			supportSyllogisme.text = _showOnlyThatMuch;
 			//trace(supportSyllogisme.text);
 			//trace("epitaphe x: " + x);
