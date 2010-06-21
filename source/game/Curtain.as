@@ -39,11 +39,11 @@ package game
 		public var complete:Boolean = false;
 
 		
-		public function Curtain(w:int, h:int, type:String) 
+		public function Curtain(w:int, h:int, model:String) 
 		{
 			this._w = w;
 			this._h = h;
-			this._type = type;
+			this._type = model;
 			
 			// set at origin
 			this.x = 0;

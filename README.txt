@@ -4,15 +4,15 @@ FP.choose() is your friend
 Embedding assets: http://www.bit-101.com/blog/?p=853
 
 
-Bugs:
-----
+Bugs/Polish:
+-----------
 
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
 > change the event handmers in intro so pressing enter feels immediate
-> one shit animations no longer trigger
+> car crash animations no longer trigger
+> add intro-> fade + text on black "Je me souviens de mes parents..."  -> fade to game
 
-Je me souviens de mes parents...
 
 Release Candidate 3
 -------------------
@@ -22,7 +22,8 @@ Release Candidate 3
 > début du fade de mort joueur (et musique credit) a t-15s (au lieu de 10s)
 > fade to black avant credits allonge de 5s
 > le joueur garde le controle pendant la naissance de sa fille
-> correction du bug pas de son apres la transmission
+
+> correction du bug pas de son apres la transmission si touche appuyee
 
 Next: release 2.0
 -----------------
