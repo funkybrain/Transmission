@@ -14,6 +14,15 @@ this is probably due to the camera trail effect.
 
 Je me souviens de mes parents...
 
+Release Candidate 3
+-------------------
+> apparition plus propre du texte de fin
+> relevé les caches de départ de 10 px
+> coeff_type3 = 0.30 au lieu de 0.25
+> début du fade de mort joueur (et musique credit) a t-15s (au lieu de 10s)
+> fade to black avant credits allonge de 5s
+> le joueur garde le controle pendant la naissance de sa fille
+
 Next: release 2.0
 -----------------
 > nouvelle animation fille -> petit-fils

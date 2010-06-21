@@ -443,9 +443,9 @@ package game
 		public function checkGrandChildNearDeath():void
 		{
 			
-			if (player.timeGrandChildToEnd.remaining <= 10 && !player.deathImminent) 
+			if (player.timeGrandChildToEnd.remaining <= 15 && !player.deathImminent) 
 			{
-				startDeathSequence(10); // 10 seconds to death
+				startDeathSequence(15); // 15 seconds to death
 				player.deathImminent = true;
 			}
 

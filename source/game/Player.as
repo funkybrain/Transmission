@@ -1000,7 +1000,7 @@
 		 */
 		private function calculateSpeed(path:uint):void
 		{			
-			var coeff_type3:Number = 0.25;
+			var coeff_type3:Number = 0.3;
 			var DyDz:Number;
 			var coeff_d_scurve:Number;
 			
@@ -1050,17 +1050,17 @@
 				{
 					
 					// check if type 3 comes into effect
-					if (DyDz > (0.25 * Dxtotale) && !type3)
+					if (DyDz > (coeff_type3 * Dxtotale) && !type3)
 					{
 															
 						trace("Dz: " + pathDistance[transmitIndexZ].toFixed(2));
 						trace("Dy: " + pathDistance[transmitIndexY].toFixed(2));
 						trace("Dx: " + Dxtotale.toFixed(2));
 						trace("DyDz: " + DyDz.toFixed(2));
-						trace("0.25*Dx: " + (coeff_type3 * Dxtotale).toFixed(2));
+						trace("0.3*Dx: " + (coeff_type3 * Dxtotale).toFixed(2));
 						 
 						
-						trace("DyDz sup à  0.25 x Dxtotale - vitesse 3");	
+						trace("DyDz sup à  0.3 x Dxtotale - vitesse 3");	
 						
 						type3 = true;
 						
@@ -1149,7 +1149,7 @@
 		{
 			// swap childAppear sprite with childAlive sprite and give control back to player
 			graphic = childAlive;
-			hasControl = true;
+			//hasControl = true;
 			childAlive.play("walk");
 		}
 		
@@ -1809,17 +1809,17 @@
 		public function onTimeToChild():void
 		{
 			// kill all path music
-			for (var i:int = 0; i < 3; i++) 
+			/*for (var i:int = 0; i < 3; i++) 
 			{
 				fadeOutPathMusic(i);
-			}
+			}*/
 
 			
-			// child appears as a robot. Nothing transmitted yet.
+			// child appears part of father sprite
 			state = "childAlive";
 
 			// remove control from player
-			hasControl = false;
+			//hasControl = false;
 			
 			// swap father sprite for child appear sprite
 			graphic = childAppear;

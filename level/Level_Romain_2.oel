@@ -1669,6 +1669,6 @@
     <anim_prison x="2460" y="270"/>
   </animations>
   <waypoints>
-    <trigger x="2190" y="0"/>
+    <trigger x="490" y="0"/>
   </waypoints>
 </level>

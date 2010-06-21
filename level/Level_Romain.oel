@@ -1666,7 +1666,5 @@
     <anim_man x="90" y="0"/>
     <anim_rouage x="1440" y="0"/>
   </animations>
-    <waypoints>
-    <trigger x="500" y="0"/>
-  </waypoints>
+
 </level>
