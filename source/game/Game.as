@@ -507,7 +507,7 @@ package game
 		private function updateFinalWords():void
 		{
 			// display one character every 25 pixels the player moves
-			var wordslength:int = int(player.x - rouleauTriggerX) / 25;
+			var wordslength:int = int(player.x - rouleauTriggerX) / 20;
 			var letterWidth:int = 20; // average width of one letter
 			
 			//trace("wordslength: " + wordslength);
@@ -524,8 +524,8 @@ package game
 				
 			}*/
 
-			var displaylength:String = StringUtils.removeExtraWhitespace(finalWords.supportSyllogisme.text);
-			finalWords.x = player.x - (displaylength.length * letterWidth);
+			var displaylength:String = StringUtils.remove(finalWords.supportSyllogisme.text, " ");
+			finalWords.x = player.x - (displaylength.length * letterWidth) - player.grandChild.width;
 			
 			if (wordslength > 1) 
 			{

@@ -10,6 +10,7 @@ package game
 	import net.flashpunk.utils.Draw;
 	import net.flashpunk.FP;
 	import flash.geom.Point;
+	import flash.display.BlendMode;
 	
 	
 	public class Papyrus extends Entity

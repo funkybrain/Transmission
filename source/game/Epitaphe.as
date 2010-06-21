@@ -24,7 +24,7 @@ package game
 		{
 			this.y = 200;
 			
-			layer = 0;
+			layer = Layers.EPITAPHE;
 			
 			supportSyllogisme.font = "quote";
 			supportSyllogisme.size = 36;

@@ -388,8 +388,8 @@
 		public function shuttersAddToWorld(world:World):Vector.<Shutter>
 		{
 			_shutterRight = new Shutter(FP.width - 200, 0, "right");
-			_shutterDown = new Shutter(0, FP.height - 120, "up");
-			_shutterUp = new Shutter(0, 0, "up");
+			_shutterDown = new Shutter(0, FP.height - 100, "up");
+			_shutterUp = new Shutter(0, -20, "up");
 			
 			shutterList = new Vector.<Shutter>();
 			shutterList.push(_shutterDown, _shutterRight, _shutterUp);

@@ -10,6 +10,9 @@ Bugs:
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
 > change the event handmers in intro so pressing enter feels immediate
+> one shit animations no longer trigger
+
+Je me souviens de mes parents...
 
 Next: release 2.0
 -----------------
