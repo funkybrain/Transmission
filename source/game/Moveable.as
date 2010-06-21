@@ -55,7 +55,7 @@
 		 // use a throw statement?
 		public function getCurrentPath():uint
 		{
-			var e:Entity, type:String, pathType:uint;
+			var e:Entity, pathType:uint;
 			e = collideTypes(pathCollideType, x, y);
 			
 			//trace("collision type: " + e.type);
@@ -84,37 +84,40 @@
 			
 				return pathType;
 			}
-			
 		}
 		
-		
-		
-		
-		/**
-		 * Moves the entity by the specified amount horizontally and vertically.
-		 */
-		
-		
-		/**
-		 * Horizontal collision (override for specific behaviour).
-		 */
-		protected function collideX(e:Entity):void
+		public function getPathTypeAt(pos_x:Number, pos_y:Number):uint
 		{
+			var e:Entity, pathType:uint;
+			e = collideTypes(pathCollideType, pos_x, pos_y);
 			
-		}
-		
-		/**
-		 * Vertical collision (override for specific behaviour).
-		 */
-		protected function collideY(e:Entity):void
-		{
+			//trace("collision type: " + e.type);
 			
+			if (e == null) 
+			{
+				trace("no collision detected in Moveable.getCurentPath");
+				trace("player position x:" + x + " y: " + y);
+				
+				return 3; // test for 3 to try and get debug information
+			}
+			else
+			{
+				switch (e.type)
+				{
+				case "red":
+					pathType = 0;
+					break;
+				case "green":
+					pathType = 1;
+					break;
+				case "blue":
+					pathType = 2;
+					break;
+				}
+			
+				return pathType;
+			}
 		}
-		
-		/**
-		 * Helper vars used by move().
-		 */
-		private var _moveX:Number = 0;
-		private var _moveY:Number = 0;
+
 	}
 }

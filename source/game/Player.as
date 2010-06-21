@@ -508,6 +508,9 @@
 			// find out what path the player is on
 			currentPathIndex = getCurrentPath();
 			
+			//check if a new animated tile needs to be placed where player has walked
+			addNewTile(this.x, this.y, Path.TILE_GRID);
+			
 			//debug if =3
 			if (currentPathIndex == 3) 
 			{
@@ -542,10 +545,6 @@
 			{
 				move(currentPathIndex);
 			}
-			
-			//check if a new animated tile needs to be placed where player has walked
-			addNewTile(this.x, this.y, Path.TILE_GRID);
-
 			
 			// update movement status of player
 			if (!wasMoving && velocity.length) 
@@ -798,12 +797,15 @@
 		{
 			// convert x,y into row, col
 			var tileExists:Boolean = false;
+			var testX:int, textY:int;
 			
-			//col = Math.floor(_x / _step);
-			//row = Math.floor(_y / _step);
+			col = Math.floor(_x / _step);
+			row = Math.floor(_y / _step);
 			
-			col = Math.floor(_x) / _step;
-			row = Math.floor(_y) / _step;
+			// calculate the coordinates of the center of a tile
+			testX = col*_step + 15;
+			textY = row*_step + 15;
+			
 			
 			// loop through vector to see if a path of index (row,col) already exists
 			for (var m:int = 0; m < pathTileList.length; m++)
@@ -828,7 +830,7 @@
 			if (tileExists==false) 
 			{
 				// add new animated tile to Vector and Level
-				var index:int = pathTileList.push(new PathTile(col, row, _step, currentPathIndex));
+				var index:int = pathTileList.push(new PathTile(col, row, _step, getPathTypeAt(testX, textY)));
 				//trace("adding tile of color : " + currentPathIndex);
 				//trace("in row: " + row + " col: " + col);
 				

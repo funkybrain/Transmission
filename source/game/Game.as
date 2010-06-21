@@ -766,7 +766,7 @@ package game
 									+"Timer: " + Math.floor(timer) + " State: " + player.state.toUpperCase() +"\n"//+ " Row: " + player.row + " Col: " + player.col 
 									+"modele de vitesse: " + player.typeVitesse[player.currentPathIndex] + "\n"
 									+"Vinstantanée: " + Number(player.pathInstantVel[player.currentPathIndex]).toFixed(2) + " Vmax(des 3 path): " + Number(player.pathFastest).toFixed(2) + "\n"
-									+ "CamX: " + FP.camera.x + " playerX: " + int(player.x);
+									+ "CamX: " + int(FP.camera.x) + " playerX: " + int(player.x)+ " playerY: " + int(player.y) + " color: " + player.currentPathIndex;
 									
 			debugText.text = father_var;
 			debugText.size = 12;
