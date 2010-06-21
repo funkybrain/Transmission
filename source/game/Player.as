@@ -1326,6 +1326,9 @@
 		{
 			isTransmitting = false;
 			
+			// force move to null to avoid sound bug
+			isMoving = wasMoving = false;
+			
 			// return control to player
 			hasControl = true;
 			trace("transmition complete");

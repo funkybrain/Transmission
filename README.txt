@@ -22,6 +22,7 @@ Release Candidate 3
 > début du fade de mort joueur (et musique credit) a t-15s (au lieu de 10s)
 > fade to black avant credits allonge de 5s
 > le joueur garde le controle pendant la naissance de sa fille
+> correction du bug pas de son apres la transmission
 
 Next: release 2.0
 -----------------
