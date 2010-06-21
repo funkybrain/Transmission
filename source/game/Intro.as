@@ -15,13 +15,15 @@ package game
 		[Embed(source='../../assets/introTransmission.swf', symbol='wrapper')]
 		private var _movie:Class;
 		
-		[Embed(source = '../../assets/introTransmission.swf', symbol = 'musiqueIntro')]
-		private var _musicIntro:Class;
+		[Embed(source = '../../sounds/MusiqueDebut.mp3', mimeType = 'audio/mpeg')]
+		private static const MUSIC_START:Class;	
 		
 		internal var movieSWF:MovieClip;
 		
 		private var _music:Sfx;
 		private var _musicFader:SfxFader;
+		
+		protected var playIntro:Boolean = true;
 		
 		public function Intro() 
 		{
@@ -35,7 +37,7 @@ package game
 		{
 			
 			movieSWF = new _clip();
-			_music = new Sfx(_musicIntro);
+			_music = new Sfx(MUSIC_START);
 			_musicFader = new SfxFader(_music, onFadeComplete, 2);
 			
 			movieSWF.x = 0;
@@ -61,7 +63,7 @@ package game
 			trace("start game");
 		}
 		
-		private function onAddedToStage(event:Event):void
+		public function onAddedToStage(event:Event):void
 		{
 			//introMovieClip.stop(); // does nothing!
 			trace("added movie to stage");
@@ -69,7 +71,11 @@ package game
 			movieSWF.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 			
 			// play intro music
-			_music.loop(1);
+			if (playIntro) 
+			{
+				_music.loop(1);	
+			}
+
 
 		}
 		
@@ -97,7 +103,7 @@ package game
 				{
 					
 					// fade out music
-					_musicFader.fadeTo(0, 2);
+					_musicFader.fadeTo(0, 1);
 
 				}
 				

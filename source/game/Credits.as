@@ -15,14 +15,23 @@ package game
 		[Embed(source='../../assets/creditsTransmission.swf', symbol='wrapper')]
 		private const _movie:Class;
 		
+		
 		public function Credits() 
 		{
 			super();
+			
 		}
 		
 		override public function init(_clip:Class):void 
 		{
 			super.init(_movie);
+			playIntro = false;
+		}
+		
+		override public function onAddedToStage(event:Event):void 
+		{
+			movieSWF.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			movieSWF.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 		}
 		
 		override public function onEnterFrame(event:Event):void 

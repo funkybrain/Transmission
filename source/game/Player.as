@@ -829,8 +829,8 @@
 			{
 				// add new animated tile to Vector and Level
 				var index:int = pathTileList.push(new PathTile(col, row, _step, currentPathIndex));
-				trace("adding tile of color : " + currentPathIndex);
-				trace("in row: " + row + " col: " + col);
+				//trace("adding tile of color : " + currentPathIndex);
+				//trace("in row: " + row + " col: " + col);
 				
 				FP.world.add(pathTileList[index-1]);
 			}

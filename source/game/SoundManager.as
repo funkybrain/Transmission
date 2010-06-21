@@ -22,8 +22,7 @@ package game
 		[Embed(source = '../../sounds/transmission.mp3', mimeType = 'audio/mpeg')]
 			private static const SOUND_TRANSMIT:Class;
 		
-		[Embed(source = '../../sounds/MusiqueDebut.mp3', mimeType = 'audio/mpeg')]
-			private static const MUSIC_START:Class;	
+
 		
 		
 		/**
