@@ -207,7 +207,9 @@
 				var _x4:int = int(s.@x) + _offset;
 				var index_four:int = _animationList.push(new Animation(_x4, s.@y, "crash", 0));
 				world.add(_animationList[index_four - 1]);
-				trace("crash x: " + _animationList[index_four-1].x);
+				trace("crash x: " + _animationList[index_four - 1].x);
+				trace("crash trigger x: " +  _animationList[index_four - 1].triggerDistance);
+				trace("anim type: " +  _animationList[index_four - 1].animType);
 			}
 			
 			for each (var w:XML in level.animations.anim_serveuse)

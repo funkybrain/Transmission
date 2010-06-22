@@ -111,13 +111,16 @@ package game
 			}
 			
 			graphic = spriteName;
-			triggerDistance = - spriteName.width / 2;
+			triggerDistance = spriteName.width / 2;
 			
 			//graphic.scrollX = .5;
 			//graphic.scrollY = .5;
-				
-			spriteName.add("loop", _frames, 24, true); // will loop
-			spriteName.add("no_loop", _frames, 24, false); // won't loop
+			
+			if (animType == 0) 
+			{
+				spriteName.add("no_loop", _frames, 24, false); // won't loop
+			} else 	spriteName.add("loop", _frames, 24, true); // will loop
+
 		}
 		
 		public function playLooping():void
@@ -128,6 +131,7 @@ package game
 		public function playOnce():void
 		{
 			spriteName.play("no_loop");
+			//spriteName.setFrame(4, 4);
 		}
 		
 	}

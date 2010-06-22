@@ -10,7 +10,7 @@ Bugs/Polish:
 > the _overlay timer has a delay when the camera moves. only comes back to right position when stops moving.
 this is probably due to the camera trail effect.
 
-> car crash animations no longer trigger
+> car crash animations no longer trigger at x=3240
 
 
 
@@ -22,11 +22,10 @@ Release Candidate 3
 > début du fade de mort joueur (et musique credit) a t-15s (au lieu de 10s)
 > fade to black avant credits allonge de 5s
 > le joueur garde le controle pendant la naissance de sa fille
-
 > correction du bug pas de son apres la transmission si touche appuyee
 > repond plus vite a la touche entree en intro
 > ajout du texte d'introduction "Je me souviens..."
-
+> anim voiture fonctionne
 
 Next: release 2.0
 -----------------

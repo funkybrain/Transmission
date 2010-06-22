@@ -531,14 +531,17 @@ package game
 
 			// add the second rouleau that unravels
 			rouleauEnd = new Rouleau();
+						
+			// move rouleau z-order up
+			rouleauEnd.layer = 2;
+			
 			//rouleauEnd.spriteRouleau.color = 0xA7B6EC;
 			rouleauEnd.x = rouleauStart.x + rouleauStart.spriteRouleau.width;
 			add(rouleauEnd);
 			
 			// add underlying paper
 			papyrus = new Papyrus((rouleauStart.x + rouleauStart.spriteRouleau.width),0, 0, FP.screen.height);
-			add(papyrus);
-			
+			add(papyrus);			
 		}
 		
 		
@@ -548,23 +551,12 @@ package game
 		private function updateFinalWords():void
 		{
 			// display one character every 25 pixels the player moves
-			var wordslength:int = int(player.x - rouleauTriggerX) / 20;
 			var letterWidth:int = 20; // average width of one letter
-			
-			//trace("wordslength: " + wordslength);
+			var wordslength:int = Math.floor((player.x - rouleauTriggerX) / letterWidth);
 			
 			finalWords.unravelFinalWord(wordslength);
 			
 			// move final words forward to keep up with player
-/*			if (player.isMoving && player.velocity.y == 0) 
-			{
-				finalWords.x += 0.2; // need to scale it to player speed and only fior up/down moves
-			}*/
-			/*if (!StringUtils.endsWith(finalWords.supportSyllogisme.text, " ")) 
-			{
-				
-			}*/
-
 			var displaylength:String = StringUtils.remove(finalWords.supportSyllogisme.text, " ");
 			finalWords.x = player.x - (displaylength.length * letterWidth) - player.grandChild.width;
 			
@@ -726,13 +718,14 @@ package game
 						animation.playLooping();
 						animation.spriteName.rate = rate * FP.frameRate * FP.elapsed;	
 						
-					} else if((animation.x - player.x) < animation.triggerDistance && !animation.playedOnce)
+					} else if( player.x > (animation.x + animation.triggerDistance) && !animation.playedOnce)
 					{
-						//trace("anim x: " + animation.x);
-						//trace("player x: " + player.x);
-						//trace("trigger distance: " + animation.triggerDistance);
+						trace("anim x: " + animation.x);
+						trace("player x: " + player.x);
+						trace("trigger distance: " + animation.triggerDistance);
 						animation.playOnce();
 						animation.playedOnce = true;
+		
 					}
 				}
 			}
