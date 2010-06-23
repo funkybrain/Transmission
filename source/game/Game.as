@@ -151,6 +151,12 @@ package game
 		private var _counter:Number = 0;
 		
 		/**
+		 * Fade Out
+		 */
+		public var fadeOutCurtain:Curtain;
+		
+		
+		/**
 		 * CONSTRUCTOR
 		 */
 		public function Game() 
@@ -287,13 +293,13 @@ package game
 			// leave game smoothmy at player death
 			if (player.isPlayerDead) 
 			{
-				if (null == player.fadeOutCurtain) 
+				if (null == fadeOutCurtain) 
 				{
 					leaveGameSequence();
 				}
 				
 				// if final fade out is finished, send-in Credits
-				if (null != player.fadeOutCurtain && player.fadeOutCurtain.complete) 
+				if (null != fadeOutCurtain && fadeOutCurtain.complete) 
 				{					
 					callCredits();
 				}
@@ -360,8 +366,8 @@ package game
 		{
 			
 			// send in fade out
-			player.fadeOutGame();
-			add(player.fadeOutCurtain);
+			fadeOutGame();
+			add(fadeOutCurtain);
 			
 			// remove sound object from world
 			remove(player.sound);
@@ -516,6 +522,15 @@ package game
 			fadeInEndMusic();
 		}
 		
+		public function fadeOutGame():void
+		{
+			// send Outro
+			fadeOutCurtain = new Curtain(FP.width, FP.height, "out", 15);
+			fadeOutCurtain.x = FP.camera.x;
+			fadeOutCurtain.y = FP.camera.y;
+
+		}
+		
 		/**
 		 * Generate final words
 		 */
@@ -582,11 +597,11 @@ package game
 			} else _inContact = false;
 				 
 			
-			if (_inContact && !rouleauStart.isSpinning && !_inContact) 
+			// avoid spinning rouleau if payer dies whilst in contact with it
+			if (_inContact && player.isPlayerDead) 
 			{
-				trace("made new contact ");		
+				rouleauEnd.spriteRouleau.rate = 0;		
 			}
-			//trace("in contact: " + _inContact);
 			
 			if (rouleauStart != null && !_rouleauTriggered) 
 			{

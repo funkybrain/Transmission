@@ -17,7 +17,7 @@
 	<!-- variables utilisées pour les calculs de vitesse-->
 	<vitesse>
 		<VB>0</VB>	<!-- Vb pere-->
-		<CT_VB>0.6</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
+		<CT_VB>0.5</CT_VB>	<!--Vb  fils et petit fils mettre la meme valeur que VB-->
 	</vitesse>
 
 	<!-- variables utilisées pour le calcul de S-Curve-->
@@ -28,7 +28,7 @@
 		
 		<D_MAX>1800</D_MAX>
 		<S_MIN>-1.2</S_MIN>
-		<S_MAX>2</S_MAX>
+		<S_MAX>1.9</S_MAX>
 	</scurve>
 
 	<!-- variables utilisées pour les timers de transmission
@@ -52,8 +52,8 @@
 	
 	<!-- Texte de fin-->
 	<citation>
-		Je me souviens de mon père, comme il se souvient du sien, certainement. 
-		Mais sur son enfance, apposer la mienne.(test)
+		... comme il se souviennent certainement des leurs; et 
+		eux comme moi, à tort ou à raison, sommes ce qu'ils ont fait de nous ...
 	</citation>	
 	
 </data>

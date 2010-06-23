@@ -194,10 +194,6 @@
 		private var _isDaughterVisible:Boolean = false; // true once daughter becomes visible
 		private var _isGrandChildVisible:Boolean = false;
 
-		/**
-		 * Fade Out
-		 */
-		public var fadeOutCurtain:Curtain;
 		
 		
 		// Shutters 
@@ -1885,8 +1881,8 @@
 			trace("grandchild is dead");
 			isPlayerDead = true;
 
-			// see if this helps kill the sounds
-			//playerGoneAWOL = true;
+			// remove player control
+			hasControl = false;
 			
 			// kill all sounds
 			for each (var soundToKill:Sfx in sound.pathSound) 
@@ -1901,15 +1897,7 @@
 
 		}
 		
-		public function fadeOutGame():void
-		{
-			// send Outro
-			fadeOutCurtain = new Curtain(FP.width, FP.height, "out", 15);
-			fadeOutCurtain.x = FP.camera.x;
-			fadeOutCurtain.y = FP.camera.y;
-			trace("fade out");
-			//return fadeOutCurtain;
-		}
+		
 		
 		
 		/**
