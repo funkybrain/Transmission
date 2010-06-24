@@ -29,7 +29,9 @@ package game
 		{
 			
 			Input.define("Enter", Key.ENTER);
+			
 			FP.engine.stage.frameRate = 20;
+			
 			init(_movie);
 		}
 		
@@ -37,20 +39,22 @@ package game
 		{
 			
 			movieSWF = new _clip();
-			_music = new Sfx(MUSIC_START);
-			_musicFader = new SfxFader(_music, onFadeComplete, 2);
-			
+		
 			movieSWF.x = 0;
 			movieSWF.y = 0;
+
 			
+			if (playIntro) 
+			{
+				_music = new Sfx(MUSIC_START);
+				_musicFader = new SfxFader(_music, onFadeComplete, 2);
+				// add music to world
+				FP.world.addTween(_musicFader);
+			}
+						
 			movieSWF.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			// add movie to stage
 			FP.stage.addChild(movieSWF);
-			
-			
-			// add music to world
-			FP.world.addTween(_musicFader);
-			
 		}
 		
 		public function onFadeComplete():void
@@ -65,8 +69,7 @@ package game
 		
 		public function onAddedToStage(event:Event):void
 		{
-			//introMovieClip.stop(); // does nothing!
-			//trace("added movie to stage");
+
 			movieSWF.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			movieSWF.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 			

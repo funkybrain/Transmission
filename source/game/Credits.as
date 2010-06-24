@@ -24,8 +24,9 @@ package game
 		
 		override public function init(_clip:Class):void 
 		{
-			super.init(_movie);
 			playIntro = false;
+			super.init(_movie);
+			
 		}
 		
 		override public function onAddedToStage(event:Event):void 
@@ -36,22 +37,20 @@ package game
 		
 		override public function onEnterFrame(event:Event):void 
 		{
-			//super.onEnterFrame(event);
+
 			if (movieSWF.currentFrame == movieSWF.totalFrames) 
 			{
 				// stop playing movie
 				movieSWF.stop();
-				
-				// check if user wants to start game
-				
-				if (Input.check("Enter")) 
+								
+				/*if (Input.check("Enter")) 
 				{
 					// remove movie from stage
 					FP.stage.removeChild(movieSWF);
 					
 					// fade out credit music handled in Game via CreditMusic Class
 					
-				}
+				}*/
 				
 			}
 		}

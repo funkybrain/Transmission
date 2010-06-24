@@ -49,7 +49,6 @@ package game
 		
 		private function onAutoKill():void
 		{
-			trace("autokill");
 			FP.world.remove(this);
 		}
 		

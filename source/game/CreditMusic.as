@@ -24,14 +24,14 @@ package game
 			fadeMusicOut = new SfxFader(musicEnd, onFadeOutComplete, 2);
 			addTween(fadeMusicIn);
 			addTween(fadeMusicOut);
-			trace("CreditMusic Obj instantiated");
+
 		}
 		
 		private function onFadeOutComplete():void
 		{
-			FP.world.removeAll();
+			//FP.world.removeAll();
 			FP.world = new Game;
-			trace("fadeout complete - restart game");
+
 		}
 		
 	}

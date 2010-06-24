@@ -17,8 +17,6 @@
 	import net.flashpunk.utils.Input;
 	import net.flashpunk.utils.Key;
 	import game.LoadXmlData;
-
-	
 	import net.flashpunk.*;
 	
 	public class Player extends Moveable
@@ -48,7 +46,6 @@
 		 * Tweeners.
 		 */
 		public var fadeSprite:VarTween = new VarTween(); // called from game to make grandchild disappear
-		private var zoom:VarTween;
 		
 		/**
 		 * Load external game data
@@ -251,7 +248,7 @@
 		 ************************************************/
 		public function Player(_x:int=0, _y:int=0, _vb:Array=null) 
 		{
-			//call ancestor's construtor
+			//call ancestor's constructor
 			super();
 			
 			// place the entity's origin in the center of the path
@@ -350,6 +347,7 @@
 			
 			// and basic speed vb on each path (pathBaseSpeed is an array)
 			vbArray = new Array(VB, VB, VB);
+			
 			if (_vb == null	) 
 			{
 				pathBaseSpeed = vbArray; //NOTE may have to concat() to make a true copy
@@ -428,52 +426,19 @@
 			return shutterList;
 		}
 		
-		/**
-		 * Debug info for persistent getCurrentPath bug
-		 */
-		private function printDebugInfo(from:uint):void
-		{
-			var debutext:String;
-			switch (from)
-				{
-				case 1:
-					debutext = "crashed when player first added to world";
-					break;
-				case 2:
-					debutext = "crashed in player update, at beginning of loop";
-					break;
-				case 3:
-					debutext = "crashed in player update, after the move";
-					break;
-				}
-			trace(debutext);
-			
-			trace("state: " + state);
-			trace("x: " + x);
-			trace("y: " + y);
-				
-		}
+
 		
 		/**
 		 * Play music at game start, when object is instantiated
 		 */
 		override public function added():void
 		{
-			_pathPreviousIndex = getCurrentPath(); // find path player is on to play the correct file
-			// debug if =3
-			if (_pathPreviousIndex == 3) 
-			{
-				
-				printDebugInfo(1);
-				
-			}
+			 // find path player is on to play the correct file
+			_pathPreviousIndex = getCurrentPath();
 			
 			// start playing path sound + music
 			startSounds();
-			
-			// stop music on the player's starting path.. will resume once player starts moving
-			//sound.pathSound[_pathPreviousIndex].stop();
-			
+						
 			// intialize switch variables
 			_pathSwitchTable[0] = _pathSwitchTable[1] = _pathPreviousIndex;
 			_pathSwitchLocation = position.clone();
@@ -491,7 +456,6 @@
 					music.stop(); // stop the music so that you can resume as soon as the player is moving
 					
 			}
-			//trace("vol: " + sound.pathSound[_pathPreviousIndex].volume);
 
 		}
 		 
@@ -510,14 +474,6 @@
 			
 			//check if a new animated tile needs to be placed where player has walked
 			addNewTile(this.x, this.y, Path.TILE_GRID);
-			
-			//debug if =3
-			if (currentPathIndex == 3) 
-			{
-				
-				printDebugInfo(2);
-				
-			}
 			
 			//store current path index
 			if (_pathSwitched==false) 
@@ -566,24 +522,18 @@
 			
 			//store new path index
 			_pathSwitchTable[1] = getCurrentPath();
-			//debug if =3
-			if (_pathSwitchTable[1] == 3) 
-			{
-				
-				printDebugInfo(3);
-				
-			}
+	
 			
 			//store player location if path has changed
 			if (_pathSwitchTable[0]!=_pathSwitchTable[1] && _pathSwitchClonedPosition==false) 
 			{
-				//trace("player has changed path!");
+
 				_pathSwitchClonedPosition = true;
 				 // stop storing _pathSwitchTable[0] until 30 pixels have passed
 				_pathSwitched = true;
 				 // store position where path changed
 				_pathSwitchLocation = position.clone();
-				//trace("pathSwitchTable: " + _pathSwitchTable);
+
 				
 			}
 			
@@ -594,13 +544,13 @@
 				//trace("distance > 30px");
 				if (_pathSwitchTable[0]!=_pathSwitchTable[1] && !isTransmitting && !deathImminent) // paths are still different after 30px
 				{
-					//trace("permanent path change");
 					// play music based on current path and latest path change
 					changePathMusic();
 				}
+				
 				_pathSwitched = false;
 				_pathSwitchClonedPosition = false;
-				//trace("dist: " + Point.distance(position, _pathSwitchLocation));				
+								
 			}
 
 			
@@ -663,13 +613,13 @@
 					{
 						music.resume();	
 					}
-					//trace("music state: " + music.playing);
+			
 				}
 				
 				// BUT only turn on the volume of the current path
 				sound.pathFader[path].fadeTo(1, 1, Ease.quintIn);				
 				
-				//trace("fade path (" + path +") volume up");
+			
 				
 			}
 			// FADE MUSIC OUT
@@ -681,20 +631,12 @@
 				}
 				// player stopped moving: fade out and stop all music (stop handled by onComplete in SoundManager)
 				
-				//trace("fade path (" + path +") volume down");
 			}
 	
-			
+			// sounter used for tracing
 			if (_counter>0.4) 
 			{
 				_counter -= _counter;
-				for (var z:int = 0; z < 3; z++) 
-				{
-					/*trace("vol(" + z +"): " + sound.pathSound[z].volume.toFixed(1)
-						+ "| scrub(" + z +"): " + sound.pathSound[z].position.toFixed(1)
-						+ "| scale(" + z +"): "+ sound.pathFader[z].scale.toFixed(1));*/
-				}
-				//trace(" \n");
 			}
 		}
 		
@@ -728,22 +670,7 @@
 				fromSound = sound.pathFader[idFrom];
 				toSound = sound.pathFader[idTo];
 				
-				//trace("start xfade");
-				
-				// fade out last path music
-				//trace("playing sound: " + idFrom);
-
 				fromSound.fadeTo(0, 1, Ease.sineOut);
-				
-				
-				// fade in new path music
-				//trace("moving to sound: " + idTo);
-
-/*				if (!sound.pathSound[idTo].playing) 
-				{
-					toSound.sfx.resume();
-					trace("resuming...");
-				}*/
 				
 				for each (var music:Sfx in sound.pathSound) 
 				{
@@ -751,14 +678,10 @@
 					if (!music.playing) 
 					{
 						music.resume();
-						trace("resuming...");
 					}
-					//trace("music state: " + music.playing);
 				}
 				
-				toSound.fadeTo(1, 2, Ease.sineIn);
-				
-				
+				toSound.fadeTo(1, 2, Ease.sineIn);				
 			}
 
 		}
@@ -831,9 +754,7 @@
 			{
 				// add new animated tile to Vector and Level
 				var index:int = pathTileList.push(new PathTile(col, row, _step, getPathTypeAt(testX, textY)));
-				//trace("adding tile of color : " + currentPathIndex);
-				//trace("in row: " + row + " col: " + col);
-				
+
 				FP.world.add(pathTileList[index-1]);
 			}
 		}
@@ -866,8 +787,7 @@
 
 				} else pathDistToTotalRatio[i] = 0;
 			}
-				//trace(distance);
-				//trace(pathDistance[pathIndex]);
+			
 		}
 		
 		/**
@@ -888,21 +808,8 @@
 			var prev_x:Number = x;
 			var prev_y:Number = y;
 			
-			
-			//BUG the erratic bug may come from the fact that at high speeds I don't pixel-check move
-			
-			// check if god mode is on to set unique value for fast playthrough
-			if (LoadXmlData.GODMODE==true) 
-			{ 
-				// use god speed
-				speed = 3 * (FP.frameRate * FP.elapsed);	
-			} 
-			else 
-			{
-				// use normal velocity calculations
-				speed = pathInstantVel[pathType] * (FP.frameRate * FP.elapsed);
-			}
-			
+			// use normal velocity calculations
+			speed = pathInstantVel[pathType] * (FP.frameRate * FP.elapsed);
 			
 			if (Input.check("R"))
 			{
@@ -912,7 +819,6 @@
 					velocity.x = speed;
 				} else 
 				{
-					//trace("collided with entity: " + e);
 					velocity.x = 0;
 				}
 				
@@ -920,20 +826,9 @@
 						
 			if (Input.check("L"))
 			{
-				e = collideTypes(pathCollideType, x - speed, y);
-				if (e)
-				{
-					if (LoadXmlData.GODMODE==true) 
-						{ 
-							// use god speed
-							speed = 3 * (FP.frameRate * FP.elapsed);	
-						} else speed = 0;
+		
+				velocity.x = 0;
 					
-				} else 
-				{
-					//trace("collided with entity: " + e);
-					velocity.x = 0;
-				}	
 			}
 			
 			if (Input.check("U"))
@@ -944,7 +839,7 @@
 					velocity.y = -speed;
 				} else 
 				{
-					//trace("collided with entity: " + e);
+	
 					velocity.y = 0;
 				}
 				
@@ -958,14 +853,11 @@
 					velocity.y = speed;
 				} else 
 				{
-					//trace("collided with entity: " + e);
 					velocity.y = 0;
 				}	
 				
 			}
-			
-			// try and round the number, bug may be linked to rounding errors?	
-			
+						
 			// add position to velocity vector
 			position.x = x + velocity.x;
 			position.y = y + velocity.y;
@@ -979,14 +871,6 @@
 
 			if (!next_e) 
 			{
-				trace("CRASH: moved to an unacceptable position");
-				trace("checked positive before move on type: " + e.type);
-				//trace("checked after move and returned type: " + next_e.type);
-				trace("prev_x: " + prev_x + "prev_y: " + prev_y);
-				trace("vel_x: " +  velocity.x + "vel_y: " + velocity.y);
-				trace("should move to x: " + (prev_x + velocity.x) + " y: " + (prev_y + velocity.y) );
-				trace("new_x: " + x + "new_y: " + y);
-				trace("moving player back to its previous position...");
 				x = prev_x;
 				y = prev_y;
 			}
@@ -1053,14 +937,14 @@
 					if (DyDz > (coeff_type3 * Dxtotale) && !type3)
 					{
 															
-						trace("Dz: " + pathDistance[transmitIndexZ].toFixed(2));
+		/*				trace("Dz: " + pathDistance[transmitIndexZ].toFixed(2));
 						trace("Dy: " + pathDistance[transmitIndexY].toFixed(2));
 						trace("Dx: " + Dxtotale.toFixed(2));
 						trace("DyDz: " + DyDz.toFixed(2));
 						trace("0.3*Dx: " + (coeff_type3 * Dxtotale).toFixed(2));
 						 
 						
-						trace("DyDz sup à  0.3 x Dxtotale - vitesse 3");	
+						trace("DyDz sup à  0.3 x Dxtotale - vitesse 3");*/	
 						
 						type3 = true;
 						
@@ -1070,22 +954,22 @@
 					{
 						pathInstantVel[i] = pathFastest;
 						typeVitesse[i] = "V3 - Vmax des 3 chemins";
-						//trace("V3 - Vmax des 3 chemins");
+						
 						
 					} else if (pathMaxVel[i] < pathChildSpeed[i]) 
 					{
 						pathInstantVel[i] = pathChildSpeed[i];
 						typeVitesse[i] = "V1 - constant (VB transmis)";	
-						//trace("V1 - constant (VB transmis)");
+						
 					} 
 					else if (pathMaxVel[i] >= pathChildSpeed[i]) 
 					{
 						typeVitesse[i] = "V2 - comme pere (vb+scurve)";
 						pathInstantVel[i] = pathMaxVel[i];
-						//trace("V2 - comme pere (vb+scurve)");
+						
 					} else 
 					{
-						trace ("wtf?");
+						//trace ("wtf?");
 					}
 				}
 				
@@ -1149,7 +1033,7 @@
 		{
 			// swap childAppear sprite with childAlive sprite and give control back to player
 			graphic = childAlive;
-			//hasControl = true;
+			
 			childAlive.play("walk");
 		}
 		
@@ -1160,7 +1044,7 @@
 		public function onFatherDeathComplete():void
 		{
 			isFatherDying = false;
-			trace("oh, shit, father just went awol...");
+			
 		}
 		
 		
@@ -1223,7 +1107,7 @@
 			if (robotFather.robotFatherDeath.frame == 12 && !_isDaughterVisible) 
 			{
 				makeChildVisible();
-				trace("child visible");
+				
 			}
 		}
 		
@@ -1235,7 +1119,7 @@
 			if (robotDaughter.robotDaughterDeath.frame == 23 && !_isGrandChildVisible) 
 			{
 				makeGrandChildVisible();
-				trace("grand child visible");
+				
 			}
 		}
 		
@@ -1249,7 +1133,7 @@
 				//BUG removing father removes background image!
 				//FP.world.remove(robotFather);
 				robotFatherIsAlive = false;
-				trace("removed robot father from world");
+				
 			}
 		}
 		
@@ -1263,7 +1147,7 @@
 				//BUG removing daughter removes path spritemap
 				//FP.world.remove(robotDaughter);
 				robotDaughterIsAlive = false;
-				trace("removed robot daughter from world");
+				
 			}
 
 		}
@@ -1319,7 +1203,7 @@
 			
 			// remove control from player
 			hasControl = false;
-			trace("start transmition timer");
+		
 		}
 		
 		private function onTransmitTimerComplete():void
@@ -1331,8 +1215,7 @@
 			
 			// return control to player
 			hasControl = true;
-			trace("transmition complete");
-			
+					
 			//transmit properties from father to child
 			transmitFatherToChild();
 			
@@ -1342,10 +1225,10 @@
 			{
 				//start countdown to grandchild transmission
 				timeToGrandChild.start();
-				trace("start timeToGrandChild alarm");		
+				
 				//set player state to child
 				state = "child";
-				trace("has control of child");
+		
 			}
 			else if (state == "child") 
 			{
@@ -1355,10 +1238,10 @@
 						
 				//set player state to child
 				state = "grandChild";
-				trace("has control of grand child");
+		
 			}
 			
-			trace("state: " + state);
+			
 			
 		}
 		
@@ -1406,17 +1289,17 @@
 			// debug stuff
 			for (var h:int = 0; h < 3; h++) 
 			{
-				trace("classement: " + classement[h]);
+				//trace("classement: " + classement[h]);
 				switch (h) 
 				{
 					case 0:
-						trace("ratio z: " + pathDistToTotalRatio[classement[h]]);
+						//trace("ratio z: " + pathDistToTotalRatio[classement[h]]);
 						break;
 					case 1:
-						trace("ratio y: " + pathDistToTotalRatio[classement[h]]);
+						//trace("ratio y: " + pathDistToTotalRatio[classement[h]]);
 						break;
 					case 2:
-						trace("ratio x: " + pathDistToTotalRatio[classement[h]]);
+						//trace("ratio x: " + pathDistToTotalRatio[classement[h]]);
 						break;
 				}
 
@@ -1436,7 +1319,7 @@
 					pathBaseSpeed[j] = VB;
 				}
 				transmitModel = ONE_A;
-				trace("Modèle 1a");
+		
 			} 
 			// Modèle 1-b: 0.43=<ratx=<0.6 et 0=<ratz<0.15
 			else if (ratx >= 0.43 && ratx <= 0.6 && ratz <= 0.15)
@@ -1450,7 +1333,7 @@
 				{
 					pathBaseSpeed[m] = VB;
 				}
-				trace("Modèle 1b");
+		
 				transmitModel = ONE_B;
 			}
 			// Modèle 2: 0.34=<ratx=<0.6 et 0.15=<ratz<0.33
@@ -1467,15 +1350,15 @@
 					pathBaseSpeed[k] = VB;
 				}
 				transmitModel = TWO;
-				trace("Modèle 2");
+				
 			}
 			else
 			{
-				trace("cas moyen!");
+				//trace("cas moyen!");
 			}
       
 			for (var i:int = 0; i < 3; i++) {
-				trace("nouvelle VB: ("+ i + ") " + pathChildSpeed[i]);
+				//trace("nouvelle VB: ("+ i + ") " + pathChildSpeed[i]);
 			}
 			
 			// remettre toues les distances à zero
@@ -1512,12 +1395,12 @@
 				transmitIndexY = sortspeeds[1];
 				transmitIndexZ = sortspeeds[2];
 
-				trace("pere -> fils");
+				/*trace("pere -> fils");
 				trace("chemin le plus emprunté: " + sortpaths[0]);
 				trace("Dxtotale: " + Number(Dxtotale).toFixed(1));
 				trace("chemins les plus lents: " + transmitIndexY + " " + transmitIndexZ);
 				trace("distance sur ces chemins: " + Number(fatherStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(fatherStoredDistances[sortpaths[2]]).toFixed(1));
-				
+				*/
 
 			} else {
 				
@@ -1532,11 +1415,11 @@
 				transmitIndexY = sortspeeds[1];
 				transmitIndexZ = sortspeeds[2];
 
-				trace("fils -> petit_fils");
+				/*trace("fils -> petit_fils");
 				trace("chemin le plus emprunté: " + sortpaths[0]);
 				trace("Dxtotale: " + Number(Dxtotale).toFixed(1));
 				trace("chemins les plus lents: " + transmitIndexY + " " + transmitIndexZ);
-				trace("distance sur ces chemins: " + Number(childStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(childStoredDistances[sortpaths[2]]).toFixed(1));
+				trace("distance sur ces chemins: " + Number(childStoredDistances[sortpaths[1]]).toFixed(1) + " " + Number(childStoredDistances[sortpaths[2]]).toFixed(1));*/
 
 			}
 			
@@ -1723,12 +1606,7 @@
 			if (_counter > 0.4 && debug) 
 			{
 				_counter -= _counter;
-				trace("modele 1a");
-					
-				if (_shutterRightTween.active) 
-				{
-					trace(_shutterRightTween.value);
-				}
+				
 			}
 		}
 		
@@ -1758,12 +1636,7 @@
 			if (_counter > 0.4 && debug) 
 			{
 				_counter -= _counter;
-				trace("modele 1b");
-					
-				if (_shutterRightTween.active) 
-				{
-					trace(_shutterRightTween.value);
-				}
+				
 			}
 		}
 		
@@ -1793,12 +1666,7 @@
 			if (_counter > 0.4 && debug) 
 			{
 				_counter -= _counter;
-				trace("modele 2");
 				
-				if (_shutterRightTween.active) 
-				{
-					trace(_shutterRightTween.value);
-				}
 			}
 		}
 		
@@ -1811,23 +1679,13 @@
 		 */
 		public function onTimeToChild():void
 		{
-			// kill all path music
-			/*for (var i:int = 0; i < 3; i++) 
-			{
-				fadeOutPathMusic(i);
-			}*/
-
 			
 			// child appears part of father sprite
 			state = "childAlive";
 
-			// remove control from player
-			//hasControl = false;
-			
 			// swap father sprite for child appear sprite
 			graphic = childAppear;
-			childAppear.play("appear");
-			
+			childAppear.play("appear");			
 		}
 		
 		/**
@@ -1881,12 +1739,9 @@
 		 */
 		public function onTimeGrandChildToEnd():void
 		{
-						
-			trace("grandchild is dead");
 			isPlayerDead = true;
-
-			// see if this helps kill the sounds
-			//playerGoneAWOL = true;
+			
+			hasControl = false;
 			
 			// kill all sounds
 			for each (var soundToKill:Sfx in sound.pathSound) 
@@ -1904,11 +1759,10 @@
 		public function fadeOutGame():void
 		{
 			// send Outro
-			fadeOutCurtain = new Curtain(FP.width, FP.height, "out", 15);
+			fadeOutCurtain = new Curtain(FP.width, FP.height, "out", 11);
 			fadeOutCurtain.x = FP.camera.x;
 			fadeOutCurtain.y = FP.camera.y;
-			trace("fade out");
-			//return fadeOutCurtain;
+
 		}
 		
 		

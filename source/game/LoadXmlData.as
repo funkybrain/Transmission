@@ -1,29 +1,18 @@
 package game 
 {
-	import flash.net.URLLoader
-	import flash.net.URLRequest
-	import flash.xml.*
-	import flash.errors.*
-	import flash.events.*
+
 	import net.flashpunk.FP;
 	import net.flashpunk.World;
-	import rooms.Level;
-
 	
 	/**
 	* Constructor 
 	*/
 	public class LoadXmlData
 	{
-		public var gameData:XML;
-		public var loader:URLLoader = new URLLoader();
-		public var url:XMLList;
-		
-		public static var gameDataLoaded:Boolean = false;
+
 		
 		public static var timer_ToChild:Number;
 		public static var timer_GrandChildToEnd:Number;
-		public static var timer_FatherToChild:Number;
 		public static var timer_FatherToDeath:Number;
 		public static var timer_ChildToGrandChild:Number;
 		
@@ -47,79 +36,54 @@ package game
 		
 		public static var TRANS_TIMER:Number;
 		
+		public var playIntro:Intro;
+		
 		public function LoadXmlData() 
 		{
-			loader.addEventListener(Event.COMPLETE, onComplete);
-			loader.load(new URLRequest("gamedata.xml"));
+			init();
+			playIntro = new Intro();
 		}
 		
-		public function onComplete(evt:Event):void
+		public function init():void
 		{
-			gameData = new XML(loader.data)
-			trace("xml loaded, start parsing using E4X syntax");
 			
 			// speed
-			VB = Number(gameData.vitesse.VB.text());
-			CT_VB = Number(gameData.vitesse.CT_VB.text());
+			VB = 0;
+			CT_VB = 0.6;
 			
 			// scurve
-			COEFF_D = Number(gameData.scurve.COEFF_D.text());
-			COEFF_D_CHILD = Number(gameData.scurve.COEFF_D_CHILD.text());
-			COEFF_D_GRANDCHILD = Number(gameData.scurve.COEFF_D_GRANDCHILD.text());
+			COEFF_D = 1.6;
+			COEFF_D_CHILD = 2;
+			COEFF_D_GRANDCHILD = 2.4;
 			
-			D_MAX = Number(gameData.scurve.D_MAX.text()); 
-			S_MIN = Number(gameData.scurve.S_MIN.text());
-			S_MAX = Number(gameData.scurve.S_MAX.text());
+			D_MAX = 1800; 
+			S_MIN = -1.2;
+			S_MAX = 2;
 			
 			// timers
-			timer_ToChild = Number(gameData.timers.timeToChild.text());
-			timer_FatherToDeath = Number(gameData.timers.timeFatherToDeath.text());
-			timer_FatherToChild = Number(gameData.timers.timeFatherToChild.text());
-			timer_ChildToGrandChild = Number(gameData.timers.timeChildToGrandChild.text());
-			timer_GrandChildToEnd = Number(gameData.timers.timeGrandChildToEnd.text());
+			timer_ToChild = 60;
+			timer_FatherToDeath = 80;
+			timer_ChildToGrandChild = 80;
+			timer_GrandChildToEnd = 80;
 			
 			// debug
-			DEBUG = stringToBoolean(gameData.debug.text());
-			GODMODE = stringToBoolean(gameData.godmode.text());
-			LD = stringToBoolean(gameData.LD.text());
+			DEBUG = false;
+			GODMODE = false;
+			LD = true;
 		
 			// citation
-			CITATION = gameData.citation.text(); 
+			CITATION = "... comme il se souviennent certainement des leurs; et eux comme moi, à tort ou à raison, sommes ce qu'ils ont fait de nous ..."; 
 			
 			//volume
-			VOLUME = Number(gameData.volume.text());
+			VOLUME = 1;
 			
 			//transmition timer
-			TRANS_TIMER = Number(gameData.transmitTimer.text());
+			TRANS_TIMER = 14;
 			
 			// HUD
-			HUD = stringToBoolean(gameData.HUD.text());
-			
-			trace("done assigning data in LoadXmlData");
-
-			//trace("starting intro movie");
-			//remove comment to play intro movie
-			
-			var playIntro:Intro = new Intro();
-
-			//trace("creating world");			
-			// comment out to pplay intro movie
-			
-			//FP.world = new Game;
-			
+			HUD = true;
+	
 		}
-		
-		
-		// helper function
-		public static function stringToBoolean($string:String):Boolean
-		{
-		
-          return ($string.toLowerCase() == "true" || $string.toLowerCase() == "1");
-		
-		}
-
-
-		
 	}
 
 }

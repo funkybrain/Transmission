@@ -1700,8 +1700,10 @@
   <animations>
     <anim_rouage x="480" y="120"/>
     <anim_rouage x="3000" y="0"/>
-    <anim_crash x="1030" y="0"/>
     <anim_man x="90" y="0"/>
     <anim_rouage x="1440" y="0"/>
+    <anim_crash x="3120" y="30"/>
+    <anim_fatherchild x="4200" y="60"/>
+    <anim_fatherchild x="6570" y="30"/>
   </animations>
 </level>

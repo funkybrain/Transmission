@@ -2,7 +2,6 @@ package game
 {
 	import adobe.utils.CustomActions;
 	import flash.display.InteractiveObject;
-	import utils.SWFProfiler;
 	import net.flashpunk.graphics.Canvas;
 	import net.flashpunk.graphics.Spritemap;
 	import net.flashpunk.Sfx;
@@ -52,14 +51,12 @@ package game
 		 */
 		[Embed(source = '../../assets/fonts/EMLATIN6.ttf', fontFamily = 'debugFont')]
 		private static const FNT_ARIAL:Class;
-
-		
 		
 		/**
 		 * Camera following information.
 		 */
 		public const FOLLOW_TRAIL:Number = 50;
-		public const FOLLOW_RATE:Number = .5; // was .9
+		public const FOLLOW_RATE:Number = .9;
 		public var worldWidth:uint;
 		public var worldHeight:uint;
 				
@@ -145,6 +142,8 @@ package game
 		 */
 		public var creditMusic:CreditMusic;
 		
+		public var playCredits:Credits;
+		
 		/**
 		 * For debug
 		 */
@@ -162,7 +161,6 @@ package game
 			
 			// get trigger for rouleau
 			rouleauTriggerX = level_1.getTriggerPosition();
-			trace("trigger X : " + rouleauTriggerX); 
 			
 			// set intial camera clamp value to level width/height
 			worldWidth = level_1.width;
@@ -208,17 +206,13 @@ package game
 			_overlay = new GameOverlay();
 			add(_overlay);
 			
-
-			
 			//TODO remove kill vol befor publish
 			FP.volume = LoadXmlData.VOLUME;
-			
-			trace("end of Game constructor");			
+					
 		} // end constructor
 		
 		override public function begin():void 
 		{
-			trace("begin method called")
 			super.begin();
 			
 			_introText = new IntroText();
@@ -233,8 +227,7 @@ package game
 		{
 			_fadeInCurtain = new Curtain(FP.width, FP.height, "in", 15);
 			add(_fadeInCurtain);
-			trace("fade In");
-			
+
 		}
 		
 		
@@ -279,7 +272,6 @@ package game
 			// freeze or unfreeze timers and sounds
 			checkTimers();
 			
-			
 			//set backgound animation framerates based on player speed
 			setAnimationSpeed();
 			
@@ -300,14 +292,11 @@ package game
 			}
 
 			
-			
-			
 			// test to see if next level needs to be imported
 			if (FP.camera.x > (level_1.width - FP.width - 100) && !_levelTwoAdded) 
 			{
 				importNextLevel();
 				_levelTwoAdded = true;
-				trace("import level2");
 			}
 			
 			// clean-up animation and background list to save on memory
@@ -319,7 +308,7 @@ package game
 			{
 					_rouleauTriggered = true;
 					// start a tween on the camera to slowly bring the player to the right third of screen
-					_cameraPan = new NumTween(onCameraPan, 2);
+					_cameraPan = new NumTween(null, 2);
 					_cameraPan.tween((FP.width / 2), (FP.width / 1.5), 25, Ease.expoIn);
 					addTween(_cameraPan);
 					_cameraPan.start();
@@ -327,26 +316,12 @@ package game
 					// start Epitaphe
 					startFinalWords();
 			}
-
-			// debug
-			if (null != _cameraPan && _cameraPan.active)
-			{
-				//trace("cam pan: " + _cameraPan.value);
-			}
-			
-			
-			// hide/show overlay
-			if (LoadXmlData.HUD) 
-			{
-				_overlay.visible = true;
-			} else _overlay.visible = false;
-			
 			
 			// check to see if it's time to kill the credit music
 			if (Input.check("Enter") &&  player.isPlayerDead && !creditMusic.fadeMusicOut.active)
 			{
-				trace("player hit Enter - kill credit music");
 				fadeOutEndMusic();
+				FP.stage.removeChild(playCredits.movieSWF);
 			}
 			
 		}
@@ -358,25 +333,12 @@ package game
 		 */		
 		private function leaveGameSequence():void
 		{
-			
 			// send in fade out
 			player.fadeOutGame();
 			add(player.fadeOutCurtain);
 			
 			// remove sound object from world
 			remove(player.sound);
-						
-
-		}
-		
-
-		
-		/**
-		 * Camera pan event when epitaphe starts to appear
-		 */
-		private function onCameraPan():void
-		{
-			trace("camera pan complete");
 		}
 		
 		/**
@@ -394,8 +356,6 @@ package game
 			debug.drawHitBox(player);
 			debugHUD.render();
 			debug.drawHitBoxOrigin(player);
-			
-			
 		}
 		// end Game RENDER LOOP
 		
@@ -406,19 +366,15 @@ package game
 		{
 			// create first level
 			level_2 = new Level(2, worldWidth);
-			trace("level2 imported");
 			
 			// get trigger for rouleau
 			if (rouleauTriggerX >= 50000) // true if trigger was NOT loaded in the first level
 			{
 				rouleauTriggerX = level_2.getTriggerPosition();
-				trace("trigger X : " + rouleauTriggerX); 
-
 			}
 			
 			// set intial camera clamp value to level width/height
 			worldWidth += level_2.width;
-			trace("worldWidth: " + worldWidth);
 			
 			// add level objects to world
 			level_2.addObjectsToWorld(this)
@@ -511,7 +467,6 @@ package game
 			}
 				
 			// call end music. starts during death scene and extends to credits
-			trace("end music kicks in");
 			launchEndMusic = true;
 			fadeInEndMusic();
 		}
@@ -526,7 +481,7 @@ package game
 			finalWords = new Epitaphe();
 			finalWords.visible = false;
 			finalWords.x = rouleauStart.x + rouleauStart.spriteRouleau.width + 5;
-			trace("final words x " + finalWords.x);
+			//trace("final words x " + finalWords.x);
 			add(finalWords);
 
 			// add the second rouleau that unravels
@@ -558,7 +513,7 @@ package game
 			
 			// move final words forward to keep up with player
 			var displaylength:String = StringUtils.remove(finalWords.supportSyllogisme.text, " ");
-			finalWords.x = player.x - (displaylength.length * letterWidth) - player.grandChild.width;
+			finalWords.x = player.x - (displaylength.length * letterWidth);// - player.grandChild.width;
 			
 			if (wordslength > 1) 
 			{
@@ -594,11 +549,11 @@ package game
 				if (_inContact && !rouleauStart.isSpinning)
 				{
 					var test:Boolean = player.rightArrowReleased();
-					//trace("arrow released: " + test);
+					
 					if (test || !player.hasControl)
 					{
 						rouleauStart.rollFree();
-						//_inContact = false;
+						
 						rollFrom = rouleauStart.x;
 					}
 				}
@@ -667,10 +622,10 @@ package game
 		{
 			if (false == _creditsCalled) 
 			{
-				var playCredits:Credits = new Credits();
+				playCredits = new Credits();
 				_creditsCalled = true;
-				trace("call credits and remove player");
-				remove(player);
+				
+				//remove(player);
 			}
 		}
 		
@@ -680,10 +635,12 @@ package game
 		public function fadeInEndMusic():void
 		{	
 			creditMusic = new CreditMusic();
+			
 			add(creditMusic);
+			
 			creditMusic.musicEnd.play(0);
 			creditMusic.fadeMusicIn.fadeTo(1, 1, Ease.sineIn);
-			trace("fadeInEndMusic() called");
+			
 		}
 		
 		/**
@@ -693,7 +650,7 @@ package game
 		public function fadeOutEndMusic():void
 		{
 			creditMusic.fadeMusicOut.fadeTo(0, 2, Ease.sineOut);
-			trace("fadeOutEndMusic() called");
+			
 		}
 		
 		/**
@@ -702,7 +659,7 @@ package game
 		private function setAnimationSpeed():void
 		{
 			// first map player velocity to framerate
-			var rate:Number = FP.scaleClamp(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 4, 0, 1);	
+			var rate:Number = FP.scaleClamp(Math.max(Math.abs(player.velocity.x), Math.abs(player.velocity.y)), 0, 3, 0, 1);	
 			
 			for each (var animation:Animation in animationList)
 			{
@@ -720,9 +677,7 @@ package game
 						
 					} else if( player.x > (animation.x + animation.triggerDistance) && !animation.playedOnce)
 					{
-						trace("anim x: " + animation.x);
-						trace("player x: " + player.x);
-						trace("trigger distance: " + animation.triggerDistance);
+
 						animation.playOnce();
 						animation.playedOnce = true;
 		
@@ -765,8 +720,7 @@ package game
 					var bgrnd:Vector.<Background> = backgroundList.splice(bg, 1);
 					FP.world.remove(value);	
 					bg--;
-					trace("background removed at x: " + bgrnd[0].x);
-					trace("bg list length: " + backgroundList.length);
+
 				}
 			}	
 		}

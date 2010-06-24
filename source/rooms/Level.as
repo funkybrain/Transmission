@@ -33,14 +33,7 @@
 		private static const LEVEL:Class;
 		
 		[Embed(source = '../../level/Level_Romain_2.oel', mimeType = 'application/octet-stream')]
-		private static const LEVEL_2:Class;
-		
-		[Embed(source = '../../level/Level_Test_Manu.oel', mimeType = 'application/octet-stream')]
-		private static const LEVEL_TEST:Class;
-		
-		[Embed(source = '../../level/Level_Test_Manu_2.oel', mimeType = 'application/octet-stream')]
-		private static const LEVEL_TEST_2:Class;
-		
+		private static const LEVEL_2:Class;		
 		
 		/**
 		 * Size of the level (so it knows where to keep the player + camera in).
@@ -68,43 +61,25 @@
 			
 			var loadLevel:Class;
 		
-			if (!LoadXmlData.LD) 
+			switch (number) 
 			{
-				switch (number) 
-				{
-					case 1:
-						loadLevel = LEVEL_TEST;
-						break;
-					case 2:
-						loadLevel = LEVEL_TEST_2;
-						break;
-					default:
-						loadLevel = LEVEL_TEST;
-						break;
-				}
-				
-			} else {
-				switch (number) 
-				{
-					case 1:
-						loadLevel = LEVEL;
-						break;
-					case 2:
-						loadLevel = LEVEL_2
-						break;
-					default:
-						loadLevel = LEVEL_TEST;
-						break;
-				}
+				case 1:
+					loadLevel = LEVEL;
+					break;
+				case 2:
+					loadLevel = LEVEL_2
+					break;
+				default:
+					break;
 			}
+			
 			
 			//trace("loading level: " + loadLevel);
 			super(loadLevel);
 
 			width = level.width;
 			height = level.height;
-			trace(level.width);
-			trace(level.height);
+
 			
 		}
 		
@@ -198,7 +173,7 @@
 				var _x3:int = int(o.@x) + _offset;
 				var index_three:int = _animationList.push(new Animation(_x3, o.@y, "prison", 0));
 				world.add(_animationList[index_three-1]);
-				trace("prison x: " + _animationList[index_three-1].x);
+				//trace("prison x: " + _animationList[index_three-1].x);
 			}
 			
 			for each (var s:XML in level.animations.anim_crash)
@@ -207,9 +182,7 @@
 				var _x4:int = int(s.@x) + _offset;
 				var index_four:int = _animationList.push(new Animation(_x4, s.@y, "crash", 0));
 				world.add(_animationList[index_four - 1]);
-				trace("crash x: " + _animationList[index_four - 1].x);
-				trace("crash trigger x: " +  _animationList[index_four - 1].triggerDistance);
-				trace("anim type: " +  _animationList[index_four - 1].animType);
+
 			}
 			
 			for each (var w:XML in level.animations.anim_serveuse)
@@ -218,7 +191,7 @@
 				var _x5:int = int(w.@x) + _offset;
 				var index_five:int = _animationList.push(new Animation(_x5, w.@y, "serveuse", 0));
 				world.add(_animationList[index_five - 1]);
-				trace("serveuse x: " + _animationList[index_five-1].x);
+				//trace("serveuse x: " + _animationList[index_five-1].x);
 			}
 			
 			for each (var k:XML in level.animations.anim_junky)
@@ -227,7 +200,7 @@
 				var _x6:int = int(k.@x) + _offset;
 				var index_six:int = _animationList.push(new Animation(_x6, k.@y, "junky", 0));
 				world.add(_animationList[index_six - 1]);
-				trace("junky x: " + _animationList[index_six-1].x);
+				//trace("junky x: " + _animationList[index_six-1].x);
 			}
 			
 			for each (var t:XML in level.animations.anim_fatherchild)
@@ -236,7 +209,7 @@
 				var _x7:int = int(t.@x) + _offset;
 				var index_seven:int = _animationList.push(new Animation(_x7, t.@y, "fatherchild", 1));
 				world.add(_animationList[index_seven - 1]);
-				trace("fatherchild x: " + _animationList[index_seven-1].x);
+				//trace("fatherchild x: " + _animationList[index_seven-1].x);
 			}
 			
 			return _animationList;
